@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Neusendungs-Report | 7 o'clock</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.js"></script>
+<style>
+:root {
+  color-scheme: light;
+  --bg: #faf8f5;
+  --card: #ffffff;
+  --ink: #1a1a1a;
+  --ink-soft: #6b6b6b;
+  --line: #ebe6df;
+  --accent: #2d2a26;
+  --good: #4a7c59;
+  --warn: #c4934a;
+  --bad: #b04848;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  font-size: 14px;
+  line-height: 1.55;
+  padding: 40px 24px;
+}
+.wrap { max-width: 1200px; margin: 0 auto; }
+
+header { margin-bottom: 36px; padding-bottom: 24px; border-bottom: 1px solid var(--line); }
+.brand { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--ink-soft); margin-bottom: 8px; }
+h1 { font-size: 28px; font-weight: 500; letter-spacing: -0.5px; }
+.subtitle { color: var(--ink-soft); font-size: 14px; margin-top: 8px; }
+.timestamp { font-size: 12px; color: var(--ink-soft); margin-top: 12px; font-style: italic; }
+
+h2 { font-size: 13px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; color: var(--ink-soft); margin-bottom: 16px; }
+
+.section { margin-bottom: 36px; }
+
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 32px;
+}
+.kpi {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 20px;
+}
+.kpi-label { font-size: 11px; color: var(--ink-soft); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+.kpi-value { font-size: 28px; font-weight: 500; letter-spacing: -0.5px; }
+.kpi-sub { font-size: 12px; color: var(--ink-soft); margin-top: 6px; }
+
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 24px;
+}
+.chart-wrap { position: relative; height: 280px; }
+
+.cat-list { display: flex; flex-direction: column; gap: 6px; }
+.cat-row { display: flex; align-items: center; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--line); }
+.cat-row:last-child { border-bottom: none; }
+.cat-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.cat-name { flex: 1; font-size: 13px; }
+.cat-count { font-weight: 600; font-size: 13px; }
+.cat-pct { color: var(--ink-soft); font-size: 12px; margin-left: 8px; min-width: 50px; text-align: right; }
+
+table { width: 100%; border-collapse: collapse; }
+th { font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--ink-soft); text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line); font-weight: 600; }
+td { padding: 12px; border-bottom: 1px solid var(--line); font-size: 13px; }
+tr:last-child td { border-bottom: none; }
+td.num { text-align: right; font-weight: 600; }
+
+.alert {
+  background: rgba(196, 147, 74, 0.1);
+  border-left: 3px solid var(--warn);
+  padding: 14px 18px;
+  border-radius: 4px;
+  font-size: 13px;
+  margin-bottom: 10px;
+}
+.alert.bad { background: rgba(176, 72, 72, 0.08); border-left-color: var(--bad); }
+.alert.good { background: rgba(74, 124, 89, 0.08); border-left-color: var(--good); }
+.alert strong { display: block; margin-bottom: 4px; }
+
+footer { margin-top: 48px; padding-top: 20px; border-top: 1px solid var(--line); font-size: 11px; color: var(--ink-soft); text-align: center; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="brand">7 O'CLOCK · KUNDENSERVICE</div>
+  <h1>Neusendungs-Report</h1>
+  <div class="subtitle">Auswertung 26. Mai – 18. Juni 2026 (24 Tage)</div>
+  <div class="timestamp" id="generated-at">Generiert am 22.06.2026</div>
+</header>
+
+<div class="section">
+  <div class="alert bad">
+    <strong>Tracking-Lücke (Hauptproblem)</strong>
+    81% aller Neusendungen laufen noch über den alten Sammel-SKU "Sonstiges". Solange nicht konsequent die neuen Kategorie-SKUs vom Support genutzt werden, lassen sich Verursacher nicht steuern.
+  </div>
+  <div class="alert">
+    <strong>Nia-Geschirr dominiert</strong>
+    Die Top 3 nachgesendeten Artikel sind alle große Teller der Nia-Linie – klassische Bruchware. Verpackungs- und Inlay-Optimierung speziell für Nia-Teller hat den größten Hebel.
+  </div>
+</div>
+
+<div class="kpi-grid">
+  <div class="kpi">
+    <div class="kpi-label">Bestellungen mit Neusendung</div>
+    <div class="kpi-value">250</div>
+    <div class="kpi-sub">24-Tage-Zeitraum</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">Neusendungs-Items gesamt</div>
+    <div class="kpi-value">251</div>
+    <div class="kpi-sub">Summe Stückzahl</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">Ø pro Tag</div>
+    <div class="kpi-value">13,9</div>
+    <div class="kpi-sub">Neusendungen / Tag</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">Spitzentag</div>
+    <div class="kpi-value">17.06.</div>
+    <div class="kpi-sub">19 Neusendungen</div>
+  </div>
+</div>
+
+<div class="section two-col">
+  <div class="card">
+    <h2>Nach Verursacher</h2>
+    <div class="chart-wrap"><canvas id="chart-verursacher"></canvas></div>
+  </div>
+  <div class="card">
+    <h2>Nach Kategorie</h2>
+    <div class="cat-list">
+      <div class="cat-row">
+        <div class="cat-dot" style="background:#9a9a9a"></div>
+        <div class="cat-name">Sonstiges (alt-Sammelkategorie)</div>
+        <div class="cat-count">202</div>
+        <div class="cat-pct">80%</div>
+      </div>
+      <div class="cat-row">
+        <div class="cat-dot" style="background:#7d8fa3"></div>
+        <div class="cat-name">Paket zurückgekommen</div>
+        <div class="cat-count">24</div>
+        <div class="cat-pct">10%</div>
+      </div>
+      <div class="cat-row">
+        <div class="cat-dot" style="background:#c4934a"></div>
+        <div class="cat-name">Defekt/Bruch</div>
+        <div class="cat-count">24</div>
+        <div class="cat-pct">10%</div>
+      </div>
+      <div class="cat-row">
+        <div class="cat-dot" style="background:#9a9a9a"></div>
+        <div class="cat-name">Schweiz</div>
+        <div class="cat-count">1</div>
+        <div class="cat-pct">0%</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section card">
+  <h2>Verlauf nach Tag</h2>
+  <div class="chart-wrap" style="height: 240px;"><canvas id="chart-trend"></canvas></div>
+</div>
+
+<div class="section card">
+  <h2>Top 10 nachgesendete Original-Produkte</h2>
+  <table>
+    <thead><tr><th>Artikel</th><th style="text-align:right">Anzahl</th></tr></thead>
+    <tbody>
+      <tr><td>Großer Teller cremeweiß-matt | Nia</td><td class="num">41</td></tr>
+      <tr><td>Großer Teller cremeweiß-glänzend | Nia</td><td class="num">35</td></tr>
+      <tr><td>Großer gerillter Teller cremeweiß | Nia</td><td class="num">31</td></tr>
+      <tr><td>Kleiner Teller cremeweiß-matt | Nia</td><td class="num">19</td></tr>
+      <tr><td>Kleines organisches Glas | Alaska</td><td class="num">18</td></tr>
+      <tr><td>Kleiner Teller cremeweiß-glänzend | Nia</td><td class="num">15</td></tr>
+      <tr><td>Kleiner gerillter Teller cremeweiß | Nia</td><td class="num">14</td></tr>
+      <tr><td>Große Bowl cremeweiß-glänzend | Nia</td><td class="num">13</td></tr>
+      <tr><td>Kleine Bowl cremeweiß-glänzend | Nia</td><td class="num">12</td></tr>
+      <tr><td>Große Bowl cremeweiß-matt | Nia</td><td class="num">12</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="section card">
+  <h2>Empfehlungen</h2>
+  <div class="alert good">
+    <strong>1. Saubere Kategorisierung ab heute Pflicht</strong>
+    Ab heute Support-Schulung: Statt "NEUSENDUNG" immer die spezifische Kategorie nutzen (Defekt/Bruch, Artikel fehlt, Falscher Artikel, etc.). Sonst bleibt das Reporting wertlos.
+  </div>
+  <div class="alert good">
+    <strong>2. Verpackungs-Optimierung Nia-Linie</strong>
+    Die Nia-Teller (matt und glänzend) machen die Top-Plätze der Bruchware aus. A/B-Test: Verstärktes Inlay, dickere Pappumhüllung oder Karton-Format speziell für große Teller.
+  </div>
+  <div class="alert good">
+    <strong>3. Carrier-Quote reduzieren</strong>
+    10% Carrier-Probleme (Paket zurückgekommen) ist für Premium-DTC hoch. Empfehlung: Google Address Validation API im Checkout + proaktive Versand-Kommunikation 1-2 Tage vor Zustellung.
+  </div>
+  <div class="alert good">
+    <strong>4. Versteckte COGS sichtbar machen</strong>
+    14 Neusendungen/Tag × Ø 2-3 Artikel = ~30 Einzelartikel täglich. Bei einem Ø-Warenwert von 25 € sind das ~22.500 € pro Monat reine Nachsendung. Sollte als KPI in der Monatsauswertung erscheinen.
+  </div>
+</div>
+
+<footer>
+  7 o'clock · Interner Kundenservice-Report · Vertraulich<br>
+  Datenquelle: Shopify Live-Daten · Aktualisierung täglich um 8 Uhr morgens
+</footer>
+
+</div>
+
+<script>
+// Generated timestamp
+document.getElementById('generated-at').textContent = 'Generiert am ' + new Date().toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' }) + ' um ' + new Date().toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' }) + ' Uhr';
+
+// Verursacher-Chart
+new Chart(document.getElementById('chart-verursacher'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Sonstiges (alt)', 'Carrier', 'Produkt/Qualität', 'Schweiz'],
+    datasets: [{
+      data: [202, 24, 24, 1],
+      backgroundColor: ['#9a9a9a', '#7d8fa3', '#c4934a', '#b08968'],
+      borderWidth: 0,
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { position: 'right', labels: { boxWidth: 12, font: { size: 12 } } }
+    }
+  }
+});
+
+// Trend-Chart
+const trendData = {
+  '2026-05-26': 8, '2026-05-27': 9, '2026-05-28': 15, '2026-05-29': 11,
+  '2026-06-01': 17, '2026-06-02': 11, '2026-06-03': 15, '2026-06-04': 13, '2026-06-05': 9,
+  '2026-06-08': 16, '2026-06-09': 15, '2026-06-10': 18, '2026-06-11': 18, '2026-06-12': 16,
+  '2026-06-15': 15, '2026-06-16': 15, '2026-06-17': 19, '2026-06-18': 11
+};
+new Chart(document.getElementById('chart-trend'), {
+  type: 'bar',
+  data: {
+    labels: Object.keys(trendData).map(d => new Date(d + 'T00:00:00').toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit' })),
+    datasets: [{
+      label: 'Neusendungen',
+      data: Object.values(trendData),
+      backgroundColor: '#c4b5a0',
+      borderRadius: 3,
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { grid: { display: false }, ticks: { font: { size: 10 } } },
+      y: { beginAtZero: true, ticks: { precision: 0 } }
+    }
+  }
+});
+</script>
+
+</body>
+</html>
