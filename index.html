@@ -327,11 +327,14 @@ var MAX_DATE = ALL_DATES[ALL_DATES.length-1] || DATA.targetDate;
 var ALL_AGG = null; // wird nach aggregate-Definition gesetzt
 
 document.getElementById('updatedLine').textContent = 'Aktualisiert am ' + fmtDE(DATA.lastUpdated || MAX_DATE);
-document.getElementById('dataHint').textContent = 'Datensatz: ' + fmtDE(MIN_DATE) + ' bis ' + fmtDE(MAX_DATE) + ' · ' + CASES.length + ' Cases · Zeiträume relativ zum letzten Datum.';
+document.getElementById('dataHint').textContent = 'Datensatz: ' + fmtDE(MIN_DATE) + ' bis ' + fmtDE(MAX_DATE) + ' · ' + CASES.length + ' Cases · "Gestern" = ' + fmtDE(DATA.targetDate || addDays(MAX_DATE,-1));
 document.getElementById('footer').textContent = "7 o'clock · Interner Kundenservice-Report · Vertraulich · Aktualisiert am " + fmtDE(DATA.lastUpdated || MAX_DATE);
 
 function rangeFor(tab){
-  var anchor = MAX_DATE;
+  // V6-FIX: "Gestern" = targetDate aus dem JSON (= echter Vortag, nicht heute).
+  // Längere Zeiträume enden ebenfalls am Vortag, NICHT am heutigen MAX_DATE.
+  // Sonst würden die Werte vom unvollständigen heutigen Tag den Vergleich verfälschen.
+  var anchor = DATA.targetDate || addDays(MAX_DATE,-1);
   if(tab==='yesterday') return {from:anchor,to:anchor};
   if(tab==='7d')   return {from:addDays(anchor,-6),to:anchor};
   if(tab==='30d')  return {from:addDays(anchor,-29),to:anchor};
