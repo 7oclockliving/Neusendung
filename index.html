@@ -244,11 +244,28 @@ var CASES = DATA.cases || [];
 
 var VCOL = {lager:'#6b8e7f',produkt:'#c4934a',carrier:'#7d8fa3',kunde:'#b08968',kulanz:'#a892b8',sonstiges:'#9a9a9a'};
 var VLABEL = {lager:'Lager',produkt:'Produkt',carrier:'Carrier',kunde:'Kunde',kulanz:'Kulanz',sonstiges:'Sonstiges'};
-// V4: Konsistente Verursacher-Reihenfolge
+// V4: Konsistente Verursacher-Reihenfolge (V5.2: nicht mehr in UI verwendet, bleibt für Datenstruktur)
 var V_ORDER = ['lager','produkt','carrier','kunde','kulanz','sonstiges'];
 
 // V4: Vollständige Heatmap-Spaltenreihenfolge (immer alle 13 Spalten, auch wenn 0)
 var REASON_ORDER = ['Defekt/Bruch','Defekt (Lager-Kontrolle)','Produktionsfehler','Artikel fehlt','Falscher Artikel','Falsche Menge','Packstation','Transportschaden','Falsche Adresse','Paket zurückgekommen','Schweiz','Kulanz','Sonstiges (alt)'];
+
+// V5.2: Brand-Farben pro Kategorie (für Kategorien-Doughnut)
+var KCOL = {
+  'Defekt/Bruch':'#c4934a',
+  'Defekt (Lager-Kontrolle)':'#d4a868',
+  'Produktionsfehler':'#b08350',
+  'Artikel fehlt':'#6b8e7f',
+  'Falscher Artikel':'#7c9d8e',
+  'Falsche Menge':'#8badad',
+  'Packstation':'#7d8fa3',
+  'Transportschaden':'#8d9fb3',
+  'Falsche Adresse':'#b08968',
+  'Paket zurückgekommen':'#6d7f93',
+  'Schweiz':'#a892b8',
+  'Kulanz':'#c4a8d4',
+  'Sonstiges (alt)':'#9a9a9a'
+};
 
 // V5 KRITISCH: SKU-Mapping-Fix.
 // SKU 8797853122892 hieß historisch "Defekt/Bruch" (Produktion), heißt jetzt aber
@@ -551,10 +568,6 @@ function applyCasesFilters(panel){
       var keys = (tr.dataset.k || '').split('|');
       if(keys.indexOf(f.kat) < 0) visible = false;
     }
-    if(visible && f.verus){
-      var vs = (tr.dataset.v || '').split('|');
-      if(vs.indexOf(f.verus) < 0) visible = false;
-    }
     if(visible && f.art && (tr.dataset.a || '').indexOf(f.art) < 0) visible = false;
     if(visible && f.ord){
       var o = tr.dataset.o || '', cu = tr.dataset.c || '';
@@ -579,7 +592,6 @@ function setupCasesFilters(panel, casesArr){
   // Dropdowns füllen
   var landSel = panel.querySelector('.f-land');
   var katSel = panel.querySelector('.f-kat');
-  var verusSel = panel.querySelector('.f-verus');
   if(landSel){
     // V4: ALLE Länder aus dem gesamten Datensatz (nicht nur zeitraumabhängig)
     var lands = Object.keys(ALL_AGG.byLand).sort();
@@ -593,12 +605,6 @@ function setupCasesFilters(panel, casesArr){
       return '<option value="'+escapeAttr(r)+'">'+escapeHTML(r)+'</option>';
     }).join('');
     if(panel._casesFilters.kat) katSel.value = panel._casesFilters.kat;
-  }
-  if(verusSel){
-    verusSel.innerHTML = '<option value="">Alle</option>' + V_ORDER.map(function(v){
-      return '<option value="'+escapeAttr(v)+'">'+escapeHTML(VLABEL[v]||v)+'</option>';
-    }).join('');
-    if(panel._casesFilters.verus) verusSel.value = panel._casesFilters.verus;
   }
   // Datums-Range vom Panel ggf. übernehmen
   var fromEl = panel.querySelector('.f-date-from');
@@ -633,7 +639,6 @@ function setupCasesFilters(panel, casesArr){
     bindInput(panel.querySelector('.f-date-to'), 'dateTo', false);
     bindSelect(panel.querySelector('.f-land'), 'land');
     bindSelect(panel.querySelector('.f-kat'), 'kat');
-    bindSelect(panel.querySelector('.f-verus'), 'verus');
     bindInput(panel.querySelector('.f-art'), 'art', true);
     bindInput(panel.querySelector('.f-order'), 'ord', true);
     bindInput(panel.querySelector('.f-customer'), 'cust', true);
@@ -641,7 +646,7 @@ function setupCasesFilters(panel, casesArr){
     if(resetBtn){
       resetBtn.addEventListener('click', function(){
         panel._casesFilters = {};
-        ['.f-date-from','.f-date-to','.f-land','.f-kat','.f-verus','.f-art','.f-order','.f-customer'].forEach(function(sel){
+        ['.f-date-from','.f-date-to','.f-land','.f-kat','.f-art','.f-order','.f-customer'].forEach(function(sel){
           var el = panel.querySelector(sel); if(el) el.value = '';
         });
         applyCasesFilters(panel);
@@ -684,7 +689,8 @@ function renderPanel(panelId, from, to, opts){
   var katListHTML = katEntries.length
     ? katEntries.map(function(e){
         var pct = agg.total ? ((e[1]/agg.total)*100).toFixed(1) : 0;
-        return '<li><span class="name"><span class="dot" style="background:#c4b8a4"></span>'+escapeHTML(e[0])+'</span><span><span class="count">'+e[1]+'</span><span class="pct">'+pct+'%</span></span></li>';
+        var col = KCOL[e[0]] || '#c4b8a4';
+        return '<li><span class="name"><span class="dot" style="background:'+col+'"></span>'+escapeHTML(e[0])+'</span><span><span class="count">'+e[1]+'</span><span class="pct">'+pct+'%</span></span></li>';
       }).join('')
     : '<div class="empty">Keine Kategorien</div>';
 
@@ -702,17 +708,13 @@ function renderPanel(panelId, from, to, opts){
   var casesArr = cases.slice().sort(function(a,b){return a.d<b.d?1:-1});
   var casesTbl = casesArr.length ? casesArr.map(function(c){
     var kats = (c.n||[]).map(function(n){return '<span class="pill pill-kat">'+escapeHTML(n.k)+'</span>'}).join('');
-    var verus = {};
-    (c.n||[]).forEach(function(n){verus[n.v]=true});
-    var vTags = Object.keys(verus).map(function(v){return '<span class="tag tag-'+v+'">'+VLABEL[v]+'</span>'}).join(' ');
     var arts = (c.p||[]).map(function(p){return escapeHTML(p.t)+(p.q>1?' ('+p.q+'×)':'')}).join('<br>');
     // V4: data-Attribute für Spalten-Filter
     var katsRaw = (c.n||[]).map(function(n){return n.k}).join('|');
-    var verusRaw = Object.keys(verus).join('|');
     var artsRaw = (c.p||[]).map(function(p){return p.t}).join(' ');
-    return '<tr data-d="'+escapeAttr(c.d)+'" data-l="'+escapeAttr(c.l||'')+'" data-k="'+escapeAttr(katsRaw)+'" data-v="'+escapeAttr(verusRaw)+'" data-o="'+escapeAttr((c.o||'').toLowerCase())+'" data-c="'+escapeAttr((c.c||'').toLowerCase())+'" data-a="'+escapeAttr(artsRaw.toLowerCase())+'">'
-      +'<td>'+fmtDE(c.d)+'</td><td>'+escapeHTML(c.o)+'</td><td>'+escapeHTML(c.c)+'</td><td>'+escapeHTML(c.l)+'</td><td>'+kats+'</td><td>'+vTags+'</td><td>'+arts+'</td></tr>';
-  }).join('') : '<tr class="empty-row"><td colspan="7"><div class="empty">Keine Cases im Zeitraum</div></td></tr>';
+    return '<tr data-d="'+escapeAttr(c.d)+'" data-l="'+escapeAttr(c.l||'')+'" data-k="'+escapeAttr(katsRaw)+'" data-o="'+escapeAttr((c.o||'').toLowerCase())+'" data-c="'+escapeAttr((c.c||'').toLowerCase())+'" data-a="'+escapeAttr(artsRaw.toLowerCase())+'">'
+      +'<td>'+fmtDE(c.d)+'</td><td>'+escapeHTML(c.o)+'</td><td>'+escapeHTML(c.c)+'</td><td>'+escapeHTML(c.l)+'</td><td>'+kats+'</td><td>'+arts+'</td></tr>';
+  }).join('') : '<tr class="empty-row"><td colspan="6"><div class="empty">Keine Cases im Zeitraum</div></td></tr>';
 
   var trend = bucketTrend(agg.byDay,from,to);
 
@@ -743,19 +745,23 @@ function renderPanel(panelId, from, to, opts){
   destroyChart(doughnutId);
   destroyChart(barId);
 
-  // V4: feste Verursacher-Reihenfolge (V_ORDER), nur die mit Daten zeigen
-  var vKeys = V_ORDER.filter(function(k){return (agg.byV[k]||0)>0});
-  Object.keys(agg.byV).forEach(function(k){if(vKeys.indexOf(k)<0 && agg.byV[k]>0) vKeys.push(k)});
+  // V5.2: Doughnut zeigt jetzt Kategorien (byK) statt Verursacher
+  var kKeys = REASON_ORDER.filter(function(k){return (agg.byK[k]||0)>0});
+  Object.keys(agg.byK).forEach(function(k){if(kKeys.indexOf(k)<0 && agg.byK[k]>0) kKeys.push(k)});
   var dCtx = panel.querySelector('.doughnut-canvas');
-  if(vKeys.length){
+  if(kKeys.length){
     charts[doughnutId] = new Chart(dCtx,{
       type:'doughnut',
-      data:{labels:vKeys.map(function(k){return VLABEL[k]||k}),
-        datasets:[{data:vKeys.map(function(k){return agg.byV[k]}),
-          backgroundColor:vKeys.map(function(k){return VCOL[k]||'#9a9a9a'}),
+      data:{labels:kKeys,
+        datasets:[{data:kKeys.map(function(k){return agg.byK[k]}),
+          backgroundColor:kKeys.map(function(k){return KCOL[k]||'#9a9a9a'}),
           borderColor:'#fff',borderWidth:2}]},
       options:{responsive:true,maintainAspectRatio:false,cutout:'62%',
-        plugins:{legend:{position:'bottom',labels:{boxWidth:10,padding:14,font:{size:12}}}}}
+        plugins:{legend:{position:'bottom',labels:{boxWidth:10,padding:10,font:{size:11}}},
+          tooltip:{callbacks:{label:function(c){
+            var pct = agg.total ? Math.round(c.parsed/agg.total*100) : 0;
+            return c.label+': '+c.parsed+' ('+pct+'%)';
+          }}}}}
     });
   } else {
     dCtx.getContext('2d').clearRect(0,0,dCtx.width,dCtx.height);
@@ -781,7 +787,7 @@ function panelTemplate(id){
     + '<div class="compare-bar"></div>'
     + '<div class="kpis"></div>'
     + '<div class="grid-2">'
-      + '<div class="card"><h3>Verteilung nach Verursacher</h3><div class="chart-wrap"><canvas class="doughnut-canvas"></canvas></div></div>'
+      + '<div class="card"><h3>Verteilung nach Kategorie</h3><div class="chart-wrap"><canvas class="doughnut-canvas"></canvas></div></div>'
       + '<div class="card"><h3>Kategorien</h3><ul class="kat-list"></ul></div>'
     + '</div>'
     + '<div class="card" style="margin-bottom:18px"><h3>Trend</h3><div class="chart-wrap"><canvas class="bar-canvas"></canvas></div></div>'
@@ -801,7 +807,7 @@ function panelTemplate(id){
       + '</div>'
       + '<div style="overflow-x:auto"><table class="cases-table"><thead>'
         + '<tr>'
-        + '<th>Datum</th><th>Bestellung</th><th>Kunde</th><th>Land</th><th>Kategorie</th><th>Verursacher</th><th>Artikel</th>'
+        + '<th>Datum</th><th>Bestellung</th><th>Kunde</th><th>Land</th><th>Kategorie</th><th>Artikel</th>'
         + '</tr>'
         + '<tr class="filter-row">'
           + '<th><div class="date-pair"><input type="date" class="f-date-from" title="von"><input type="date" class="f-date-to" title="bis"></div></th>'
@@ -809,7 +815,6 @@ function panelTemplate(id){
           + '<th><input type="search" class="f-customer" placeholder="Suche..."></th>'
           + '<th><select class="f-land"><option value="">Alle</option></select></th>'
           + '<th><select class="f-kat"><option value="">Alle</option></select></th>'
-          + '<th><select class="f-verus"><option value="">Alle</option></select></th>'
           + '<th><input type="search" class="f-art" placeholder="Suche..."></th>'
         + '</tr>'
         + '</thead><tbody class="cases-tbody"></tbody></table></div>'
@@ -830,7 +835,7 @@ function customPanelTemplate(){
     + '<div class="compare-bar"></div>'
     + '<div class="kpis"></div>'
     + '<div class="grid-2">'
-      + '<div class="card"><h3>Verteilung nach Verursacher</h3><div class="chart-wrap"><canvas class="doughnut-canvas"></canvas></div></div>'
+      + '<div class="card"><h3>Verteilung nach Kategorie</h3><div class="chart-wrap"><canvas class="doughnut-canvas"></canvas></div></div>'
       + '<div class="card"><h3>Kategorien</h3><ul class="kat-list"></ul></div>'
     + '</div>'
     + '<div class="card" style="margin-bottom:18px"><h3>Trend</h3><div class="chart-wrap"><canvas class="bar-canvas"></canvas></div></div>'
@@ -850,7 +855,7 @@ function customPanelTemplate(){
       + '</div>'
       + '<div style="overflow-x:auto"><table class="cases-table"><thead>'
         + '<tr>'
-        + '<th>Datum</th><th>Bestellung</th><th>Kunde</th><th>Land</th><th>Kategorie</th><th>Verursacher</th><th>Artikel</th>'
+        + '<th>Datum</th><th>Bestellung</th><th>Kunde</th><th>Land</th><th>Kategorie</th><th>Artikel</th>'
         + '</tr>'
         + '<tr class="filter-row">'
           + '<th><div class="date-pair"><input type="date" class="f-date-from" title="von"><input type="date" class="f-date-to" title="bis"></div></th>'
@@ -858,7 +863,6 @@ function customPanelTemplate(){
           + '<th><input type="search" class="f-customer" placeholder="Suche..."></th>'
           + '<th><select class="f-land"><option value="">Alle</option></select></th>'
           + '<th><select class="f-kat"><option value="">Alle</option></select></th>'
-          + '<th><select class="f-verus"><option value="">Alle</option></select></th>'
           + '<th><input type="search" class="f-art" placeholder="Suche..."></th>'
         + '</tr>'
         + '</thead><tbody class="cases-tbody"></tbody></table></div>'
@@ -929,19 +933,25 @@ function buildPTSection(panel, agg, idPrefix){
   }
 
   top5.forEach(function(e, idx){
-    var pt = e[0];
+    var pt = e[0], ptTotal = e[1];
     var rs = agg.ptReason[pt] || {};
-    var keys = Object.keys(rs).sort(function(a,b){return rs[b]-rs[a]});
+    // V5.2: Reasons (= Kategorien) in REASON_ORDER, mit konsistenten KCOL-Farben
+    var keys = REASON_ORDER.filter(function(k){return (rs[k]||0)>0});
+    Object.keys(rs).forEach(function(k){if(keys.indexOf(k)<0 && rs[k]>0) keys.push(k)});
     var values = keys.map(function(k){return rs[k]});
-    var colors = ['#b04848','#c4934a','#7d8fa3','#6b8e7f','#a892b8','#b08968','#9a9a9a'];
     destroyChart(idPrefix+'_ptMini_'+idx);
     var ctx = panel.querySelector('#'+idPrefix+'_ptMini_'+idx);
     if(!ctx) return;
+    if(!keys.length) return;
     charts[idPrefix+'_ptMini_'+idx] = new Chart(ctx, {
       type:'doughnut',
-      data:{labels:keys,datasets:[{data:values,backgroundColor:keys.map(function(k,i){return colors[i%colors.length]}),borderColor:'#fff',borderWidth:2}]},
+      data:{labels:keys,datasets:[{data:values,backgroundColor:keys.map(function(k){return KCOL[k]||'#9a9a9a'}),borderColor:'#fff',borderWidth:2}]},
       options:{responsive:true,maintainAspectRatio:false,cutout:'58%',
-        plugins:{legend:{position:'bottom',labels:{boxWidth:8,padding:8,font:{size:10}}}}}
+        plugins:{legend:{position:'bottom',labels:{boxWidth:8,padding:6,font:{size:9}}},
+          tooltip:{callbacks:{label:function(c){
+            var pct = ptTotal ? Math.round(c.parsed/ptTotal*100) : 0;
+            return c.label+': '+c.parsed+' ('+pct+'%)';
+          }}}}}
     });
   });
 
@@ -963,9 +973,10 @@ function buildPTSection(panel, agg, idPrefix){
           : 'Kategorie tiefer analysieren';
     strat.push({pt:pt,reason:topR[0],pct:pct,total:total,action:action});
   });
-  var carrierTotal = (agg.byV['carrier']||0);
+  // V5.2: Carrier-Quote aus Kategorien aggregieren (statt aus byV)
+  var carrierTotal = (agg.byK['Paket zurückgekommen']||0) + (agg.byK['Falsche Adresse']||0) + (agg.byK['Packstation']||0) + (agg.byK['Transportschaden']||0);
   if(agg.total>0 && carrierTotal/agg.total > 0.1){
-    strat.push({pt:'Alle Kategorien',reason:'Carrier-Probleme',pct:Math.round(carrierTotal/agg.total*100),total:carrierTotal,
+    strat.push({pt:'Alle Kategorien',reason:'Versand-/Carrier-Themen',pct:Math.round(carrierTotal/agg.total*100),total:carrierTotal,
       action:'Quartalsgespräch mit Versanddienstleister & Region-Analyse'});
   }
   var stratBox = panel.querySelector('.pt-strat');
@@ -1081,19 +1092,25 @@ function buildCountrySection(panel, agg, idPrefix){
       }).join('');
       top3.forEach(function(e, idx){
         var d = e[1];
-        var vKeys = Object.keys(d.byV);
-        if(!vKeys.length) return;
+        // V5.2: Mini-Doughnut zeigt jetzt Kategorien (byK) statt Verursacher
+        var kKeys = REASON_ORDER.filter(function(k){return (d.byK[k]||0)>0});
+        Object.keys(d.byK).forEach(function(k){if(kKeys.indexOf(k)<0 && d.byK[k]>0) kKeys.push(k)});
+        if(!kKeys.length) return;
         destroyChart(idPrefix+'_countryMini_'+idx);
         var ctx = panel.querySelector('#'+idPrefix+'_countryMini_'+idx);
         if(!ctx) return;
         charts[idPrefix+'_countryMini_'+idx] = new Chart(ctx, {
           type:'doughnut',
-          data:{labels:vKeys.map(function(k){return VLABEL[k]||k}),
-            datasets:[{data:vKeys.map(function(k){return d.byV[k]}),
-              backgroundColor:vKeys.map(function(k){return VCOL[k]||'#9a9a9a'}),
+          data:{labels:kKeys,
+            datasets:[{data:kKeys.map(function(k){return d.byK[k]}),
+              backgroundColor:kKeys.map(function(k){return KCOL[k]||'#9a9a9a'}),
               borderColor:'#fff',borderWidth:2}]},
           options:{responsive:true,maintainAspectRatio:false,cutout:'58%',
-            plugins:{legend:{position:'bottom',labels:{boxWidth:8,padding:8,font:{size:10}}}}}
+            plugins:{legend:{position:'bottom',labels:{boxWidth:8,padding:6,font:{size:9}}},
+              tooltip:{callbacks:{label:function(c){
+                var pct = d.total ? Math.round(c.parsed/d.total*100) : 0;
+                return c.label+': '+c.parsed+' ('+pct+'%)';
+              }}}}}
         });
       });
     }
@@ -1108,14 +1125,16 @@ function buildCountrySection(panel, agg, idPrefix){
     if(!sortedK.length) return;
     var topK = sortedK[0];
     var pct = Math.round(topK[1]/d.total*100);
-    var carrierPct = d.byV['carrier'] ? Math.round(d.byV['carrier']/d.total*100) : 0;
+    // V5.2: Carrier-Quote aus Kategorien (byK) statt Verursacher (byV)
+    var carrierAbs = (d.byK['Paket zurückgekommen']||0) + (d.byK['Falsche Adresse']||0) + (d.byK['Packstation']||0);
+    var carrierPct = d.total ? Math.round(carrierAbs/d.total*100) : 0;
     var bruchAbs = (d.byK['Defekt/Bruch']||0) + (d.byK['Defekt (Lager-Kontrolle)']||0) + (d.byK['Transportschaden']||0);
     var bruchPct = Math.round(bruchAbs/d.total*100);
 
     if(iso==='CH' && (d.byK['Schweiz']||0)/d.total > 0.5){
       strat.push({iso:iso,text:'Schweiz: '+Math.round((d.byK['Schweiz']||0)/d.total*100)+'% Zoll-/Schweiz-Sonderfall ('+d.total+' Neusendungen) → CH-Versand-Prozess separat behandeln.'});
     } else if(carrierPct >= 25){
-      strat.push({iso:iso,text:countryName(iso)+': hohe Carrier-Quote ('+carrierPct+'% Paket-Rückläufer bei '+d.total+' Neusendungen) → Versanddienstleister & Adress-Validierung prüfen.'});
+      strat.push({iso:iso,text:countryName(iso)+': hohe Versand-Quote ('+carrierPct+'% Paket-Rückläufer/Adresse/Packstation bei '+d.total+' Neusendungen) → Versanddienstleister & Adress-Validierung prüfen.'});
     } else if(bruchPct >= 50 && d.total >= 5){
       strat.push({iso:iso,text:countryName(iso)+': Bruchquote überdurchschnittlich ('+bruchPct+'% Defekt/Transport) → Verpackungs-Audit für diese Region.'});
     } else if(pct >= 50 && d.total >= 3){
@@ -1276,10 +1295,11 @@ function generateAIRecs(){
     recs.push({id:'ai-2', ai:true, title:'Lieferantengespräch: "'+topArt[0]+'" wurde '+topArt[1]+'× nachgesendet',
       desc:'Dieser Artikel ist der mit Abstand häufigste Nachsende-Grund. Mit dem Lieferanten Qualität, Verpackung am Werk und mögliche Konstruktionsänderungen besprechen.'});
   }
-  var carrierV = allAgg.byV['carrier'] || 0;
+  // V5.2: Carrier-Quote aus Kategorien (byK) statt Verursacher (byV)
+  var carrierV = (allAgg.byK['Paket zurückgekommen']||0) + (allAgg.byK['Falsche Adresse']||0) + (allAgg.byK['Packstation']||0);
   if(allAgg.total>0 && carrierV/allAgg.total > 0.07){
-    recs.push({id:'ai-3', ai:true, title:'Carrier-Performance prüfen: '+Math.round(carrierV/allAgg.total*100)+'% Paket-Rückläufer',
-      desc:'Auffällig viele Carrier-bedingte Neusendungen. Quartalsgespräch mit dem Versanddienstleister, Sendungsverfolgungs-Daten je Region analysieren.'});
+    recs.push({id:'ai-3', ai:true, title:'Carrier-Performance prüfen: '+Math.round(carrierV/allAgg.total*100)+'% Paket-Rückläufer/Adresse/Packstation',
+      desc:'Auffällig viele versand-bedingte Neusendungen. Quartalsgespräch mit dem Versanddienstleister, Sendungsverfolgungs-Daten je Region analysieren.'});
   }
   // V3: Top-Kategorie/Reason-Insight
   var ptEntries = Object.keys(allAgg.byPT).map(function(p){return [p, allAgg.byPT[p]]}).sort(function(a,b){return b[1]-a[1]});
