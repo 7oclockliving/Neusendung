@@ -170,6 +170,12 @@ tr:hover td{background:#fdfcfa}
 .cases-table .filter-row .date-pair{display:flex;gap:3px}
 .cases-table .filter-row .date-pair input{font-size:10px;padding:3px 4px}
 
+/* === V5.4: Scrollbare Tabellen-Container (15 Zeilen sichtbar) === */
+.tbl-scroll{overflow:auto;max-height:calc(15 * 44px + 80px);border:1px solid var(--line);border-radius:8px;background:#fff}
+.tbl-scroll table{border:none;border-radius:0}
+.tbl-scroll thead th{position:sticky;top:0;background:#faf8f5;z-index:2;box-shadow:0 1px 0 var(--line)}
+.tbl-scroll .filter-row th{position:sticky;top:34px;background:#fdfcfa;z-index:2;box-shadow:0 1px 0 var(--line)}
+
 /* === V4: Artikel-Suche mit Live-Total === */
 .search-row{display:flex;align-items:center;gap:14px;margin-bottom:14px;flex-wrap:wrap}
 .search-row .search{margin:0;flex:1;min-width:200px}
@@ -267,6 +273,24 @@ var KCOL = {
   'Sonstiges (alt)':'#9a9a9a'
 };
 
+// V5.4: Helper für farbige Pills mit KCOL-Tönung
+function katPill(label, count){
+  var col = KCOL[label] || '#c4b8a4';
+  // Hex → rgba mit niedriger Opacity für Background
+  function hexA(h, a){
+    h = h.replace('#','');
+    var r=parseInt(h.substr(0,2),16), g=parseInt(h.substr(2,2),16), b=parseInt(h.substr(4,2),16);
+    return 'rgba('+r+','+g+','+b+','+a+')';
+  }
+  var bg = hexA(col, 0.18);
+  var border = hexA(col, 0.45);
+  var fg = hexA(col, 1);
+  // Den Text-Foreground etwas abdunkeln für Lesbarkeit
+  var txtCol = col;
+  var countHTML = (count!==undefined) ? ' <strong style="font-weight:700">'+count+'</strong>' : '';
+  return '<span class="pill pill-kat" style="background:'+bg+';border:1px solid '+border+';color:'+txtCol+';font-weight:500">'+escapeHTML(label)+countHTML+'</span>';
+}
+
 // V5 KRITISCH: SKU-Mapping-Fix.
 // SKU 8797853122892 hieß historisch "Defekt/Bruch" (Produktion), heißt jetzt aber
 // "Defekt (Lager-Kontrolle)" (= Lager hat den Schaden vor Versand kontrolliert).
@@ -341,16 +365,17 @@ function aggregate(cases){
     (c.p||[]).forEach(function(p){
       if(!artikelStats[p.t]) artikelStats[p.t] = {total:0,gruende:{}};
       var pt = p.pt || 'Sonstige';
-      byLand[land].byArtikel[p.t] = (byLand[land].byArtikel[p.t]||0) + (p.q||1);
+      var qty = p.q || 1; // V5.4: Quantity korrekt berücksichtigen
+      byLand[land].byArtikel[p.t] = (byLand[land].byArtikel[p.t]||0) + qty;
       caseKats.forEach(function(k){
-        artikelStats[p.t].total += 1;
-        artikelStats[p.t].gruende[k] = (artikelStats[p.t].gruende[k]||0)+1;
-        // pt-aggregations: pro Case-Kategorie ein Tick
-        byPT[pt] = (byPT[pt]||0) + 1;
+        artikelStats[p.t].total += qty;
+        artikelStats[p.t].gruende[k] = (artikelStats[p.t].gruende[k]||0)+qty;
+        // pt-aggregations: pro Case-Kategorie ein Tick * qty
+        byPT[pt] = (byPT[pt]||0) + qty;
         if(!ptReason[pt]) ptReason[pt]={};
-        ptReason[pt][k] = (ptReason[pt][k]||0)+1;
+        ptReason[pt][k] = (ptReason[pt][k]||0)+qty;
         if(!ptArtikel[pt]) ptArtikel[pt]={};
-        ptArtikel[pt][p.t] = (ptArtikel[pt][p.t]||0)+1;
+        ptArtikel[pt][p.t] = (ptArtikel[pt][p.t]||0)+qty;
       });
     });
   });
@@ -712,13 +737,13 @@ function renderPanel(panelId, from, to, opts){
 
   var artikelTbl = artikelArr.length ? artikelArr.map(function(a){
     var pills = Object.keys(a.gruende).sort(function(x,y){return a.gruende[y]-a.gruende[x]})
-      .map(function(k){return '<span class="pill pill-kat">'+escapeHTML(k)+' '+a.gruende[k]+'</span>'}).join('');
+      .map(function(k){return katPill(k, a.gruende[k])}).join(' ');
     return '<tr data-title="'+escapeAttr(a.title.toLowerCase())+'" data-total="'+a.total+'"><td>'+escapeHTML(a.title)+'</td><td>'+pills+'</td><td style="text-align:right;font-weight:600">'+a.total+'</td></tr>';
   }).join('') : '<tr><td colspan="3"><div class="empty">Keine Artikel im Zeitraum</div></td></tr>';
 
   var casesArr = cases.slice().sort(function(a,b){return a.d<b.d?1:-1});
   var casesTbl = casesArr.length ? casesArr.map(function(c){
-    var kats = (c.n||[]).map(function(n){return '<span class="pill pill-kat">'+escapeHTML(n.k)+'</span>'}).join('');
+    var kats = (c.n||[]).map(function(n){return katPill(n.k)}).join(' ');
     var arts = (c.p||[]).map(function(p){return escapeHTML(p.t)+(p.q>1?' ('+p.q+'×)':'')}).join('<br>');
     // V4: data-Attribute für Spalten-Filter
     var katsRaw = (c.n||[]).map(function(n){return n.k}).join('|');
@@ -807,7 +832,7 @@ function panelTemplate(id){
         + '<input type="search" class="search artikel-search" placeholder="Artikel suchen ...">'
         + '<div class="art-total">Gesamt: <strong class="art-total-num">0</strong></div>'
       + '</div>'
-      + '<div style="overflow-x:auto"><table class="artikel-table"><thead><tr>'
+      + '<div class="tbl-scroll"><table class="artikel-table"><thead><tr>'
         + '<th data-sort="title">Artikel</th><th>Gründe</th><th data-sort="total" class="sorted" style="text-align:right">Gesamt</th>'
       + '</tr></thead><tbody class="artikel-tbody"></tbody></table></div>'
     + '</div>'
@@ -816,7 +841,7 @@ function panelTemplate(id){
         + '<div class="count"><strong class="cases-count-shown">0</strong> von <strong class="cases-count-total">0</strong> Cases</div>'
         + '<button class="cases-reset" type="button">Filter zurücksetzen</button>'
       + '</div>'
-      + '<div style="overflow-x:auto"><table class="cases-table"><thead>'
+      + '<div class="tbl-scroll"><table class="cases-table"><thead>'
         + '<tr>'
         + '<th>Datum</th><th>Bestellung</th><th>Kunde</th><th>Land</th><th>Kategorie</th><th>Artikel</th>'
         + '</tr>'
@@ -855,7 +880,7 @@ function customPanelTemplate(){
         + '<input type="search" class="search artikel-search" placeholder="Artikel suchen ...">'
         + '<div class="art-total">Gesamt: <strong class="art-total-num">0</strong></div>'
       + '</div>'
-      + '<div style="overflow-x:auto"><table class="artikel-table"><thead><tr>'
+      + '<div class="tbl-scroll"><table class="artikel-table"><thead><tr>'
         + '<th data-sort="title">Artikel</th><th>Gründe</th><th data-sort="total" class="sorted" style="text-align:right">Gesamt</th>'
       + '</tr></thead><tbody class="artikel-tbody"></tbody></table></div>'
     + '</div>'
@@ -864,7 +889,7 @@ function customPanelTemplate(){
         + '<div class="count"><strong class="cases-count-shown">0</strong> von <strong class="cases-count-total">0</strong> Cases</div>'
         + '<button class="cases-reset" type="button">Filter zurücksetzen</button>'
       + '</div>'
-      + '<div style="overflow-x:auto"><table class="cases-table"><thead>'
+      + '<div class="tbl-scroll"><table class="cases-table"><thead>'
         + '<tr>'
         + '<th>Datum</th><th>Bestellung</th><th>Kunde</th><th>Land</th><th>Kategorie</th><th>Artikel</th>'
         + '</tr>'
@@ -1253,10 +1278,16 @@ document.querySelectorAll('.panel').forEach(function(panel){
   var search = panel.querySelector('.artikel-search');
   if(!search) return;
   search.addEventListener('input',function(){
-    var q = search.value.toLowerCase().trim();
+    // V5.4: AND-Suche – mehrere Begriffe (durch Leerzeichen getrennt) müssen ALLE matchen, Reihenfolge egal.
+    // Sucht in Titel UND in Pills (Gründe), nicht nur im Titel.
+    var raw = search.value.toLowerCase().trim();
+    var terms = raw.length ? raw.split(/\s+/).filter(function(t){return t.length>0}) : [];
     panel.querySelectorAll('.artikel-tbody tr').forEach(function(tr){
       if(!tr.dataset.title){return}
-      tr.style.display = tr.dataset.title.indexOf(q)>=0 ? '' : 'none';
+      // Haystack: Titel + sichtbarer Text (inkl. Pills/Gründe)
+      var hay = (tr.dataset.title + ' ' + tr.textContent).toLowerCase();
+      var match = terms.every(function(t){return hay.indexOf(t)>=0});
+      tr.style.display = match ? '' : 'none';
     });
     // V4: Live-Gesamtsumme aktualisieren
     updateArtTotal(panel);
