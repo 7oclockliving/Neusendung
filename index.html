@@ -58,6 +58,7 @@ h1{font-size:32px;font-weight:600;letter-spacing:-.01em;margin:0 0 8px}
 .card h3{margin:0 0 16px;font-size:15px;font-weight:600;letter-spacing:-.005em}
 .card-pad-lg{padding:22px}
 .chart-wrap{position:relative;height:260px}
+.chart-wrap.tall{height:320px}
 .kat-list{list-style:none;padding:0;margin:0}
 .kat-list li{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--line);font-size:13px}
 .kat-list li:last-child{border-bottom:none}
@@ -98,6 +99,65 @@ tr:hover td{background:#fdfcfa}
 .rec-item.done .rec-title,.rec-item.done .rec-desc{text-decoration:line-through;color:#b8b3a9}
 .badge-ai{font-size:9px;font-weight:700;letter-spacing:.06em;padding:2px 6px;border-radius:3px;background:linear-gradient(135deg,#7d8fa3,#a892b8);color:#fff;text-transform:uppercase}
 .footer{margin-top:36px;padding:24px 0;border-top:1px solid var(--line);color:var(--ink-soft);font-size:11px;text-align:center;letter-spacing:.04em}
+
+/* === V3: Heatmap === */
+.heatmap-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.heatmap{width:100%;border-collapse:collapse;font-size:12px;font-variant-numeric:tabular-nums}
+.heatmap th, .heatmap td{padding:8px 6px;border:1px solid var(--line);text-align:center}
+.heatmap thead th{background:#fdfcfa;font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-soft);font-weight:600;cursor:default;white-space:nowrap;line-height:1.25}
+.heatmap thead th:first-child{text-align:left;padding-left:10px}
+.heatmap tbody td{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:var(--ink);font-weight:500;cursor:default;transition:transform .12s ease}
+.heatmap tbody td:hover{transform:scale(1.05);box-shadow:0 0 0 2px var(--accent) inset;position:relative;z-index:1}
+.heatmap tbody td:first-child{text-align:left;font-family:inherit;font-weight:600;color:var(--ink);max-width:200px;background:#fff !important;padding:10px 12px}
+.heatmap tbody td:last-child{font-weight:700;background:#f7f3ec !important}
+.heatmap .cell-zero{color:#c8c2b7}
+.heat-insight{background:#f7f3ec;border:1px solid var(--line);border-left:3px solid var(--warn);
+  border-radius:6px;padding:12px 14px;margin-bottom:14px;font-size:13px;color:var(--ink);line-height:1.5}
+.heat-insight strong{color:var(--accent)}
+
+/* === V3: PT-Mini-Cards === */
+.pt-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;margin:18px 0 22px}
+.pt-card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px 16px 14px}
+.pt-card h4{margin:0 0 4px;font-size:14px;font-weight:600;line-height:1.3}
+.pt-card .pt-total{font-size:11px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px}
+.pt-card .pt-chart{position:relative;height:140px;margin-bottom:10px}
+.pt-card .pt-top{list-style:none;padding:0;margin:0;font-size:12px}
+.pt-card .pt-top li{display:flex;justify-content:space-between;padding:4px 0;color:var(--ink-soft);gap:8px}
+.pt-card .pt-top li .t{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--ink)}
+.pt-card .pt-top li .n{font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums}
+
+/* === V3: Strategic insights === */
+.strat{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:20px;margin-top:18px}
+.strat h3{margin:0 0 4px;font-size:15px;font-weight:600}
+.strat .sub{margin-bottom:14px;font-size:12px;color:var(--ink-soft)}
+.strat-item{display:flex;gap:12px;padding:11px 0;border-bottom:1px solid var(--line)}
+.strat-item:last-child{border-bottom:none}
+.strat-icon{flex:0 0 26px;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  background:#f7f3ec;color:var(--accent);font-weight:700;font-size:12px;margin-top:1px}
+.strat-text{flex:1;font-size:13px;line-height:1.5;color:var(--ink)}
+.strat-text strong{color:var(--accent)}
+
+/* === V3.1: Länder === */
+.country-mini{margin:6px 0 4px}
+.country-mini h4{margin:0 0 10px;font-size:13px;font-weight:600;letter-spacing:-.005em;color:var(--ink)}
+.country-pills{display:flex;flex-wrap:wrap;gap:8px}
+.country-pill{display:inline-flex;align-items:center;gap:8px;background:#fdfcfa;border:1px solid var(--line);border-radius:8px;padding:7px 12px;font-size:12px;color:var(--ink);line-height:1.35}
+.country-pill .flag{font-size:18px;line-height:1}
+.country-pill .cname{font-weight:600;color:var(--ink)}
+.country-pill .cnum{color:var(--ink-soft);font-variant-numeric:tabular-nums}
+.country-pill .cpct{color:var(--ink-soft);font-size:11px}
+.country-pill .creason{color:var(--ink-soft);font-size:11px;margin-left:4px;border-left:1px solid var(--line);padding-left:8px}
+.country-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:18px 0 22px}
+.country-card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px 16px 14px}
+.country-card h4{margin:0 0 4px;font-size:15px;font-weight:600;line-height:1.3;display:flex;align-items:center;gap:8px}
+.country-card h4 .flag{font-size:22px;line-height:1}
+.country-card .c-total{font-size:11px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px}
+.country-card .c-chart{position:relative;height:140px;margin-bottom:10px}
+.country-card .c-top{list-style:none;padding:0;margin:0;font-size:12px}
+.country-card .c-top li{display:flex;justify-content:space-between;padding:4px 0;color:var(--ink-soft);gap:8px}
+.country-card .c-top li .t{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--ink)}
+.country-card .c-top li .n{font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums}
+
 @media (max-width:780px){
   .wrap{padding:24px 14px}
   h1{font-size:24px}
@@ -108,6 +168,9 @@ tr:hover td{background:#fdfcfa}
   .custom-controls{flex-direction:column;align-items:stretch}
   .custom-controls button{margin-left:0;width:100%}
   th,td{padding:8px 6px;font-size:12px}
+  .heatmap th, .heatmap td{padding:6px 4px;font-size:11px}
+  .pt-grid{grid-template-columns:1fr}
+  .country-grid{grid-template-columns:1fr}
 }
 </style>
 </head>
@@ -124,13 +187,15 @@ tr:hover td{background:#fdfcfa}
     <button class="tab" data-tab="30d">Letzte 30 Tage</button>
     <button class="tab" data-tab="90d">Letzte 90 Tage</button>
     <button class="tab" data-tab="365d">Letzte 365 Tage</button>
+    <button class="tab" data-tab="pt">Produktkategorien</button>
+    <button class="tab" data-tab="country">Länder</button>
     <button class="tab" data-tab="custom">Custom</button>
   </div>
 
   <div id="panels"></div>
 
   <div class="recs">
-    <h3>Empfehlungen & Maßnahmen</h3>
+    <h3>Empfehlungen &amp; Maßnahmen</h3>
     <div class="recs-sub">Erledigte Punkte werden gespeichert (lokal im Browser).</div>
     <div id="recsList"></div>
   </div>
@@ -138,7 +203,7 @@ tr:hover td{background:#fdfcfa}
   <div class="footer" id="footer"></div>
 </div>
 
-<script id="neusendungs-data" type="application/json">{"lastUpdated":"2026-06-23","targetDate":"2026-06-22","cases":[{"d":"2026-04-24","o":"#205827","c":"Anesa A.","l":"AT","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großes Aufbewahrungsglas | Caya","q":2}]},{"d":"2026-04-27","o":"#206309","c":"Christina W.","l":"DE","n":[{"k":"Defekt/Bruch","v":"produkt","q":1}],"p":[{"t":"Tassen mit Henkel in Cremeweiß glänzend | Nia","q":1},{"t":"Große Bowl cremeweiß-glänzend | Nia","q":1},{"t":"Großer Teller cremeweiß-glänzend | Nia","q":1},{"t":"Kleiner Teller cremeweiß-glänzend | Nia","q":1}]},{"d":"2026-04-27","o":"#206310","c":"Klara L.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Telleruntersetzer Taupe/Creme | Jade","q":1}]},{"d":"2026-04-27","o":"#206311","c":"Dragana K.","l":"CH","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großer gerillter Teller cremeweiß | Nia","q":6}]},{"d":"2026-04-27","o":"#206313","c":"Verena C.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Kleines organisches Glas | Alaska","q":1}]},{"d":"2026-04-27","o":"#206315","c":"Joy R.","l":"CH","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großer gerillter Teller cremeweiß | Nia","q":3}]},{"d":"2026-04-27","o":"#206317","c":"Semah A.","l":"FR","n":[{"k":"Paket zurückgekommen","v":"carrier","q":1}],"p":[{"t":"Organischer Keramik Becher Cremeweiß | Alaska","q":2}]},{"d":"2026-04-27","o":"#206325","c":"Jonathan P.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großer Teller cremeweiß-glänzend | Nia","q":1}]},{"d":"2026-04-27","o":"#206326","c":"Kathrin F.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Geschirrset Cremeweiß gerillt | Nia","q":2}]},{"d":"2026-04-27","o":"#206335","c":"Zala E.","l":"SI","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Geriffelte Karaffe (1550ml) | Paris","q":1}]},{"d":"2026-04-27","o":"#206338","c":"Tamika B.","l":"CH","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großer gerillter Teller cremeweiß | Nia","q":1}]},{"d":"2026-04-27","o":"#206343","c":"Robert B.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"KOOPERATION","q":1},{"t":"Organischer Keramik Becher Cremeweiß | Alaska","q":1},{"t":"Geriffeltes Champagnerglas | Paris","q":1}]},{"d":"2026-04-27","o":"#206344","c":"Robert B.","l":"DE","n":[{"k":"Paket zurückgekommen","v":"carrier","q":1}],"p":[{"t":"KOOPERATION","q":1},{"t":"Organischer Keramik Becher Cremeweiß | Alaska","q":1},{"t":"Geriffeltes Champagnerglas | Paris","q":1}]},{"d":"2026-04-27","o":"#206347","c":"Robert B.","l":"DE","n":[{"k":"Paket zurückgekommen","v":"carrier","q":1}],"p":[{"t":"KOOPERATION","q":1},{"t":"Keramik Becher im Wellen-Design | Akio","q":1},{"t":"Matcha Set mit Löffel & Besen + Halter | Akio","q":1}]},{"d":"2026-04-27","o":"#206355","c":"Isa A.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großes Glas Streifen-Design | Norway","q":1}]},{"d":"2026-04-27","o":"#206360","c":"Karoline S.","l":"DE","n":[{"k":"Defekt/Bruch","v":"produkt","q":1}],"p":[{"t":"Wandregal aus dunklem Holz | Elva","q":1}]},{"d":"2026-04-27","o":"#206364","c":"Luisa M.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Kleine Bowl cremeweiß-glänzend | Nia","q":1}]},{"d":"2026-04-28","o":"#206542","c":"Celine G.","l":"DE","n":[{"k":"Paket zurückgekommen","v":"carrier","q":1}],"p":[{"t":"Beige Musselin Doppelbettwäsche | Haven","q":1}]},{"d":"2026-04-28","o":"#206545","c":"Annika K.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großer Teller cremeweiß-matt | Nia","q":1}]},{"d":"2026-04-28","o":"#206553","c":"Joana R.","l":"CH","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großer gerillter Teller cremeweiß | Nia","q":3}]},{"d":"2026-04-28","o":"#206561","c":"Mine E.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Keramik Becher in organischem Design | Lyon","q":1}]},{"d":"2026-04-28","o":"#206565","c":"Semun B.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Große Bowl cremeweiß-glänzend | Nia","q":1}]},{"d":"2026-04-28","o":"#206567","c":"Faliveni P.","l":"DE","n":[{"k":"Defekt/Bruch","v":"produkt","q":1}],"p":[{"t":"Geriffeltes Weinglas | Paris","q":1}]},{"d":"2026-04-28","o":"#206583","c":"Jörg B.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Geschirrset Cremeweiß gerillt | Nia","q":1}]},{"d":"2026-04-28","o":"#206592","c":"Susanne L.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Serviettenringe Gold 6er Set | Rina","q":1},{"t":"Tassen ohne Henkel 6er Set in Cremeweiß | Nia","q":1}]},{"d":"2026-04-29","o":"#206742","c":"Birgit G.","l":"AT","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Glasdeckel vom Geriffelten Glas - Single","q":2}]},{"d":"2026-04-29","o":"#206745","c":"Senay A.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Set aus großer und kleiner Keramik Vase in Beige | Flora","q":1},{"t":"Großer gerillter Teller cremeweiß | Nia","q":3},{"t":"Kleiner gerillter Teller cremeweiß | Nia","q":3}]},{"d":"2026-04-29","o":"#206748","c":"Jelena E.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großer Teller cremeweiß-matt | Nia","q":1}]},{"d":"2026-04-29","o":"#206752","c":"Angelika K.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Kleine Bowl cremeweiß-matt | Nia","q":1}]},{"d":"2026-04-29","o":"#206756","c":"Michelle M.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Tasse mit Untertasse in Cremeweiß glänzend | Nia","q":1}]},{"d":"2026-04-29","o":"#206761","c":"Markus A.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großer Teller cremeweiß-glänzend | Nia","q":1}]},{"d":"2026-04-29","o":"#206763","c":"Miriam M.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Glasdeckel vom Geriffelten Glas - Single","q":1}]},{"d":"2026-04-29","o":"#206766","c":"Jasmine J.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Geriffeltes Glas mit Glasdeckel & Glasstrohhalm | Paris","q":1}]},{"d":"2026-04-29","o":"#206770","c":"Miriam G.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Geriffeltes kleines Glas | Paris","q":1}]},{"d":"2026-04-29","o":"#206772","c":"Sarah C.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großer Teller cremeweiß-matt | Nia","q":1}]},{"d":"2026-04-29","o":"#206773","c":"Aysegül B.","l":"DK","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Beige Musselin Einzelbettwäsche | Haven","q":2}]},{"d":"2026-04-29","o":"#206775","c":"Nina L.","l":"AT","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großer Teller cremeweiß-glänzend | Nia","q":1}]},{"d":"2026-04-29","o":"#206777","c":"Ayse Ü.","l":"DE","n":[{"k":"Defekt/Bruch","v":"produkt","q":1}],"p":[{"t":"Großes organisches Glas | Alaska","q":2}]},{"d":"2026-04-29","o":"#206782","c":"Arina L.","l":"DE","n":[{"k":"Paket zurückgekommen","v":"carrier","q":1}],"p":[{"t":"Salz- und Pfeffermühle Rillen-Design | Marlo","q":1}]},{"d":"2026-04-29","o":"#206783","c":"Nadja V.","l":"DE","n":[{"k":"Defekt/Bruch","v":"produkt","q":1}],"p":[{"t":"Kleines organisches Glas | Alaska","q":1}]},{"d":"2026-04-29","o":"#206784","c":"Arina L.","l":"DE","n":[{"k":"Paket zurückgekommen","v":"carrier","q":1}],"p":[{"t":"Salz- und Pfeffermühle Rillen-Design | Marlo","q":1}]},{"d":"2026-04-29","o":"#206785","c":"Arina L.","l":"DE","n":[{"k":"Paket zurückgekommen","v":"carrier","q":1}],"p":[{"t":"Salz- und Pfeffermühle Rillen-Design | Marlo","q":1}]},{"d":"2026-04-30","o":"#206924","c":"Luca K.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großer Teller cremeweiß-glänzend | Nia","q":2}]},{"d":"2026-04-30","o":"#206925","c":"Oliver K.","l":"DE","n":[{"k":"Defekt/Bruch","v":"produkt","q":1}],"p":[{"t":"Großer Teller cremeweiß-matt | Nia","q":1}]},{"d":"2026-04-30","o":"#206932","c":"Katharina D.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Cappuccino Keramik Becher Beige | Faro","q":1}]},{"d":"2026-04-30","o":"#206935","c":"Leonie S.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großer Teller cremeweiß-glänzend | Nia","q":1}]},{"d":"2026-04-30","o":"#206955","c":"felicia r.","l":"NL","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Geschirrset Cremeweiß | Nia","q":1}]},{"d":"2026-04-30","o":"#206958","c":"Emilie F.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Kleiner Teller cremeweiß-glänzend | Nia","q":1}]},{"d":"2026-04-30","o":"#206961","c":"Emilie F.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Kleiner gerillter Teller cremeweiß | Nia","q":1}]},{"d":"2026-05-03","o":"#207454","c":"Dimitrios E.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großer Teller cremeweiß-glänzend | Nia","q":2}]},{"d":"2026-05-04","o":"#207700","c":"Daria A.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Serviettenringe Gold 6er Set | Tye","q":1}]},{"d":"2026-05-04","o":"#207704","c":"Jamilcia M.","l":"NL","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Große Bowl cremeweiß-matt | Nia","q":1}]},{"d":"2026-05-04","o":"#207706","c":"Antonina G.","l":"IT","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Teller- und Glasuntersetzer Taupe/Creme | Jade","q":1},{"t":"Gerüschte Musselin Einzelbettwäsche Beige | Haven","q":2}]},{"d":"2026-05-04","o":"#207708","c":"Carolin B.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Geriffeltes Weinglas | Paris","q":1}]},{"d":"2026-05-04","o":"#207709","c":"Nina R.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Kleiner gerillter Teller cremeweiß | Nia","q":1}]},{"d":"2026-05-04","o":"#207712","c":"Esra A.","l":"AT","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Cappuccino Keramik Becher Beige | Faro","q":1}]},{"d":"2026-05-04","o":"#207714","c":"Jasmina K.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Geriffeltes Glas mit Glasdeckel & Glasstrohhalm | Paris","q":1}]},{"d":"2026-05-04","o":"#207715","c":"Jasmina K.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Geriffeltes Glas mit Glasdeckel & Glasstrohhalm | Paris","q":1}]},{"d":"2026-05-04","o":"#207717","c":"Katharina B.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Beige Musselin Einzelbettwäsche | Haven","q":1}]},{"d":"2026-05-04","o":"#207721","c":"Doga Ö.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großes organisches Glas | Alaska","q":1}]},{"d":"2026-05-04","o":"#207727","c":"Yildiz, Y.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"1er Set Tasse cremeweiß-matt | Nia","q":1}]},{"d":"2026-05-04","o":"#207728","c":"Noah W.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Kleines organisches Glas | Alaska","q":1}]},{"d":"2026-05-04","o":"#207737","c":"Zöhre S.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Kleine Bowl cremeweiß-matt | Nia","q":1}]},{"d":"2026-05-04","o":"#207748","c":"Luna Heß L.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Kleines organisches Glas | Alaska","q":1}]},{"d":"2026-05-05","o":"#207928","c":"Denise M.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Telleruntersetzer Taupe/Creme | Jade","q":4}]},{"d":"2026-05-05","o":"#207929","c":"Anastasiya K.","l":"CH","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großer Teller cremeweiß-glänzend | Nia","q":1}]},{"d":"2026-05-05","o":"#207967","c":"Julian S.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Geriffeltes großes Glas | Paris","q":1}]},{"d":"2026-05-05","o":"#207968","c":"Diana L.","l":"DE","n":[{"k":"Defekt/Bruch","v":"produkt","q":1}],"p":[{"t":"Geriffeltes Weinglas | Paris","q":1}]},{"d":"2026-05-05","o":"#207971","c":"Mathias V.","l":"DE","n":[{"k":"Defekt/Bruch","v":"produkt","q":1}],"p":[{"t":"Geriffeltes Weinglas | Paris","q":1}]},{"d":"2026-05-05","o":"#207972","c":"Lina S.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Geriffeltes Glas im eckigen Design | Kuba","q":1}]},{"d":"2026-05-05","o":"#207973","c":"Tanja R.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Deckel | Paris","q":1}]},{"d":"2026-05-05","o":"#207974","c":"Angelina S.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großer Teller cremeweiß-matt | Nia","q":1}]},{"d":"2026-05-05","o":"#207977","c":"Mustafa C.","l":"DE","n":[{"k":"Defekt/Bruch","v":"produkt","q":1}],"p":[{"t":"Kleiner gerillter Teller cremeweiß | Nia","q":1}]},{"d":"2026-05-05","o":"#207979","c":"Danny Esteban R.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großer Teller cremeweiß-glänzend | Nia","q":1}]},{"d":"2026-05-05","o":"#207981","c":"Stefanie H.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Geriffelte Karaffe & Gläser-Set | Paris","q":1},{"t":"Glas Wellen-Design | Mykonos","q":1}]},{"d":"2026-05-06","o":"#208102","c":"Tara O.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großer Teller cremeweiß-matt | Nia","q":1}]},{"d":"2026-05-06","o":"#208103","c":"Selver C.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Silikon Untersetzer im organischen Design | Elou","q":1},{"t":"Organischer Keramik Becher Cremeweiß | Alaska","q":1}]},{"d":"2026-05-06","o":"#208105","c":"Inessa S.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Kleines organisches Glas | Alaska","q":1}]},{"d":"2026-05-06","o":"#208108","c":"Alisya Y.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großer Teller cremeweiß-glänzend | Nia","q":1}]},{"d":"2026-05-06","o":"#208110","c":"Cansu B.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Keramiktasse Perlenhenkel Beige | Chloé","q":2}]},{"d":"2026-05-06","o":"#208114","c":"Sophie F.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Geriffeltes Weinglas | Paris","q":1}]},{"d":"2026-05-06","o":"#208117","c":"Annabelle S.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Khakifarbene Musselin Einzelbettwäsche | Haven","q":2}]},{"d":"2026-05-06","o":"#208119","c":"Nele S.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großer gerillter Teller cremeweiß | Nia","q":1}]},{"d":"2026-05-06","o":"#208122","c":"Diana H.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Kleines organisches Glas | Alaska","q":1}]},{"d":"2026-05-06","o":"#208124","c":"Melina B.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Große Bowl cremeweiß-glänzend | Nia","q":1}]},{"d":"2026-05-06","o":"#208125","c":"Karin B.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Kleines organisches Glas | Alaska","q":1}]},{"d":"2026-05-06","o":"#208128","c":"Ariane D.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großer gerillter Teller cremeweiß | Nia","q":1}]},{"d":"2026-05-06","o":"#208132","c":"Celina J.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Kleiner Teller cremeweiß-glänzend | Nia","q":1}]},{"d":"2026-05-06","o":"#208134","c":"Valeriano R.","l":"DE","n":[{"k":"Paket zurückgekommen","v":"carrier","q":1}],"p":[{"t":"Keramik Becher im geriffeltem Design Beige | Paris","q":1}]},{"d":"2026-05-06","o":"#208149","c":"Eylem S.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Kleiner Teller cremeweiß-glänzend | Nia","q":1}]},{"d":"2026-05-07","o":"#208309","c":"Aleyna Ö.","l":"DE","n":[{"k":"Paket zurückgekommen","v":"carrier","q":1}],"p":[{"t":"Organischer Keramik Becher Cremeweiß | Alaska","q":1},{"t":"Tasse mit Untertasse in Cremeweiß glänzend | Nia","q":1},{"t":"Silikon Untersetzer im organischen Design | Elou","q":4}]},{"d":"2026-05-07","o":"#208312","c":"Marina S.","l":"AT","n":[{"k":"Paket zurückgekommen","v":"carrier","q":1}],"p":[{"t":"Großes Glas Bogen-Design | Rom","q":3},{"t":"Karaffe im Bogen-Design | Rom","q":3},{"t":"Kleines Glas Bogen-Design | Rom","q":3}]},{"d":"2026-05-07","o":"#208315","c":"Miriam M.","l":"DE","n":[{"k":"Defekt/Bruch","v":"produkt","q":1}],"p":[{"t":"Geriffeltes Glas mit Glasdeckel & Glasstrohhalm | Paris","q":1}]},{"d":"2026-05-07","o":"#208318","c":"Patricia C.","l":"CH","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großer gerillter Teller cremeweiß | Nia","q":2}]},{"d":"2026-05-07","o":"#208323","c":"Ruslan Z.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großer Teller cremeweiß-glänzend | Nia","q":1}]},{"d":"2026-05-07","o":"#208325","c":"Jessica B.","l":"CH","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großer gerillter Teller cremeweiß | Nia","q":1}]},{"d":"2026-05-07","o":"#208332","c":"Julia F.","l":"AT","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Kleines organisches Glas | Alaska","q":1}]},{"d":"2026-05-07","o":"#208334","c":"Bianca F.","l":"AT","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Kleines organisches Glas | Alaska","q":1}]},{"d":"2026-05-07","o":"#208340","c":"Véronique d.","l":"BE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Kleine gerillte Bowl cremeweiß | Nia","q":1}]},{"d":"2026-05-07","o":"#208342","c":"Verena C.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Kleines organisches Glas | Alaska","q":1}]},{"d":"2026-05-07","o":"#208343","c":"Verena C.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Kleines organisches Glas | Alaska","q":1}]},{"d":"2026-05-07","o":"#208345","c":"Ibrahim E.","l":"DK","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Kleiner gerillter Teller cremeweiß | Nia","q":1}]},{"d":"2026-05-07","o":"#208353","c":"Lisa A.","l":"AT","n":[{"k":"Defekt/Bruch","v":"produkt","q":1}],"p":[{"t":"Großer Teller cremeweiß-matt | Nia","q":1}]},{"d":"2026-05-07","o":"#208356","c":"kristyna u.","l":"CZ","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großer gerillter Teller cremeweiß | Nia","q":1}]},{"d":"2026-05-07","o":"#208361","c":"Carlo G.","l":"DE","n":[{"k":"Defekt/Bruch","v":"produkt","q":1}],"p":[{"t":"Glas eckiges Design | Kuba","q":2}]},{"d":"2026-05-07","o":"#208364","c":"Sarah B.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Geriffeltes Champagnerglas | Paris","q":1}]},{"d":"2026-05-08","o":"#208487","c":"Frau F.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großer Teller cremeweiß-matt | Nia","q":1},{"t":"Große Bowl cremeweiß-matt | Nia","q":1}]},{"d":"2026-05-08","o":"#208489","c":"Tanja G.","l":"CH","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Große Bowl cremeweiß-glänzend | Nia","q":2}]},{"d":"2026-05-08","o":"#208491","c":"Maha A.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großer Teller cremeweiß-matt | Nia","q":1}]},{"d":"2026-05-08","o":"#208493","c":"Maria I.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Modernes Glas mit Wölbungen | Nizza","q":1}]},{"d":"2026-05-08","o":"#208494","c":"Sandra S.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großer Teller cremeweiß-glänzend | Nia","q":1}]},{"d":"2026-05-08","o":"#208495","c":"Isabel P.","l":"DE","n":[{"k":"Defekt/Bruch","v":"produkt","q":1}],"p":[{"t":"Große gerillte Bowl cremeweiß | Nia","q":3},{"t":"Großer gerillter Teller cremeweiß | Nia","q":2},{"t":"Kleiner gerillter Teller cremeweiß | Nia","q":1}]},{"d":"2026-05-08","o":"#208497","c":"Ludmila B.","l":"CH","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Kleiner Teller Cremeweiß Einzel","q":1}]},{"d":"2026-05-08","o":"#208498","c":"Nina K.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großer Teller cremeweiß-glänzend | Nia","q":1}]},{"d":"2026-05-08","o":"#208500","c":"Aylin K.","l":"DE","n":[{"k":"Defekt/Bruch","v":"produkt","q":1}],"p":[{"t":"Große Bowl Ø27cm in Cremeweiß matt | Nia","q":1}]},{"d":"2026-05-08","o":"#208503","c":"Ray S.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Kleines organisches Glas | Alaska","q":1}]},{"d":"2026-05-08","o":"#208505","c":"Frank E.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Kleines organisches Glas | Alaska","q":1}]},{"d":"2026-05-08","o":"#208507","c":"Hanan O.","l":"CH","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Kleines organisches Glas | Alaska","q":1},{"t":"Beige Servietten mit Serviettenring 6er Set | Kyla & Rina","q":1}]},{"d":"2026-05-08","o":"#208509","c":"Franziska P.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großer Teller cremeweiß-matt | Nia","q":2}]},{"d":"2026-05-08","o":"#208516","c":"Arwen H.","l":"DE","n":[{"k":"Defekt/Bruch","v":"produkt","q":1}],"p":[{"t":"Großer gerillter Teller cremeweiß | Nia","q":1},{"t":"Kleiner gerillter Teller cremeweiß | Nia","q":4}]},{"d":"2026-05-08","o":"#208517","c":"Berfin Ö.","l":"DE","n":[{"k":"Defekt/Bruch","v":"produkt","q":1}],"p":[{"t":"Großes organisches Glas mit Karaffe | Alaska","q":1},{"t":"Großes Glas Streifen-Design | Norway","q":1}]},{"d":"2026-05-08","o":"#208518","c":"Norman G.","l":"DE","n":[{"k":"Paket zurückgekommen","v":"carrier","q":1}],"p":[{"t":"Gerüschte Musselin Einzelbettwäsche Beige | Haven","q":2}]},{"d":"2026-05-08","o":"#208520","c":"Ayse K.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Geriffeltes großes Glas | Paris","q":1}]},{"d":"2026-05-08","o":"#208532","c":"Janine K.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Gerüschte Musselin Einzelbettwäsche Beige | Haven","q":2}]},{"d":"2026-05-08","o":"#208535","c":"Lisa-Marie N.","l":"DE","n":[{"k":"Defekt/Bruch","v":"produkt","q":1}],"p":[{"t":"Großer Teller cremeweiß-glänzend | Nia","q":6},{"t":"Kleiner Teller cremeweiß-glänzend | Nia","q":3}]},{"d":"2026-05-08","o":"#208537","c":"Lukas S.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Große Bowl cremeweiß-matt | Nia","q":1},{"t":"Großer Teller cremeweiß-matt | Nia","q":3}]},{"d":"2026-05-08","o":"#208539","c":"Fabian R.","l":"DE","n":[{"k":"Defekt/Bruch","v":"produkt","q":1}],"p":[{"t":"Kleiner Teller cremeweiß-matt | Nia","q":2}]},{"d":"2026-05-08","o":"#208542","c":"Cigdem B.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Keramik Becher in organischem Design | Lyon","q":1}]},{"d":"2026-05-08","o":"#208546","c":"Alexandra I.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Geriffeltes Weinglas | Paris","q":1},{"t":"12er Gläser-Set + GRATIS Karaffe | Paris","q":1},{"t":"Dipschalen 6er Set in Cremeweiß matt | Nia","q":1},{"t":"Große Bowl Ø27cm in Cremeweiß matt | Nia","q":1},{"t":"Tassen ohne Henkel 6er Set in Cremeweiß matt | Nia","q":1}]},{"d":"2026-05-08","o":"#208549","c":"Lisa S.","l":"DE","n":[{"k":"Paket zurückgekommen","v":"carrier","q":1}],"p":[{"t":"Bestseller Bundle 12er Gläser-Set","q":1}]},{"d":"2026-05-08","o":"#208551","c":"Arwen H.","l":"DE","n":[{"k":"Defekt/Bruch","v":"produkt","q":1}],"p":[{"t":"Großer gerillter Teller cremeweiß | Nia","q":4},{"t":"Kleiner gerillter Teller cremeweiß | Nia","q":1}]},{"d":"2026-05-11","o":"#209381","c":"Isabella S.","l":"DE","n":[{"k":"Paket zurückgekommen","v":"carrier","q":1}],"p":[{"t":"Glastasse Streifen-Design | Norway","q":1},{"t":"12er Gläser-Set + GRATIS Karaffe | Paris","q":1}]},{"d":"2026-05-11","o":"#209382","c":"Baris E.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großes Aufbewahrungsglas | Caya","q":1},{"t":"Mittleres Aufbewahrungsglas | Caya","q":1}]},{"d":"2026-05-11","o":"#209384","c":"Leander F.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großes Aufbewahrungsglas | Caya","q":1}]},{"d":"2026-05-11","o":"#209385","c":"Maria D.","l":"DE","n":[{"k":"Paket zurückgekommen","v":"carrier","q":1}],"p":[{"t":"Großes organisches Glas mit Karaffe | Alaska","q":1}]},{"d":"2026-05-11","o":"#209387","c":"Mag.Michaela S.","l":"AT","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Silikon Untersetzer im organischen Design | Elou","q":1}]},{"d":"2026-05-11","o":"#209390","c":"Pelin T.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Geriffelte Glastasse (300ml) | Paris","q":1}]},{"d":"2026-05-11","o":"#209391","c":"Viviana C.","l":"DE","n":[{"k":"Defekt/Bruch","v":"produkt","q":1}],"p":[{"t":"Kleines organisches Glas | Alaska","q":1}]},{"d":"2026-05-11","o":"#209392","c":"Viktoriia C.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großer gerillter Teller cremeweiß | Nia","q":1}]},{"d":"2026-05-11","o":"#209394","c":"Radka B.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Karaffe im organischen Design | Alaska","q":1}]},{"d":"2026-05-11","o":"#209395","c":"Natalie L.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Große Bowl Ø27cm in Cremeweiß gerillt | Nia","q":1},{"t":"Kleine Bowl cremeweiß-glänzend | Nia","q":1}]},{"d":"2026-05-11","o":"#209397","c":"Nicola K.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Glasstrohhalme Knick-Design 4er Set | Lani","q":1},{"t":"Aufbewahrungsglas Set | Caya","q":1}]},{"d":"2026-05-11","o":"#209399","c":"Nina P.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Acryl Untersetzer | Holly","q":1},{"t":"Glas eckiges Design | Kuba","q":1}]},{"d":"2026-05-11","o":"#209400","c":"Karim A.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Cappuccino Keramik Becher Beige | Faro","q":1}]},{"d":"2026-05-11","o":"#209403","c":"Rebecca E.","l":"AT","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großer gerillter Teller cremeweiß | Nia","q":1}]},{"d":"2026-05-11","o":"#209404","c":"Marie-Kristin K.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großer gerillter Teller cremeweiß | Nia","q":1}]},{"d":"2026-05-11","o":"#209405","c":"Isabel P.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Große gerillte Bowl cremeweiß | Nia","q":1}]},{"d":"2026-05-11","o":"#209410","c":"Aleyna Ö.","l":"DE","n":[{"k":"Paket zurückgekommen","v":"carrier","q":1}],"p":[{"t":"Organischer Keramik Becher Cremeweiß | Alaska","q":1},{"t":"Silikon Untersetzer im organischen Design | Elou","q":4}]},{"d":"2026-05-11","o":"#209412","c":"Rico Z.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Matcha Set mit Löffel & Besen + Halter | Akio","q":1}]},{"d":"2026-05-11","o":"#209414","c":"Simon G.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Cappuccino Keramik Becher Beige | Faro","q":1}]},{"d":"2026-05-11","o":"#209416","c":"Lara Tatjana W.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großer Teller cremeweiß-glänzend | Nia","q":1},{"t":"Große Bowl cremeweiß-glänzend | Nia","q":1}]},{"d":"2026-05-11","o":"#209418","c":"Nico K.","l":"DE","n":[{"k":"Defekt/Bruch","v":"produkt","q":1}],"p":[{"t":"Großer Löffel matt-gebürstet | Tava","q":5}]},{"d":"2026-05-11","o":"#209421","c":"Tara P.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Dunkelbraune Musselin Doppelbettwäsche | Haven","q":1}]},{"d":"2026-05-11","o":"#209424","c":"Julia K.","l":"AT","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großes organisches Glas | Alaska","q":1}]},{"d":"2026-05-11","o":"#209425","c":"Lara O.","l":"CH","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großer gerillter Teller cremeweiß | Nia","q":1}]},{"d":"2026-05-11","o":"#209426","c":"Ursula C.","l":"AT","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Große Bowl cremeweiß-glänzend | Nia","q":1}]},{"d":"2026-05-11","o":"#209427","c":"Veronika A.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Lange Glasstrohhalme 8er Set | Aris","q":1}]},{"d":"2026-05-11","o":"#209430","c":"Lidia L.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Kleiner Teller cremeweiß-glänzend | Nia","q":1}]},{"d":"2026-05-12","o":"#209571","c":"Lavia W.","l":"DE","n":[{"k":"Paket zurückgekommen","v":"carrier","q":1}],"p":[{"t":"Salz- und Pfeffermühle Rillen-Design | Marlo","q":1}]},{"d":"2026-05-12","o":"#209574","c":"Cedrik S.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Set aus langen & kurzen Glasstrohhalmen | Aris","q":1},{"t":"Modernes Glas mit Wölbungen | Nizza","q":1}]},{"d":"2026-05-12","o":"#209575","c":"Désirée D.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großes organisches Glas | Alaska","q":1},{"t":"Kleines Glas Blumen-Design | Florenz","q":1}]},{"d":"2026-05-12","o":"#209581","c":"Ismail S.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Kleines organisches Glas | Alaska","q":1},{"t":"Glastasse Streifen-Design | Norway","q":1}]},{"d":"2026-05-12","o":"#209582","c":"Laura P.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Beige Musselin Doppelbettwäsche | Haven","q":1}]},{"d":"2026-05-12","o":"#209583","c":"Dimitrios E.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großer gerillter Teller cremeweiß | Nia","q":2}]},{"d":"2026-05-12","o":"#209591","c":"Susanne P.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Gerüschte Musselin Einzelbettwäsche Beige | Haven","q":2}]},{"d":"2026-05-12","o":"#209593","c":"Benjamin S.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Geschirrset matt Cremeweiß | Nia","q":1},{"t":"Großer Löffel matt-gebürstet | Tava","q":10}]},{"d":"2026-05-12","o":"#209596","c":"Vicktoria H.","l":"DE","n":[{"k":"Defekt/Bruch","v":"produkt","q":1}],"p":[{"t":"Großer gerillter Teller cremeweiß | Nia","q":1}]},{"d":"2026-05-12","o":"#209598","c":"Marie S.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großer Löffel matt-gebürstet | Tava","q":5}]},{"d":"2026-05-12","o":"#209600","c":"Dragana K.","l":"CH","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großer gerillter Teller cremeweiß | Nia","q":6}]},{"d":"2026-05-12","o":"#209609","c":"Larissa S.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"1er Set Tasse cremeweiß-glänzend | Nia","q":2}]},{"d":"2026-05-12","o":"#209612","c":"Lara S.","l":"DE","n":[{"k":"Paket zurückgekommen","v":"carrier","q":1}],"p":[{"t":"Geschirrset Cremeweiß gerillt | Nia","q":1}]},{"d":"2026-05-12","o":"#209613","c":"Kristin J.","l":"DE","n":[{"k":"Defekt/Bruch","v":"produkt","q":1}],"p":[{"t":"Geriffeltes großes Glas | Paris","q":1}]},{"d":"2026-05-12","o":"#209615","c":"Jennifer M.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Weinglas im organischen Design | Alaska","q":1}]},{"d":"2026-05-13","o":"#209744","c":"Sandra B.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Große Bowl Ø27cm in Cremeweiß | Nia","q":1}]},{"d":"2026-05-13","o":"#209746","c":"Julia S.","l":"DE","n":[{"k":"Defekt/Bruch","v":"produkt","q":1}],"p":[{"t":"Großer Teller cremeweiß-glänzend | Nia","q":2},{"t":"Große Bowl cremeweiß-glänzend | Nia","q":1}]},{"d":"2026-05-13","o":"#209748","c":"Maike S.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Kleiner gerillter Teller cremeweiß | Nia","q":1}]},{"d":"2026-05-13","o":"#209757","c":"Enise Ü.","l":"DE","n":[{"k":"Paket zurückgekommen","v":"carrier","q":1}],"p":[{"t":"Beige Musselin Einzelbettwäsche | Haven","q":1},{"t":"Weiße Musselin Einzelbettwäsche | Haven","q":1}]},{"d":"2026-05-13","o":"#209758","c":"Anna K.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Beige Musselin Einzelbettwäsche | Haven","q":1}]},{"d":"2026-05-13","o":"#209759","c":"Serpil N.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Große Bowl cremeweiß-glänzend | Nia","q":1}]},{"d":"2026-05-13","o":"#209761","c":"Tugba K.","l":"DK","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großer Teller cremeweiß-glänzend | Nia","q":1}]},{"d":"2026-05-13","o":"#209763","c":"Melih A.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Glas Wellen-Design | Mykonos","q":1},{"t":"Kleines organisches Glas | Alaska","q":1},{"t":"Glas eckiges Design | Kuba","q":1}]},{"d":"2026-05-13","o":"#209764","c":"Volker L.","l":"DE","n":[{"k":"Defekt/Bruch","v":"produkt","q":1}],"p":[{"t":"Geriffeltes Weinglas | Paris","q":1}]},{"d":"2026-05-13","o":"#209768","c":"Diana T.","l":"AT","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Geschirrset matt Cremeweiß | Nia","q":1}]},{"d":"2026-05-13","o":"#209777","c":"Daniela R.","l":"CH","n":[{"k":"Defekt/Bruch","v":"produkt","q":1}],"p":[{"t":"Große Bowl Ø27cm in Cremeweiß matt | Nia","q":2},{"t":"Großer Teller cremeweiß-matt | Nia","q":1}]},{"d":"2026-05-13","o":"#209778","c":"Vildan C.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großes organisches Glas | Alaska","q":1}]},{"d":"2026-05-15","o":"#210110","c":"Sabrina B.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großer Teller cremeweiß-matt | Nia","q":1}]},{"d":"2026-05-15","o":"#210116","c":"Seuchea O.","l":"RO","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großer Teller cremeweiß-glänzend | Nia","q":1}]},{"d":"2026-05-15","o":"#210117","c":"Kira H.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großer gerillter Teller cremeweiß | Nia","q":2}]},{"d":"2026-05-15","o":"#210119","c":"Lisa L.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Glasdeckel vom Geriffelten Glas - Single","q":1}]},{"d":"2026-05-15","o":"#210127","c":"Violetta H.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großer Teller cremeweiß-glänzend | Nia","q":1}]},{"d":"2026-05-15","o":"#210128","c":"Tobias G.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großer Teller cremeweiß-glänzend | Nia","q":1}]},{"d":"2026-05-16","o":"#210368","c":"Jana Z.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Serviettenringe Gold 6er Set | Rina","q":1},{"t":"Cappuccino & Espresso Keramik Becher Beige | Faro","q":1},{"t":"Cappuccino Keramik Becher Beige | Faro","q":1}]},{"d":"2026-05-17","o":"#210414","c":"Lara H.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Kleiner Teller cremeweiß-glänzend | Nia","q":4}]},{"d":"2026-05-17","o":"#210417","c":"Alexandra B.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Kleines organisches Glas | Alaska","q":1}]},{"d":"2026-05-17","o":"#210418","c":"Sarah N.","l":"LU","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Mittleres Aufbewahrungsglas | Caya","q":1}]},{"d":"2026-05-18","o":"#210582","c":"Isabella S.","l":"DE","n":[{"k":"Paket zurückgekommen","v":"carrier","q":1}],"p":[{"t":"Glastasse Streifen-Design | Norway","q":1},{"t":"12er Gläser-Set + GRATIS Karaffe | Paris","q":1}]},{"d":"2026-05-18","o":"#210583","c":"Ronja L.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Kleiner Teller taupe-glänzend | Nia","q":1}]},{"d":"2026-05-18","o":"#210588","c":"Lara Tatjana W.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Kleine Bowl cremeweiß-glänzend | Nia","q":1}]},{"d":"2026-05-18","o":"#210589","c":"Lenya F.","l":"DE","n":[{"k":"Defekt/Bruch","v":"produkt","q":1}],"p":[{"t":"Kleines organisches Glas | Alaska","q":1}]},{"d":"2026-05-18","o":"#210591","c":"Charlotte V.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Große Bowl cremeweiß-matt | Nia","q":1}]},{"d":"2026-05-18","o":"#210593","c":"Libby B.","l":"GB","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Geschirrset Cremeweiß gerillt | Nia","q":1}]},{"d":"2026-05-18","o":"#210596","c":"Nathalie B.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Große gerillte Bowl cremeweiß | Nia","q":3}]},{"d":"2026-05-18","o":"#210599","c":"Mohammed A.","l":"CH","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großer Teller cremeweiß-matt | Nia","q":1},{"t":"Kleine Bowl cremeweiß-matt | Nia","q":1}]},{"d":"2026-05-18","o":"#210600","c":"Jessica K.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großer Teller cremeweiß-glänzend | Nia","q":1},{"t":"Kleine Bowl cremeweiß-glänzend | Nia","q":1}]},{"d":"2026-05-18","o":"#210602","c":"Holger S.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Karaffe im Bogen-Design | Rom","q":2}]},{"d":"2026-05-18","o":"#210605","c":"Colleen F.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großes Aufbewahrungsglas | Caya","q":1}]},{"d":"2026-05-18","o":"#210606","c":"Luisa B.","l":"CH","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Wellenförmiger Keramik Becher Beige | Mya","q":3}]},{"d":"2026-05-18","o":"#210608","c":"Luisa B.","l":"CH","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Keramiktasse Perlenhenkel Beige | Chloé","q":1}]},{"d":"2026-05-18","o":"#210609","c":"Melanie A.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Geriffelte Karaffe (1550ml) | Paris","q":1}]},{"d":"2026-05-18","o":"#210613","c":"felicia r.","l":"NL","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großer Teller cremeweiß-glänzend | Nia","q":1}]},{"d":"2026-05-18","o":"#210619","c":"Albert R.","l":"DE","n":[{"k":"Defekt/Bruch","v":"produkt","q":1}],"p":[{"t":"Spiegel | Ava","q":1}]},{"d":"2026-05-18","o":"#210621","c":"Lidia L.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Kleiner Teller cremeweiß-glänzend | Nia","q":1}]},{"d":"2026-05-18","o":"#210622","c":"Nicole H.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Perlenbesetzte Glastasse | Atlanta","q":1}]},{"d":"2026-05-18","o":"#210623","c":"Ina K.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Organischer Keramik Becher Cremeweiß | Alaska","q":1}]},{"d":"2026-05-18","o":"#210624","c":"Julia P.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Khakifarbene Musselin Einzelbettwäsche | Haven","q":1},{"t":"Große Bowl Ø27cm in Cremeweiß | Nia","q":1}]},{"d":"2026-05-18","o":"#210626","c":"Leonie K.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Geriffeltes kleines Glas | Paris","q":1}]},{"d":"2026-05-18","o":"#210627","c":"Lina B.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Geriffeltes Weinglas | Paris","q":1}]},{"d":"2026-05-18","o":"#210628","c":"Jessika S.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Weinglas im organischen Design | Alaska","q":1}]},{"d":"2026-05-18","o":"#210630","c":"Sandra G.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Geriffeltes Weinglas | Paris","q":1}]},{"d":"2026-05-19","o":"#210773","c":"Selina J.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großer gerillter Teller cremeweiß | Nia","q":1}]},{"d":"2026-05-19","o":"#210774","c":"Evelynn R.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Kleines organisches Glas | Alaska","q":1}]},{"d":"2026-05-19","o":"#210776","c":"Sarah S.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Glas eckiges Design | Kuba","q":1}]},{"d":"2026-05-19","o":"#210777","c":"Yves v.","l":"CH","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großer gerillter Teller cremeweiß | Nia","q":3}]},{"d":"2026-05-19","o":"#210780","c":"Patricia G.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Kleine Bowl cremeweiß-glänzend | Nia","q":1}]},{"d":"2026-05-19","o":"#210787","c":"Jacqueline F.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Geriffeltes kleines Glas | Paris","q":1},{"t":"Kleines Glas Blumen-Design | Florenz","q":1}]},{"d":"2026-05-19","o":"#210789","c":"Carola T.","l":"AT","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Große Bowl cremeweiß-matt | Nia","q":1},{"t":"Großer Teller cremeweiß-matt | Nia","q":1},{"t":"Kleiner Teller cremeweiß-matt | Nia","q":1}]},{"d":"2026-05-19","o":"#210793","c":"Yasmin S.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Kleiner Teller cremeweiß-glänzend | Nia","q":2}]},{"d":"2026-05-20","o":"#210943","c":"Vanessa L.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Organischer Keramik Becher Pink | Alaska","q":1}]},{"d":"2026-05-20","o":"#210946","c":"Petr D.","l":"CZ","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Kleine gerillte Bowl cremeweiß | Nia","q":3}]},{"d":"2026-05-20","o":"#210947","c":"Felicitas E.","l":"DE","n":[{"k":"Paket zurückgekommen","v":"carrier","q":1}],"p":[{"t":"Geriffeltes Glas mit Glasdeckel & Glasstrohhalm | Paris","q":1}]},{"d":"2026-05-20","o":"#210948","c":"Yasmin S.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Kleiner Teller cremeweiß-glänzend | Nia","q":2}]},{"d":"2026-05-20","o":"#210949","c":"Sarah T.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Geriffelte Karaffe (1550ml) | Paris","q":1}]},{"d":"2026-05-20","o":"#210951","c":"Melisa H.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Geriffeltes kleines Glas | Paris","q":1}]},{"d":"2026-05-20","o":"#210953","c":"Christina H.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Kleine gerillte Bowl cremeweiß | Nia","q":1}]},{"d":"2026-05-20","o":"#210954","c":"Nil K.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Keramiktasse Perlenhenkel Beige | Chloé","q":1}]},{"d":"2026-05-20","o":"#210961","c":"Lina S.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Gerüschte Musselin Einzelbettwäsche Beige | Haven","q":2}]},{"d":"2026-05-20","o":"#210963","c":"Laura Michelle B.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Glastasse Streifen-Design | Norway","q":1}]},{"d":"2026-05-20","o":"#210972","c":"Malin P.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großes perlenbesetztes Glas | Atlanta","q":1}]},{"d":"2026-05-20","o":"#210980","c":"Anne K.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großes Glas Bogen-Design | Rom","q":1}]},{"d":"2026-05-20","o":"#210981","c":"DeJian C.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Kleine Bowl cremeweiß-matt | Nia","q":1}]},{"d":"2026-05-20","o":"#210984","c":"Umair A.","l":"AT","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großer Teller cremeweiß-matt | Nia","q":3},{"t":"Kleine Bowl cremeweiß-matt | Nia","q":1},{"t":"Große Bowl cremeweiß-matt | Nia","q":4}]},{"d":"2026-05-21","o":"#211089","c":"lisa s.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Geschirrset matt Cremeweiß | Nia","q":1}]},{"d":"2026-05-21","o":"#211090","c":"Lara S.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Glas mit Spiral-Twist | Orlando","q":1}]},{"d":"2026-05-21","o":"#211091","c":"Jonathan W.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großer gerillter Teller cremeweiß | Nia","q":4}]},{"d":"2026-05-21","o":"#211100","c":"Felicitas E.","l":"DE","n":[{"k":"Paket zurückgekommen","v":"carrier","q":1}],"p":[{"t":"Geriffeltes Glas mit Glasdeckel & Glasstrohhalm | Paris","q":1}]},{"d":"2026-05-21","o":"#211101","c":"Juliana V.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Kleiner Teller cremeweiß-glänzend | Nia","q":1}]},{"d":"2026-05-21","o":"#211107","c":"Katharina A.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großes Glas Bogen-Design | Rom","q":1}]},{"d":"2026-05-21","o":"#211108","c":"Monika K.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Große Bowl cremeweiß-matt | Nia","q":1},{"t":"Kleine Bowl cremeweiß-matt | Nia","q":1}]},{"d":"2026-05-21","o":"#211112","c":"Irina H.","l":"CH","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Geschirrset Cremeweiß gerillt | Nia","q":1}]},{"d":"2026-05-21","o":"#211123","c":"Eva W.","l":"ES","n":[{"k":"Paket zurückgekommen","v":"carrier","q":1}],"p":[{"t":"Dipschalen 6er Set in Cremeweiß gerillt | Nia","q":1},{"t":"Gläser-Set Streifen-Design | Norway","q":2}]}]}</script>
+<script id="neusendungs-data" type="application/json">{"lastUpdated":"2026-06-23","targetDate":"2026-06-22","cases":[{"d":"2026-05-21","o":"#211089","c":"lisa S.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Geschirrset matt Cremeweiß | Nia","pt":"Geschirr","q":1}]},{"d":"2026-05-21","o":"#211090","c":"Lara S.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Glas mit Spiral-Twist | Orlando","pt":"Trinkglas","q":1}]},{"d":"2026-05-21","o":"#211091","c":"Jonathan W.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großer gerillter Teller cremeweiß | Nia","pt":"Geschirr","q":4}]},{"d":"2026-05-21","o":"#211100","c":"Felicitas E.","l":"DE","n":[{"k":"Paket zurückgekommen","v":"carrier","q":1}],"p":[{"t":"Geriffeltes Glas mit Glasdeckel & Glasstrohhalm | Paris","pt":"Trinkglas","q":1}]},{"d":"2026-05-21","o":"#211101","c":"Juliana V.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Kleiner Teller cremeweiß-glänzend | Nia","pt":"Geschirr","q":1}]},{"d":"2026-05-21","o":"#211107","c":"Katharina A.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großes Glas Bogen-Design | Rom","pt":"Trinkglas","q":1}]},{"d":"2026-05-21","o":"#211108","c":"Monika K.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Große Bowl cremeweiß-matt | Nia","pt":"Salatbowl","q":1},{"t":"Kleine Bowl cremeweiß-matt | Nia","pt":"Salatbowl","q":1}]},{"d":"2026-05-21","o":"#211112","c":"Irina H.","l":"CH","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Geschirrset Cremeweiß gerillt | Nia","pt":"Geschirr","q":1}]},{"d":"2026-05-21","o":"#211123","c":"Eva W.","l":"ES","n":[{"k":"Paket zurückgekommen","v":"carrier","q":1}],"p":[{"t":"Dipschalen 6er Set in Cremeweiß gerillt | Nia","pt":"Dipschale","q":1},{"t":"Gläser-Set Streifen-Design | Norway","pt":"Trinkglas","q":2}]},{"d":"2026-05-20","o":"#210943","c":"Vanessa L.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Organischer Keramik Becher Pink | Alaska","pt":"Keramik Becher/Tassen","q":1}]},{"d":"2026-05-20","o":"#210946","c":"Petr D.","l":"CZ","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Kleine gerillte Bowl cremeweiß | Nia","pt":"Salatbowl","q":3}]},{"d":"2026-05-20","o":"#210947","c":"Felicitas E.","l":"DE","n":[{"k":"Paket zurückgekommen","v":"carrier","q":1}],"p":[{"t":"Geriffeltes Glas mit Glasdeckel & Glasstrohhalm | Paris","pt":"Trinkglas","q":1}]},{"d":"2026-05-20","o":"#210948","c":"Yasmin S.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Kleiner Teller cremeweiß-glänzend | Nia","pt":"Geschirr","q":2}]},{"d":"2026-05-20","o":"#210949","c":"Sarah T.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Geriffelte Karaffe (1550ml) | Paris","pt":"Karaffe","q":1}]},{"d":"2026-05-20","o":"#210951","c":"Melisa H.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Geriffeltes kleines Glas | Paris","pt":"Trinkglas","q":1}]},{"d":"2026-05-20","o":"#210953","c":"Christina H.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Kleine gerillte Bowl cremeweiß | Nia","pt":"Salatbowl","q":1}]},{"d":"2026-05-20","o":"#210954","c":"Nil K.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Keramiktasse Perlenhenkel Beige | Chloé","pt":"Keramik Becher/Tassen","q":1}]},{"d":"2026-05-20","o":"#210961","c":"Lina S.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Gerüschte Musselin Einzelbettwäsche Beige | Haven","pt":"Bettwäsche","q":2}]},{"d":"2026-05-20","o":"#210963","c":"Laura Michelle B.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Glastasse Streifen-Design | Norway","pt":"Tassen","q":1}]},{"d":"2026-05-20","o":"#210972","c":"Malin P.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großes perlenbesetztes Glas | Atlanta","pt":"Trinkglas","q":1}]},{"d":"2026-05-20","o":"#210980","c":"Anne K.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großes Glas Bogen-Design | Rom","pt":"Trinkglas","q":1}]},{"d":"2026-05-20","o":"#210981","c":"DeJian C.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Kleine Bowl cremeweiß-matt | Nia","pt":"Salatbowl","q":1}]},{"d":"2026-05-20","o":"#210984","c":"Umair A.","l":"AT","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großer Teller cremeweiß-matt | Nia","pt":"Geschirr","q":3},{"t":"Kleine Bowl cremeweiß-matt | Nia","pt":"Salatbowl","q":1},{"t":"Große Bowl cremeweiß-matt | Nia","pt":"Salatbowl","q":4}]},{"d":"2026-05-19","o":"#210773","c":"Selina J.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großer gerillter Teller cremeweiß | Nia","pt":"Geschirr","q":1}]},{"d":"2026-05-19","o":"#210774","c":"Evelynn R.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Kleines organisches Glas | Alaska","pt":"Trinkglas","q":1}]},{"d":"2026-05-19","o":"#210776","c":"Sarah S.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Glas eckiges Design | Kuba","pt":"Trinkglas","q":1}]},{"d":"2026-05-19","o":"#210777","c":"Yves V.","l":"CH","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großer gerillter Teller cremeweiß | Nia","pt":"Geschirr","q":3}]},{"d":"2026-05-19","o":"#210780","c":"Patricia G.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Kleine Bowl cremeweiß-glänzend | Nia","pt":"Salatbowl","q":1}]},{"d":"2026-05-19","o":"#210787","c":"Jacqueline F.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Geriffeltes kleines Glas | Paris","pt":"Trinkglas","q":1},{"t":"Kleines Glas Blumen-Design | Florenz","pt":"Trinkglas","q":1}]},{"d":"2026-05-19","o":"#210789","c":"Carola T.","l":"AT","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Große Bowl cremeweiß-matt | Nia","pt":"Salatbowl","q":1},{"t":"Großer Teller cremeweiß-matt | Nia","pt":"Geschirr","q":1},{"t":"Kleiner Teller cremeweiß-matt | Nia","pt":"Geschirr","q":1}]},{"d":"2026-05-19","o":"#210793","c":"Yasmin S.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Kleiner Teller cremeweiß-glänzend | Nia","pt":"Geschirr","q":2}]},{"d":"2026-05-18","o":"#210582","c":"Isabella S.","l":"DE","n":[{"k":"Paket zurückgekommen","v":"carrier","q":1}],"p":[{"t":"Glastasse Streifen-Design | Norway","pt":"Tassen","q":1},{"t":"12er Gläser-Set + GRATIS Karaffe | Paris","pt":"Karaffe & Gläser-Set","q":1}]},{"d":"2026-05-18","o":"#210583","c":"Ronja L.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Kleiner Teller taupe-glänzend | Nia","pt":"Geschirr","q":1}]},{"d":"2026-05-18","o":"#210588","c":"Lara Tatjana W.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Kleine Bowl cremeweiß-glänzend | Nia","pt":"Salatbowl","q":1}]},{"d":"2026-05-18","o":"#210589","c":"Lenya F.","l":"DE","n":[{"k":"Defekt/Bruch","v":"produkt","q":1}],"p":[{"t":"Kleines organisches Glas | Alaska","pt":"Trinkglas","q":1}]},{"d":"2026-05-18","o":"#210591","c":"Charlotte V.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Große Bowl cremeweiß-matt | Nia","pt":"Salatbowl","q":1}]},{"d":"2026-05-18","o":"#210593","c":"Libby B.","l":"GB","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Geschirrset Cremeweiß gerillt | Nia","pt":"Geschirr","q":1}]},{"d":"2026-05-18","o":"#210596","c":"Nathalie B.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Große gerillte Bowl cremeweiß | Nia","pt":"Salatbowl","q":3}]},{"d":"2026-05-18","o":"#210599","c":"Mohammed A.","l":"CH","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großer Teller cremeweiß-matt | Nia","pt":"Geschirr","q":1},{"t":"Kleine Bowl cremeweiß-matt | Nia","pt":"Salatbowl","q":1}]},{"d":"2026-05-18","o":"#210600","c":"Jessica K.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großer Teller cremeweiß-glänzend | Nia","pt":"Geschirr","q":1},{"t":"Kleine Bowl cremeweiß-glänzend | Nia","pt":"Salatbowl","q":1}]},{"d":"2026-05-18","o":"#210602","c":"Holger S.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Karaffe im Bogen-Design | Rom","pt":"Karaffe","q":2}]},{"d":"2026-05-18","o":"#210605","c":"Colleen F.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großes Aufbewahrungsglas | Caya","pt":"Aufbewahrung","q":1}]},{"d":"2026-05-18","o":"#210606","c":"Luisa B.","l":"CH","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Wellenförmiger Keramik Becher Beige | Mya","pt":"Keramik Becher/Tassen","q":3}]},{"d":"2026-05-18","o":"#210608","c":"Luisa B.","l":"CH","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Keramiktasse Perlenhenkel Beige | Chloé","pt":"Keramik Becher/Tassen","q":1}]},{"d":"2026-05-18","o":"#210609","c":"Melanie A.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Geriffelte Karaffe (1550ml) | Paris","pt":"Karaffe","q":1}]},{"d":"2026-05-18","o":"#210613","c":"felicia R.","l":"NL","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großer Teller cremeweiß-glänzend | Nia","pt":"Geschirr","q":1}]},{"d":"2026-05-18","o":"#210619","c":"Albert R.","l":"DE","n":[{"k":"Defekt/Bruch","v":"produkt","q":1}],"p":[{"t":"Spiegel | Ava","pt":"Spiegel","q":1}]},{"d":"2026-05-18","o":"#210621","c":"Lidia L.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Kleiner Teller cremeweiß-glänzend | Nia","pt":"Geschirr","q":1}]},{"d":"2026-05-18","o":"#210622","c":"Nicole H.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Perlenbesetzte Glastasse | Atlanta","pt":"Trinkglas","q":1}]},{"d":"2026-05-18","o":"#210623","c":"Ina K.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Organischer Keramik Becher Cremeweiß | Alaska","pt":"Keramik Becher/Tassen","q":1}]},{"d":"2026-05-18","o":"#210624","c":"Julia P.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Khakifarbene Musselin Einzelbettwäsche | Haven","pt":"Bettwäsche","q":1},{"t":"Große Bowl Ø27cm in Cremeweiß | Nia","pt":"Salatbowl","q":1}]},{"d":"2026-05-18","o":"#210626","c":"Leonie K.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Geriffeltes kleines Glas | Paris","pt":"Trinkglas","q":1}]},{"d":"2026-05-18","o":"#210627","c":"Lina B.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Geriffeltes Weinglas | Paris","pt":"Weinglas","q":1}]},{"d":"2026-05-18","o":"#210628","c":"Jessika S.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Weinglas im organischen Design | Alaska","pt":"Weinglas","q":1}]},{"d":"2026-05-18","o":"#210630","c":"Sandra G.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Geriffeltes Weinglas | Paris","pt":"Weinglas","q":1}]},{"d":"2026-05-17","o":"#210414","c":"Lara H.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Kleiner Teller cremeweiß-glänzend | Nia","pt":"Geschirr","q":4}]},{"d":"2026-05-17","o":"#210417","c":"Alexandra B.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Kleines organisches Glas | Alaska","pt":"Trinkglas","q":1}]},{"d":"2026-05-17","o":"#210418","c":"Sarah N.","l":"LU","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Mittleres Aufbewahrungsglas | Caya","pt":"Aufbewahrung","q":1}]},{"d":"2026-05-16","o":"#210368","c":"Jana Z.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Serviettenringe Gold 6er Set | Rina","pt":"Serviettenringe","q":1},{"t":"Cappuccino & Espresso Keramik Becher Beige | Faro","pt":"Keramik Becher/Tassen","q":1},{"t":"Cappuccino Keramik Becher Beige | Faro","pt":"Keramik Becher/Tassen","q":1}]},{"d":"2026-05-15","o":"#210110","c":"Sabrina B.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großer Teller cremeweiß-matt | Nia","pt":"Geschirr","q":1}]},{"d":"2026-05-15","o":"#210116","c":"Seuchea O.","l":"RO","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großer Teller cremeweiß-glänzend | Nia","pt":"Geschirr","q":1}]},{"d":"2026-05-15","o":"#210117","c":"Kira H.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großer gerillter Teller cremeweiß | Nia","pt":"Geschirr","q":2}]},{"d":"2026-05-15","o":"#210119","c":"Lisa L.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Glasdeckel vom Geriffelten Glas - Single","pt":"Sonstige","q":1}]},{"d":"2026-05-15","o":"#210127","c":"Violetta H.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großer Teller cremeweiß-glänzend | Nia","pt":"Geschirr","q":1}]},{"d":"2026-05-15","o":"#210128","c":"Tobias G.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großer Teller cremeweiß-glänzend | Nia","pt":"Geschirr","q":1}]},{"d":"2026-05-13","o":"#209744","c":"Sandra B.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Große Bowl Ø27cm in Cremeweiß | Nia","pt":"Salatbowl","q":1}]},{"d":"2026-05-13","o":"#209746","c":"Julia S.","l":"DE","n":[{"k":"Defekt/Bruch","v":"produkt","q":1}],"p":[{"t":"Großer Teller cremeweiß-glänzend | Nia","pt":"Geschirr","q":2},{"t":"Große Bowl cremeweiß-glänzend | Nia","pt":"Salatbowl","q":1}]},{"d":"2026-05-13","o":"#209748","c":"Maike S.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Kleiner gerillter Teller cremeweiß | Nia","pt":"Geschirr","q":1}]},{"d":"2026-05-13","o":"#209757","c":"Enise Ü.","l":"DE","n":[{"k":"Paket zurückgekommen","v":"carrier","q":1}],"p":[{"t":"Beige Musselin Einzelbettwäsche | Haven","pt":"Bettwäsche","q":1},{"t":"Weiße Musselin Einzelbettwäsche | Haven","pt":"Bettwäsche","q":1}]},{"d":"2026-05-13","o":"#209758","c":"Anna K.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Beige Musselin Einzelbettwäsche | Haven","pt":"Bettwäsche","q":1}]},{"d":"2026-05-13","o":"#209759","c":"Serpil N.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Große Bowl cremeweiß-glänzend | Nia","pt":"Salatbowl","q":1}]},{"d":"2026-05-13","o":"#209761","c":"Tugba K.","l":"DK","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großer Teller cremeweiß-glänzend | Nia","pt":"Geschirr","q":1}]},{"d":"2026-05-13","o":"#209763","c":"Melih A.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Glas Wellen-Design | Mykonos","pt":"Trinkglas","q":1},{"t":"Kleines organisches Glas | Alaska","pt":"Trinkglas","q":1},{"t":"Glas eckiges Design | Kuba","pt":"Trinkglas","q":1}]},{"d":"2026-05-13","o":"#209764","c":"Volker L.","l":"DE","n":[{"k":"Defekt/Bruch","v":"produkt","q":1}],"p":[{"t":"Geriffeltes Weinglas | Paris","pt":"Weinglas","q":1}]},{"d":"2026-05-13","o":"#209768","c":"Diana T.","l":"AT","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Geschirrset matt Cremeweiß | Nia","pt":"Geschirr","q":1}]},{"d":"2026-05-13","o":"#209777","c":"Daniela R.","l":"CH","n":[{"k":"Defekt/Bruch","v":"produkt","q":1}],"p":[{"t":"Große Bowl Ø27cm in Cremeweiß matt | Nia","pt":"Salatbowl","q":2},{"t":"Großer Teller cremeweiß-matt | Nia","pt":"Geschirr","q":1}]},{"d":"2026-05-13","o":"#209778","c":"Vildan C.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großes organisches Glas | Alaska","pt":"Trinkglas","q":1}]},{"d":"2026-05-12","o":"#209571","c":"Lavia W.","l":"DE","n":[{"k":"Paket zurückgekommen","v":"carrier","q":1}],"p":[{"t":"Salz- und Pfeffermühle Rillen-Design | Marlo","pt":"Gewürzmühlen","q":1}]},{"d":"2026-05-12","o":"#209574","c":"Cedrik S.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Set aus langen & kurzen Glasstrohhalmen | Aris","pt":"Strohhalme","q":1},{"t":"Modernes Glas mit Wölbungen | Nizza","pt":"Trinkglas","q":1}]},{"d":"2026-05-12","o":"#209575","c":"Désirée D.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großes organisches Glas | Alaska","pt":"Trinkglas","q":1},{"t":"Kleines Glas Blumen-Design | Florenz","pt":"Trinkglas","q":1}]},{"d":"2026-05-12","o":"#209581","c":"Ismail S.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Kleines organisches Glas | Alaska","pt":"Trinkglas","q":1},{"t":"Glastasse Streifen-Design | Norway","pt":"Tassen","q":1}]},{"d":"2026-05-12","o":"#209582","c":"Laura P.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Beige Musselin Doppelbettwäsche | Haven","pt":"Bettwäsche","q":1}]},{"d":"2026-05-12","o":"#209583","c":"Dimitrios E.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großer gerillter Teller cremeweiß | Nia","pt":"Geschirr","q":2}]},{"d":"2026-05-12","o":"#209591","c":"Susanne P.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Gerüschte Musselin Einzelbettwäsche Beige | Haven","pt":"Bettwäsche","q":2}]},{"d":"2026-05-12","o":"#209593","c":"Benjamin S.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Geschirrset matt Cremeweiß | Nia","pt":"Geschirr","q":1},{"t":"Großer Löffel matt-gebürstet | Tava","pt":"Sonstige","q":10}]},{"d":"2026-05-12","o":"#209596","c":"Vicktoria H.","l":"DE","n":[{"k":"Defekt/Bruch","v":"produkt","q":1}],"p":[{"t":"Großer gerillter Teller cremeweiß | Nia","pt":"Geschirr","q":1}]},{"d":"2026-05-12","o":"#209598","c":"Marie S.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großer Löffel matt-gebürstet | Tava","pt":"Sonstige","q":5}]},{"d":"2026-05-12","o":"#209600","c":"Dragana K.","l":"CH","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großer gerillter Teller cremeweiß | Nia","pt":"Geschirr","q":6}]},{"d":"2026-05-12","o":"#209609","c":"Larissa S.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"1er Set Tasse cremeweiß-glänzend | Nia","pt":"Keramik Becher/Tassen","q":2}]},{"d":"2026-05-12","o":"#209612","c":"Lara S.","l":"DE","n":[{"k":"Paket zurückgekommen","v":"carrier","q":1}],"p":[{"t":"Geschirrset Cremeweiß gerillt | Nia","pt":"Geschirr","q":1}]},{"d":"2026-05-12","o":"#209613","c":"Kristin J.","l":"DE","n":[{"k":"Defekt/Bruch","v":"produkt","q":1}],"p":[{"t":"Geriffeltes großes Glas | Paris","pt":"Trinkglas","q":1}]},{"d":"2026-05-12","o":"#209615","c":"Jennifer M.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Weinglas im organischen Design | Alaska","pt":"Weinglas","q":1}]},{"d":"2026-05-11","o":"#209381","c":"Isabella S.","l":"DE","n":[{"k":"Paket zurückgekommen","v":"carrier","q":1}],"p":[{"t":"Glastasse Streifen-Design | Norway","pt":"Tassen","q":1},{"t":"12er Gläser-Set + GRATIS Karaffe | Paris","pt":"Karaffe & Gläser-Set","q":1}]},{"d":"2026-05-11","o":"#209382","c":"Baris E.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großes Aufbewahrungsglas | Caya","pt":"Aufbewahrung","q":1},{"t":"Mittleres Aufbewahrungsglas | Caya","pt":"Aufbewahrung","q":1}]},{"d":"2026-05-11","o":"#209384","c":"Leander F.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großes Aufbewahrungsglas | Caya","pt":"Aufbewahrung","q":1}]},{"d":"2026-05-11","o":"#209385","c":"Maria D.","l":"DE","n":[{"k":"Paket zurückgekommen","v":"carrier","q":1}],"p":[{"t":"Großes organisches Glas mit Karaffe | Alaska","pt":"Karaffe & Gläser-Set","q":1}]},{"d":"2026-05-11","o":"#209387","c":"Mag.Michaela S.","l":"AT","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Silikon Untersetzer im organischen Design | Elou","pt":"Untersetzer","q":1}]},{"d":"2026-05-11","o":"#209390","c":"Pelin T.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Geriffelte Glastasse (300ml) | Paris","pt":"Tassen","q":1}]},{"d":"2026-05-11","o":"#209391","c":"Viviana C.","l":"DE","n":[{"k":"Defekt/Bruch","v":"produkt","q":1}],"p":[{"t":"Kleines organisches Glas | Alaska","pt":"Trinkglas","q":1}]},{"d":"2026-05-11","o":"#209392","c":"Viktoriia C.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großer gerillter Teller cremeweiß | Nia","pt":"Geschirr","q":1}]},{"d":"2026-05-11","o":"#209394","c":"Radka B.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Karaffe im organischen Design | Alaska","pt":"Karaffe","q":1}]},{"d":"2026-05-11","o":"#209395","c":"Natalie L.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Große Bowl Ø27cm in Cremeweiß gerillt | Nia","pt":"Salatbowl","q":1},{"t":"Kleine Bowl cremeweiß-glänzend | Nia","pt":"Salatbowl","q":1}]},{"d":"2026-05-11","o":"#209397","c":"Nicola K.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Glasstrohhalme Knick-Design 4er Set | Lani","pt":"Strohhalme","q":1},{"t":"Aufbewahrungsglas Set | Caya","pt":"Aufbewahrung","q":1}]},{"d":"2026-05-11","o":"#209399","c":"Nina P.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Acryl Untersetzer | Holly","pt":"Untersetzer","q":1},{"t":"Glas eckiges Design | Kuba","pt":"Trinkglas","q":1}]},{"d":"2026-05-11","o":"#209400","c":"Karim A.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Cappuccino Keramik Becher Beige | Faro","pt":"Keramik Becher/Tassen","q":1}]},{"d":"2026-05-11","o":"#209403","c":"Rebecca E.","l":"AT","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großer gerillter Teller cremeweiß | Nia","pt":"Geschirr","q":1}]},{"d":"2026-05-11","o":"#209404","c":"Marie-Kristin K.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großer gerillter Teller cremeweiß | Nia","pt":"Geschirr","q":1}]},{"d":"2026-05-11","o":"#209405","c":"Isabel P.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Große gerillte Bowl cremeweiß | Nia","pt":"Salatbowl","q":1}]},{"d":"2026-05-11","o":"#209410","c":"Aleyna Ö.","l":"DE","n":[{"k":"Paket zurückgekommen","v":"carrier","q":1}],"p":[{"t":"Organischer Keramik Becher Cremeweiß | Alaska","pt":"Keramik Becher/Tassen","q":1},{"t":"Silikon Untersetzer im organischen Design | Elou","pt":"Untersetzer","q":4}]},{"d":"2026-05-11","o":"#209412","c":"Rico Z.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Matcha Set mit Löffel & Besen + Halter | Akio","pt":"Matcha-Set","q":1}]},{"d":"2026-05-11","o":"#209414","c":"Simon G.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Cappuccino Keramik Becher Beige | Faro","pt":"Keramik Becher/Tassen","q":1}]},{"d":"2026-05-11","o":"#209416","c":"Lara Tatjana W.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großer Teller cremeweiß-glänzend | Nia","pt":"Geschirr","q":1},{"t":"Große Bowl cremeweiß-glänzend | Nia","pt":"Salatbowl","q":1}]},{"d":"2026-05-11","o":"#209418","c":"Nico K.","l":"DE","n":[{"k":"Defekt/Bruch","v":"produkt","q":1}],"p":[{"t":"Großer Löffel matt-gebürstet | Tava","pt":"Sonstige","q":5}]},{"d":"2026-05-11","o":"#209421","c":"Tara P.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Dunkelbraune Musselin Doppelbettwäsche | Haven","pt":"Bettwäsche","q":1}]},{"d":"2026-05-11","o":"#209424","c":"Julia K.","l":"AT","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großes organisches Glas | Alaska","pt":"Trinkglas","q":1}]},{"d":"2026-05-11","o":"#209425","c":"Lara O.","l":"CH","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großer gerillter Teller cremeweiß | Nia","pt":"Geschirr","q":1}]},{"d":"2026-05-11","o":"#209426","c":"Ursula C.","l":"AT","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Große Bowl cremeweiß-glänzend | Nia","pt":"Salatbowl","q":1}]},{"d":"2026-05-11","o":"#209427","c":"Veronika A.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Lange Glasstrohhalme 8er Set | Aris","pt":"Strohhalme","q":1}]},{"d":"2026-05-11","o":"#209430","c":"Lidia L.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Kleiner Teller cremeweiß-glänzend | Nia","pt":"Geschirr","q":1}]},{"d":"2026-05-08","o":"#208487","c":"Frau F.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großer Teller cremeweiß-matt | Nia","pt":"Geschirr","q":1},{"t":"Große Bowl cremeweiß-matt | Nia","pt":"Salatbowl","q":1}]},{"d":"2026-05-08","o":"#208489","c":"Tanja G.","l":"CH","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Große Bowl cremeweiß-glänzend | Nia","pt":"Salatbowl","q":2}]},{"d":"2026-05-08","o":"#208491","c":"Maha A.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großer Teller cremeweiß-matt | Nia","pt":"Geschirr","q":1}]},{"d":"2026-05-08","o":"#208493","c":"Maria I.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Modernes Glas mit Wölbungen | Nizza","pt":"Trinkglas","q":1}]},{"d":"2026-05-08","o":"#208494","c":"Sandra S.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großer Teller cremeweiß-glänzend | Nia","pt":"Geschirr","q":1}]},{"d":"2026-05-08","o":"#208495","c":"Isabel P.","l":"DE","n":[{"k":"Defekt/Bruch","v":"produkt","q":1}],"p":[{"t":"Große gerillte Bowl cremeweiß | Nia","pt":"Salatbowl","q":3},{"t":"Großer gerillter Teller cremeweiß | Nia","pt":"Geschirr","q":2},{"t":"Kleiner gerillter Teller cremeweiß | Nia","pt":"Geschirr","q":1}]},{"d":"2026-05-08","o":"#208497","c":"Ludmila B.","l":"CH","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Kleiner Teller Cremeweiß Einzel","pt":"Geschirr","q":1}]},{"d":"2026-05-08","o":"#208498","c":"Nina K.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großer Teller cremeweiß-glänzend | Nia","pt":"Geschirr","q":1}]},{"d":"2026-05-08","o":"#208500","c":"Aylin K.","l":"DE","n":[{"k":"Defekt/Bruch","v":"produkt","q":1}],"p":[{"t":"Große Bowl Ø27cm in Cremeweiß matt | Nia","pt":"Salatbowl","q":1}]},{"d":"2026-05-08","o":"#208503","c":"Ray S.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Kleines organisches Glas | Alaska","pt":"Trinkglas","q":1}]},{"d":"2026-05-08","o":"#208505","c":"Frank E.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Kleines organisches Glas | Alaska","pt":"Trinkglas","q":1}]},{"d":"2026-05-08","o":"#208507","c":"Hanan O.","l":"CH","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Kleines organisches Glas | Alaska","pt":"Trinkglas","q":1},{"t":"Beige Servietten mit Serviettenring 6er Set | Kyla & Rina","pt":"Servietten","q":1}]},{"d":"2026-05-08","o":"#208509","c":"Franziska P.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großer Teller cremeweiß-matt | Nia","pt":"Geschirr","q":2}]},{"d":"2026-05-08","o":"#208516","c":"Arwen H.","l":"DE","n":[{"k":"Defekt/Bruch","v":"produkt","q":1}],"p":[{"t":"Großer gerillter Teller cremeweiß | Nia","pt":"Geschirr","q":1},{"t":"Kleiner gerillter Teller cremeweiß | Nia","pt":"Geschirr","q":4}]},{"d":"2026-05-08","o":"#208517","c":"Berfin Ö.","l":"DE","n":[{"k":"Defekt/Bruch","v":"produkt","q":1}],"p":[{"t":"Großes organisches Glas mit Karaffe | Alaska","pt":"Karaffe & Gläser-Set","q":1},{"t":"Großes Glas Streifen-Design | Norway","pt":"Trinkglas","q":1}]},{"d":"2026-05-08","o":"#208518","c":"Norman G.","l":"DE","n":[{"k":"Paket zurückgekommen","v":"carrier","q":1}],"p":[{"t":"Gerüschte Musselin Einzelbettwäsche Beige | Haven","pt":"Bettwäsche","q":2}]},{"d":"2026-05-08","o":"#208520","c":"Ayse K.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Geriffeltes großes Glas | Paris","pt":"Trinkglas","q":1}]},{"d":"2026-05-08","o":"#208532","c":"Janine K.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Gerüschte Musselin Einzelbettwäsche Beige | Haven","pt":"Bettwäsche","q":2}]},{"d":"2026-05-08","o":"#208535","c":"Lisa-Marie N.","l":"DE","n":[{"k":"Defekt/Bruch","v":"produkt","q":1}],"p":[{"t":"Großer Teller cremeweiß-glänzend | Nia","pt":"Geschirr","q":6},{"t":"Kleiner Teller cremeweiß-glänzend | Nia","pt":"Geschirr","q":3}]},{"d":"2026-05-08","o":"#208537","c":"Lukas S.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Große Bowl cremeweiß-matt | Nia","pt":"Salatbowl","q":1},{"t":"Großer Teller cremeweiß-matt | Nia","pt":"Geschirr","q":3}]},{"d":"2026-05-08","o":"#208539","c":"Fabian R.","l":"DE","n":[{"k":"Defekt/Bruch","v":"produkt","q":1}],"p":[{"t":"Kleiner Teller cremeweiß-matt | Nia","pt":"Geschirr","q":2}]},{"d":"2026-05-08","o":"#208542","c":"Cigdem B.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Keramik Becher in organischem Design | Lyon","pt":"Keramik Becher/Tassen","q":1}]},{"d":"2026-05-08","o":"#208546","c":"Alexandra I.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Geriffeltes Weinglas | Paris","pt":"Weinglas","q":1},{"t":"12er Gläser-Set + GRATIS Karaffe | Paris","pt":"Karaffe & Gläser-Set","q":1},{"t":"Dipschalen 6er Set in Cremeweiß matt | Nia","pt":"Dipschale","q":1},{"t":"Große Bowl Ø27cm in Cremeweiß matt | Nia","pt":"Salatbowl","q":1},{"t":"Tassen ohne Henkel 6er Set in Cremeweiß matt | Nia","pt":"Keramik Becher/Tassen","q":1}]},{"d":"2026-05-08","o":"#208549","c":"Lisa S.","l":"DE","n":[{"k":"Paket zurückgekommen","v":"carrier","q":1}],"p":[{"t":"Bestseller Bundle 12er Gläser-Set","pt":"Trinkglas","q":1}]},{"d":"2026-05-08","o":"#208551","c":"Arwen H.","l":"DE","n":[{"k":"Defekt/Bruch","v":"produkt","q":1}],"p":[{"t":"Großer gerillter Teller cremeweiß | Nia","pt":"Geschirr","q":4},{"t":"Kleiner gerillter Teller cremeweiß | Nia","pt":"Geschirr","q":1}]},{"d":"2026-05-07","o":"#208309","c":"Aleyna Ö.","l":"DE","n":[{"k":"Paket zurückgekommen","v":"carrier","q":1}],"p":[{"t":"Organischer Keramik Becher Cremeweiß | Alaska","pt":"Keramik Becher/Tassen","q":1},{"t":"Tasse mit Untertasse in Cremeweiß glänzend | Nia","pt":"Tassen","q":1},{"t":"Silikon Untersetzer im organischen Design | Elou","pt":"Untersetzer","q":4}]},{"d":"2026-05-07","o":"#208312","c":"Marina S.","l":"AT","n":[{"k":"Paket zurückgekommen","v":"carrier","q":1}],"p":[{"t":"Großes Glas Bogen-Design | Rom","pt":"Trinkglas","q":3},{"t":"Karaffe im Bogen-Design | Rom","pt":"Karaffe","q":3},{"t":"Kleines Glas Bogen-Design | Rom","pt":"Trinkglas","q":3}]},{"d":"2026-05-07","o":"#208315","c":"Miriam M.","l":"DE","n":[{"k":"Defekt/Bruch","v":"produkt","q":1}],"p":[{"t":"Geriffeltes Glas mit Glasdeckel & Glasstrohhalm | Paris","pt":"Trinkglas","q":1}]},{"d":"2026-05-07","o":"#208318","c":"Patricia C.","l":"CH","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großer gerillter Teller cremeweiß | Nia","pt":"Geschirr","q":2}]},{"d":"2026-05-07","o":"#208323","c":"Ruslan Z.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großer Teller cremeweiß-glänzend | Nia","pt":"Geschirr","q":1}]},{"d":"2026-05-07","o":"#208325","c":"Jessica B.","l":"CH","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großer gerillter Teller cremeweiß | Nia","pt":"Geschirr","q":1}]},{"d":"2026-05-07","o":"#208332","c":"Julia F.","l":"AT","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Kleines organisches Glas | Alaska","pt":"Trinkglas","q":1}]},{"d":"2026-05-07","o":"#208334","c":"Bianca F.","l":"AT","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Kleines organisches Glas | Alaska","pt":"Trinkglas","q":1}]},{"d":"2026-05-07","o":"#208340","c":"Véronique D.","l":"BE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Kleine gerillte Bowl cremeweiß | Nia","pt":"Salatbowl","q":1}]},{"d":"2026-05-07","o":"#208342","c":"Verena C.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Kleines organisches Glas | Alaska","pt":"Trinkglas","q":1}]},{"d":"2026-05-07","o":"#208343","c":"Verena C.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Kleines organisches Glas | Alaska","pt":"Trinkglas","q":1}]},{"d":"2026-05-07","o":"#208345","c":"Ibrahim E.","l":"DK","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Kleiner gerillter Teller cremeweiß | Nia","pt":"Geschirr","q":1}]},{"d":"2026-05-07","o":"#208353","c":"Lisa A.","l":"AT","n":[{"k":"Defekt/Bruch","v":"produkt","q":1}],"p":[{"t":"Großer Teller cremeweiß-matt | Nia","pt":"Geschirr","q":1}]},{"d":"2026-05-07","o":"#208356","c":"kristyna U.","l":"CZ","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großer gerillter Teller cremeweiß | Nia","pt":"Geschirr","q":1}]},{"d":"2026-05-07","o":"#208361","c":"Carlo G.","l":"DE","n":[{"k":"Defekt/Bruch","v":"produkt","q":1}],"p":[{"t":"Glas eckiges Design | Kuba","pt":"Trinkglas","q":2}]},{"d":"2026-05-07","o":"#208364","c":"Sarah B.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Geriffeltes Champagnerglas | Paris","pt":"Weinglas","q":1}]},{"d":"2026-05-06","o":"#208102","c":"Tara O.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großer Teller cremeweiß-matt | Nia","pt":"Geschirr","q":1}]},{"d":"2026-05-06","o":"#208103","c":"Selver C.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Silikon Untersetzer im organischen Design | Elou","pt":"Untersetzer","q":1},{"t":"Organischer Keramik Becher Cremeweiß | Alaska","pt":"Keramik Becher/Tassen","q":1}]},{"d":"2026-05-06","o":"#208105","c":"Inessa S.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Kleines organisches Glas | Alaska","pt":"Trinkglas","q":1}]},{"d":"2026-05-06","o":"#208108","c":"Alisya Y.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großer Teller cremeweiß-glänzend | Nia","pt":"Geschirr","q":1}]},{"d":"2026-05-06","o":"#208110","c":"Cansu B.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Keramiktasse Perlenhenkel Beige | Chloé","pt":"Keramik Becher/Tassen","q":2}]},{"d":"2026-05-06","o":"#208114","c":"Sophie F.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Geriffeltes Weinglas | Paris","pt":"Weinglas","q":1}]},{"d":"2026-05-06","o":"#208117","c":"Annabelle S.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Khakifarbene Musselin Einzelbettwäsche | Haven","pt":"Bettwäsche","q":2}]},{"d":"2026-05-06","o":"#208119","c":"Nele S.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großer gerillter Teller cremeweiß | Nia","pt":"Geschirr","q":1}]},{"d":"2026-05-06","o":"#208122","c":"Diana H.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Kleines organisches Glas | Alaska","pt":"Trinkglas","q":1}]},{"d":"2026-05-06","o":"#208124","c":"Melina B.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Große Bowl cremeweiß-glänzend | Nia","pt":"Salatbowl","q":1}]},{"d":"2026-05-06","o":"#208125","c":"Karin B.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Kleines organisches Glas | Alaska","pt":"Trinkglas","q":1}]},{"d":"2026-05-06","o":"#208128","c":"Ariane D.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großer gerillter Teller cremeweiß | Nia","pt":"Geschirr","q":1}]},{"d":"2026-05-06","o":"#208132","c":"Celina J.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Kleiner Teller cremeweiß-glänzend | Nia","pt":"Geschirr","q":1}]},{"d":"2026-05-06","o":"#208134","c":"Valeriano R.","l":"DE","n":[{"k":"Paket zurückgekommen","v":"carrier","q":1}],"p":[{"t":"Keramik Becher im geriffeltem Design Beige | Paris","pt":"Keramik Becher/Tassen","q":1}]},{"d":"2026-05-06","o":"#208149","c":"Eylem S.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Kleiner Teller cremeweiß-glänzend | Nia","pt":"Geschirr","q":1}]},{"d":"2026-05-05","o":"#207928","c":"Denise M.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Telleruntersetzer Taupe/Creme | Jade","pt":"Untersetzer","q":4}]},{"d":"2026-05-05","o":"#207929","c":"Anastasiya K.","l":"CH","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großer Teller cremeweiß-glänzend | Nia","pt":"Geschirr","q":1}]},{"d":"2026-05-05","o":"#207967","c":"Julian S.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Geriffeltes großes Glas | Paris","pt":"Trinkglas","q":1}]},{"d":"2026-05-05","o":"#207968","c":"Diana L.","l":"DE","n":[{"k":"Defekt/Bruch","v":"produkt","q":1}],"p":[{"t":"Geriffeltes Weinglas | Paris","pt":"Weinglas","q":1}]},{"d":"2026-05-05","o":"#207971","c":"Mathias V.","l":"DE","n":[{"k":"Defekt/Bruch","v":"produkt","q":1}],"p":[{"t":"Geriffeltes Weinglas | Paris","pt":"Weinglas","q":1}]},{"d":"2026-05-05","o":"#207972","c":"Lina S.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Geriffeltes Glas im eckigen Design | Kuba","pt":"Trinkglas","q":1}]},{"d":"2026-05-05","o":"#207973","c":"Tanja R.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Deckel | Paris","pt":"Sonstige","q":1}]},{"d":"2026-05-05","o":"#207974","c":"Angelina S.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großer Teller cremeweiß-matt | Nia","pt":"Geschirr","q":1}]},{"d":"2026-05-05","o":"#207977","c":"Mustafa C.","l":"DE","n":[{"k":"Defekt/Bruch","v":"produkt","q":1}],"p":[{"t":"Kleiner gerillter Teller cremeweiß | Nia","pt":"Geschirr","q":1}]},{"d":"2026-05-05","o":"#207979","c":"Danny Esteban R.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großer Teller cremeweiß-glänzend | Nia","pt":"Geschirr","q":1}]},{"d":"2026-05-05","o":"#207981","c":"Stefanie H.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Geriffelte Karaffe & Gläser-Set | Paris","pt":"Karaffe & Gläser-Set","q":1},{"t":"Glas Wellen-Design | Mykonos","pt":"Trinkglas","q":1}]},{"d":"2026-05-04","o":"#207700","c":"Daria A.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Serviettenringe Gold 6er Set | Tye","pt":"Serviettenringe","q":1}]},{"d":"2026-05-04","o":"#207704","c":"Jamilcia M.","l":"NL","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Große Bowl cremeweiß-matt | Nia","pt":"Salatbowl","q":1}]},{"d":"2026-05-04","o":"#207706","c":"Antonina G.","l":"IT","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Teller- und Glasuntersetzer Taupe/Creme | Jade","pt":"Untersetzer","q":1},{"t":"Gerüschte Musselin Einzelbettwäsche Beige | Haven","pt":"Bettwäsche","q":2}]},{"d":"2026-05-04","o":"#207708","c":"Carolin B.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Geriffeltes Weinglas | Paris","pt":"Weinglas","q":1}]},{"d":"2026-05-04","o":"#207709","c":"Nina R.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Kleiner gerillter Teller cremeweiß | Nia","pt":"Geschirr","q":1}]},{"d":"2026-05-04","o":"#207712","c":"Esra A.","l":"AT","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Cappuccino Keramik Becher Beige | Faro","pt":"Keramik Becher/Tassen","q":1}]},{"d":"2026-05-04","o":"#207714","c":"Jasmina K.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Geriffeltes Glas mit Glasdeckel & Glasstrohhalm | Paris","pt":"Trinkglas","q":1}]},{"d":"2026-05-04","o":"#207715","c":"Jasmina K.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Geriffeltes Glas mit Glasdeckel & Glasstrohhalm | Paris","pt":"Trinkglas","q":1}]},{"d":"2026-05-04","o":"#207717","c":"Katharina B.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Beige Musselin Einzelbettwäsche | Haven","pt":"Bettwäsche","q":1}]},{"d":"2026-05-04","o":"#207721","c":"Doga Ö.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großes organisches Glas | Alaska","pt":"Trinkglas","q":1}]},{"d":"2026-05-04","o":"#207727","c":"Yildiz, Y.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"1er Set Tasse cremeweiß-matt | Nia","pt":"Keramik Becher/Tassen","q":1}]},{"d":"2026-05-04","o":"#207728","c":"Noah W.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Kleines organisches Glas | Alaska","pt":"Trinkglas","q":1}]},{"d":"2026-05-04","o":"#207737","c":"Zöhre S.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Kleine Bowl cremeweiß-matt | Nia","pt":"Salatbowl","q":1}]},{"d":"2026-05-04","o":"#207748","c":"Luna Heß L.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Kleines organisches Glas | Alaska","pt":"Trinkglas","q":1}]},{"d":"2026-05-03","o":"#207454","c":"Dimitrios E.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großer Teller cremeweiß-glänzend | Nia","pt":"Geschirr","q":2}]},{"d":"2026-04-30","o":"#206924","c":"Luca K.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großer Teller cremeweiß-glänzend | Nia","pt":"Geschirr","q":2}]},{"d":"2026-04-30","o":"#206925","c":"Oliver K.","l":"DE","n":[{"k":"Defekt/Bruch","v":"produkt","q":1}],"p":[{"t":"Großer Teller cremeweiß-matt | Nia","pt":"Geschirr","q":1}]},{"d":"2026-04-30","o":"#206932","c":"Katharina D.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Cappuccino Keramik Becher Beige | Faro","pt":"Keramik Becher/Tassen","q":1}]},{"d":"2026-04-30","o":"#206935","c":"Leonie S.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großer Teller cremeweiß-glänzend | Nia","pt":"Geschirr","q":1}]},{"d":"2026-04-30","o":"#206955","c":"felicia R.","l":"NL","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Geschirrset Cremeweiß | Nia","pt":"Geschirr","q":1}]},{"d":"2026-04-30","o":"#206958","c":"Emilie F.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Kleiner Teller cremeweiß-glänzend | Nia","pt":"Geschirr","q":1}]},{"d":"2026-04-30","o":"#206961","c":"Emilie F.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Kleiner gerillter Teller cremeweiß | Nia","pt":"Geschirr","q":1}]},{"d":"2026-04-29","o":"#206742","c":"Birgit G.","l":"AT","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Glasdeckel vom Geriffelten Glas - Single","pt":"Sonstige","q":2}]},{"d":"2026-04-29","o":"#206745","c":"Senay A.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Set aus großer und kleiner Keramik Vase in Beige | Flora","pt":"Vasen","q":1},{"t":"Großer gerillter Teller cremeweiß | Nia","pt":"Geschirr","q":3},{"t":"Kleiner gerillter Teller cremeweiß | Nia","pt":"Geschirr","q":3}]},{"d":"2026-04-29","o":"#206748","c":"Jelena E.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großer Teller cremeweiß-matt | Nia","pt":"Geschirr","q":1}]},{"d":"2026-04-29","o":"#206752","c":"Angelika K.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Kleine Bowl cremeweiß-matt | Nia","pt":"Salatbowl","q":1}]},{"d":"2026-04-29","o":"#206756","c":"Michelle M.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Tasse mit Untertasse in Cremeweiß glänzend | Nia","pt":"Tassen","q":1}]},{"d":"2026-04-29","o":"#206761","c":"Markus A.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großer Teller cremeweiß-glänzend | Nia","pt":"Geschirr","q":1}]},{"d":"2026-04-29","o":"#206763","c":"Miriam M.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Glasdeckel vom Geriffelten Glas - Single","pt":"Sonstige","q":1}]},{"d":"2026-04-29","o":"#206766","c":"Jasmine J.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Geriffeltes Glas mit Glasdeckel & Glasstrohhalm | Paris","pt":"Trinkglas","q":1}]},{"d":"2026-04-29","o":"#206770","c":"Miriam G.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Geriffeltes kleines Glas | Paris","pt":"Trinkglas","q":1}]},{"d":"2026-04-29","o":"#206772","c":"Sarah C.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großer Teller cremeweiß-matt | Nia","pt":"Geschirr","q":1}]},{"d":"2026-04-29","o":"#206773","c":"Aysegül B.","l":"DK","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Beige Musselin Einzelbettwäsche | Haven","pt":"Bettwäsche","q":2}]},{"d":"2026-04-29","o":"#206775","c":"Nina L.","l":"AT","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großer Teller cremeweiß-glänzend | Nia","pt":"Geschirr","q":1}]},{"d":"2026-04-29","o":"#206777","c":"Ayse Ü.","l":"DE","n":[{"k":"Defekt/Bruch","v":"produkt","q":1}],"p":[{"t":"Großes organisches Glas | Alaska","pt":"Trinkglas","q":2}]},{"d":"2026-04-29","o":"#206782","c":"Arina L.","l":"DE","n":[{"k":"Paket zurückgekommen","v":"carrier","q":1}],"p":[{"t":"Salz- und Pfeffermühle Rillen-Design | Marlo","pt":"Gewürzmühlen","q":1}]},{"d":"2026-04-29","o":"#206783","c":"Nadja V.","l":"DE","n":[{"k":"Defekt/Bruch","v":"produkt","q":1}],"p":[{"t":"Kleines organisches Glas | Alaska","pt":"Trinkglas","q":1}]},{"d":"2026-04-29","o":"#206784","c":"Arina L.","l":"DE","n":[{"k":"Paket zurückgekommen","v":"carrier","q":1}],"p":[{"t":"Salz- und Pfeffermühle Rillen-Design | Marlo","pt":"Gewürzmühlen","q":1}]},{"d":"2026-04-29","o":"#206785","c":"Arina L.","l":"DE","n":[{"k":"Paket zurückgekommen","v":"carrier","q":1}],"p":[{"t":"Salz- und Pfeffermühle Rillen-Design | Marlo","pt":"Gewürzmühlen","q":1}]},{"d":"2026-04-28","o":"#206542","c":"Celine G.","l":"DE","n":[{"k":"Paket zurückgekommen","v":"carrier","q":1}],"p":[{"t":"Beige Musselin Doppelbettwäsche | Haven","pt":"Bettwäsche","q":1}]},{"d":"2026-04-28","o":"#206545","c":"Annika K.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großer Teller cremeweiß-matt | Nia","pt":"Geschirr","q":1}]},{"d":"2026-04-28","o":"#206553","c":"Joana R.","l":"CH","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großer gerillter Teller cremeweiß | Nia","pt":"Geschirr","q":3}]},{"d":"2026-04-28","o":"#206561","c":"Mine E.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Keramik Becher in organischem Design | Lyon","pt":"Keramik Becher/Tassen","q":1}]},{"d":"2026-04-28","o":"#206565","c":"Semun B.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Große Bowl cremeweiß-glänzend | Nia","pt":"Salatbowl","q":1}]},{"d":"2026-04-28","o":"#206567","c":"Faliveni P.","l":"DE","n":[{"k":"Defekt/Bruch","v":"produkt","q":1}],"p":[{"t":"Geriffeltes Weinglas | Paris","pt":"Weinglas","q":1}]},{"d":"2026-04-28","o":"#206583","c":"Jörg B.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Geschirrset Cremeweiß gerillt | Nia","pt":"Geschirr","q":1}]},{"d":"2026-04-28","o":"#206592","c":"Susanne L.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Serviettenringe Gold 6er Set | Rina","pt":"Serviettenringe","q":1},{"t":"Tassen ohne Henkel 6er Set in Cremeweiß | Nia","pt":"Keramik Becher/Tassen","q":1}]},{"d":"2026-04-27","o":"#206309","c":"Christina W.","l":"DE","n":[{"k":"Defekt/Bruch","v":"produkt","q":1}],"p":[{"t":"Tassen mit Henkel in Cremeweiß glänzend | Nia","pt":"Tassen","q":1},{"t":"Große Bowl cremeweiß-glänzend | Nia","pt":"Salatbowl","q":1},{"t":"Großer Teller cremeweiß-glänzend | Nia","pt":"Geschirr","q":1},{"t":"Kleiner Teller cremeweiß-glänzend | Nia","pt":"Geschirr","q":1}]},{"d":"2026-04-27","o":"#206310","c":"Klara L.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Telleruntersetzer Taupe/Creme | Jade","pt":"Untersetzer","q":1}]},{"d":"2026-04-27","o":"#206311","c":"Dragana K.","l":"CH","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großer gerillter Teller cremeweiß | Nia","pt":"Geschirr","q":6}]},{"d":"2026-04-27","o":"#206313","c":"Verena C.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Kleines organisches Glas | Alaska","pt":"Trinkglas","q":1}]},{"d":"2026-04-27","o":"#206315","c":"Joy R.","l":"CH","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großer gerillter Teller cremeweiß | Nia","pt":"Geschirr","q":3}]},{"d":"2026-04-27","o":"#206317","c":"Semah A.","l":"FR","n":[{"k":"Paket zurückgekommen","v":"carrier","q":1}],"p":[{"t":"Organischer Keramik Becher Cremeweiß | Alaska","pt":"Keramik Becher/Tassen","q":2}]},{"d":"2026-04-27","o":"#206325","c":"Jonathan P.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großer Teller cremeweiß-glänzend | Nia","pt":"Geschirr","q":1}]},{"d":"2026-04-27","o":"#206326","c":"Kathrin F.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Geschirrset Cremeweiß gerillt | Nia","pt":"Geschirr","q":2}]},{"d":"2026-04-27","o":"#206335","c":"Zala E.","l":"SI","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Geriffelte Karaffe (1550ml) | Paris","pt":"Karaffe","q":1}]},{"d":"2026-04-27","o":"#206338","c":"Tamika B.","l":"CH","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großer gerillter Teller cremeweiß | Nia","pt":"Geschirr","q":1}]},{"d":"2026-04-27","o":"#206343","c":"Robert B.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Organischer Keramik Becher Cremeweiß | Alaska","pt":"Keramik Becher/Tassen","q":1},{"t":"Geriffeltes Champagnerglas | Paris","pt":"Weinglas","q":1}]},{"d":"2026-04-27","o":"#206344","c":"Robert B.","l":"DE","n":[{"k":"Paket zurückgekommen","v":"carrier","q":1}],"p":[{"t":"Organischer Keramik Becher Cremeweiß | Alaska","pt":"Keramik Becher/Tassen","q":1},{"t":"Geriffeltes Champagnerglas | Paris","pt":"Weinglas","q":1}]},{"d":"2026-04-27","o":"#206347","c":"Robert B.","l":"DE","n":[{"k":"Paket zurückgekommen","v":"carrier","q":1}],"p":[{"t":"Keramik Becher im Wellen-Design | Akio","pt":"Keramik Becher/Tassen","q":1},{"t":"Matcha Set mit Löffel & Besen + Halter | Akio","pt":"Matcha-Set","q":1}]},{"d":"2026-04-27","o":"#206355","c":"Isa A.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großes Glas Streifen-Design | Norway","pt":"Trinkglas","q":1}]},{"d":"2026-04-27","o":"#206360","c":"Karoline S.","l":"DE","n":[{"k":"Defekt/Bruch","v":"produkt","q":1}],"p":[{"t":"Wandregal aus dunklem Holz | Elva","pt":"Wandregal","q":1}]},{"d":"2026-04-27","o":"#206364","c":"Luisa M.","l":"DE","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Kleine Bowl cremeweiß-glänzend | Nia","pt":"Salatbowl","q":1}]},{"d":"2026-04-24","o":"#205827","c":"Anesa A.","l":"AT","n":[{"k":"Sonstiges (alt)","v":"sonstiges","q":1}],"p":[{"t":"Großes Aufbewahrungsglas | Caya","pt":"Aufbewahrung","q":2}]}]}</script>
 
 <script>
 (function(){
@@ -148,6 +213,20 @@ var CASES = DATA.cases || [];
 
 var VCOL = {lager:'#6b8e7f',produkt:'#c4934a',carrier:'#7d8fa3',kunde:'#b08968',kulanz:'#a892b8',sonstiges:'#9a9a9a'};
 var VLABEL = {lager:'Lager',produkt:'Produkt',carrier:'Carrier',kunde:'Kunde',kulanz:'Kulanz',sonstiges:'Sonstiges'};
+
+// Konsistente Heatmap-Spaltenreihenfolge
+var REASON_ORDER = ['Defekt/Bruch','Produktionsfehler','Transportschaden','Artikel fehlt','Falscher Artikel','Falsche Menge','Paket zurückgekommen','Packstation','Falsche Adresse','Schweiz','Kulanz','Sonstiges (alt)'];
+
+// V3.1: Länder-Mapping
+var COUNTRY_NAMES = {DE:'Deutschland',AT:'Österreich',CH:'Schweiz',FR:'Frankreich',NL:'Niederlande',BE:'Belgien',FI:'Finnland',IT:'Italien',ES:'Spanien',PL:'Polen',CZ:'Tschechien',DK:'Dänemark',SE:'Schweden',LU:'Luxemburg',GB:'Großbritannien',UK:'Großbritannien',US:'USA',IE:'Irland',PT:'Portugal',HU:'Ungarn',SK:'Slowakei',SI:'Slowenien',HR:'Kroatien',RO:'Rumänien',BG:'Bulgarien',GR:'Griechenland',NO:'Norwegen',EE:'Estland',LV:'Lettland',LT:'Litauen',MT:'Malta',CY:'Zypern',IS:'Island',LI:'Liechtenstein'};
+function countryName(iso2){return COUNTRY_NAMES[iso2] || iso2 || '–'}
+function flagEmoji(iso2){
+  if(!iso2 || iso2.length !== 2) return '';
+  var A = 0x1F1E6;
+  var codeA = iso2.toUpperCase().charCodeAt(0) - 65 + A;
+  var codeB = iso2.toUpperCase().charCodeAt(1) - 65 + A;
+  return String.fromCodePoint(codeA) + String.fromCodePoint(codeB);
+}
 
 function parseDate(s){var p=s.split('-');return new Date(Date.UTC(+p[0],+p[1]-1,+p[2]))}
 function fmtDate(d){return d.toISOString().slice(0,10)}
@@ -164,7 +243,7 @@ document.getElementById('dataHint').textContent = 'Datensatz: ' + fmtDE(MIN_DATE
 document.getElementById('footer').textContent = "7 o'clock · Interner Kundenservice-Report · Vertraulich · Aktualisiert am " + fmtDE(DATA.lastUpdated || MAX_DATE);
 
 function rangeFor(tab){
-  var anchor = MAX_DATE; // "yesterday" fallback
+  var anchor = MAX_DATE;
   if(tab==='yesterday') return {from:anchor,to:anchor};
   if(tab==='7d')   return {from:addDays(anchor,-6),to:anchor};
   if(tab==='30d')  return {from:addDays(anchor,-29),to:anchor};
@@ -178,40 +257,52 @@ function filterCases(from,to){
 }
 
 function aggregate(cases){
-  var total=0, byK={}, byV={}, byDay={}, artikelStats={};
+  var total=0, byK={}, byV={}, byDay={}, artikelStats={}, byPT={}, ptReason={}, ptArtikel={};
+  var byLand={};
   cases.forEach(function(c){
     var caseKats=[];
+    var land = c.l || '??';
+    if(!byLand[land]) byLand[land]={total:0,byK:{},byV:{},byArtikel:{}};
     (c.n||[]).forEach(function(n){
       total += n.q;
       byK[n.k] = (byK[n.k]||0)+n.q;
       byV[n.v] = (byV[n.v]||0)+n.q;
       byDay[c.d] = (byDay[c.d]||0)+n.q;
       caseKats.push(n.k);
+      byLand[land].total += n.q;
+      byLand[land].byK[n.k] = (byLand[land].byK[n.k]||0)+n.q;
+      byLand[land].byV[n.v] = (byLand[land].byV[n.v]||0)+n.q;
     });
     (c.p||[]).forEach(function(p){
       if(!artikelStats[p.t]) artikelStats[p.t] = {total:0,gruende:{}};
+      var pt = p.pt || 'Sonstige';
+      byLand[land].byArtikel[p.t] = (byLand[land].byArtikel[p.t]||0) + (p.q||1);
       caseKats.forEach(function(k){
         artikelStats[p.t].total += 1;
         artikelStats[p.t].gruende[k] = (artikelStats[p.t].gruende[k]||0)+1;
+        // pt-aggregations: pro Case-Kategorie ein Tick
+        byPT[pt] = (byPT[pt]||0) + 1;
+        if(!ptReason[pt]) ptReason[pt]={};
+        ptReason[pt][k] = (ptReason[pt][k]||0)+1;
+        if(!ptArtikel[pt]) ptArtikel[pt]={};
+        ptArtikel[pt][p.t] = (ptArtikel[pt][p.t]||0)+1;
       });
     });
   });
-  return {total:total,byK:byK,byV:byV,byDay:byDay,artikelStats:artikelStats,cases:cases};
+  return {total:total,byK:byK,byV:byV,byDay:byDay,artikelStats:artikelStats,
+          byPT:byPT,ptReason:ptReason,ptArtikel:ptArtikel,byLand:byLand,cases:cases};
 }
 
 function deltaPct(cur,prev){
   if(prev===0) return cur===0 ? 0 : 100;
   return ((cur-prev)/prev)*100;
 }
-
-function deltaHTML(cur,prev,invert){
+function deltaHTML(cur,prev){
   var d = deltaPct(cur,prev);
-  var cls = 'flat', arrow='→';
+  var cls='flat', arrow='→';
   if(Math.abs(d)<0.5){cls='flat';arrow='→'}
-  else if(d>0){cls = invert?'up':'down'; arrow='▲'}
-  else {cls = invert?'down':'up'; arrow='▼'}
-  // Direction: more Neusendungen = bad (red = up). invert false => up=red.
-  // But spec says +rot, -grün => higher numbers red. Keep default.
+  else if(d>0){cls='up';arrow='▲'}
+  else {cls='down';arrow='▼'}
   return '<span class="delta '+cls+'">'+arrow+' '+(d>0?'+':'')+d.toFixed(0)+'%</span>';
 }
 
@@ -225,7 +316,6 @@ function bucketTrend(byDay,from,to){
       values.push(byDay[ds]||0);
     }
   } else if(days<=120){
-    // weekly buckets
     var cur=from;
     while(cur<=to){
       var end=addDays(cur,6); if(end>to) end=to;
@@ -236,7 +326,6 @@ function bucketTrend(byDay,from,to){
       cur=addDays(end,1);
     }
   } else {
-    // monthly
     var cur2=from;
     while(cur2<=to){
       var pd=parseDate(cur2);
@@ -255,6 +344,97 @@ function bucketTrend(byDay,from,to){
 var charts = {};
 function destroyChart(id){if(charts[id]){charts[id].destroy();delete charts[id]}}
 
+function escapeHTML(s){
+  if(s==null) return '';
+  return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]});
+}
+function escapeAttr(s){return escapeHTML(s).replace(/'/g,"&#39;")}
+
+// ============ V3: Heatmap (Produktkategorie x Grund) ============
+function buildHeatmap(agg, container, opts){
+  opts = opts || {};
+  // pts sortiert nach Gesamt absteigend
+  var ptEntries = Object.keys(agg.byPT).map(function(p){return [p, agg.byPT[p]]}).sort(function(a,b){return b[1]-a[1]});
+  if(opts.limit) ptEntries = ptEntries.slice(0, opts.limit);
+  // Welche Gründe kommen vor?
+  var reasonsSet = {};
+  ptEntries.forEach(function(e){
+    var pr = agg.ptReason[e[0]] || {};
+    Object.keys(pr).forEach(function(k){reasonsSet[k]=true});
+  });
+  // Reihenfolge: REASON_ORDER, dann unbekannte am Ende
+  var reasons = REASON_ORDER.filter(function(r){return reasonsSet[r]});
+  Object.keys(reasonsSet).forEach(function(r){if(reasons.indexOf(r)<0) reasons.push(r)});
+
+  if(!ptEntries.length || !reasons.length){
+    container.innerHTML = '<div class="empty">Keine Daten</div>';
+    return;
+  }
+
+  // Top insight
+  var topPT = ptEntries[0];
+  var topReasonForPT = '';
+  var topReasonPct = 0;
+  if(topPT){
+    var rs = agg.ptReason[topPT[0]] || {};
+    var sortedR = Object.keys(rs).map(function(r){return [r,rs[r]]}).sort(function(a,b){return b[1]-a[1]});
+    if(sortedR.length){
+      topReasonForPT = sortedR[0][0];
+      topReasonPct = Math.round(sortedR[0][1]/topPT[1]*100);
+    }
+  }
+  var insightHTML = topReasonForPT
+    ? '<div class="heat-insight"><strong>'+topReasonPct+'%</strong> der Neusendungen in <strong>'+escapeHTML(topPT[0])+'</strong> gehen wegen <strong>'+escapeHTML(topReasonForPT)+'</strong> zurück.</div>'
+    : '';
+
+  // Build table
+  var thead = '<tr><th>Produktkategorie</th>' + reasons.map(function(r){return '<th>'+escapeHTML(r)+'</th>'}).join('') + '<th>Gesamt</th></tr>';
+  var tbody = ptEntries.map(function(e){
+    var pt = e[0], total = e[1];
+    var rs = agg.ptReason[pt] || {};
+    var maxInRow = 0;
+    reasons.forEach(function(r){if((rs[r]||0)>maxInRow) maxInRow=(rs[r]||0)});
+    var cells = reasons.map(function(r){
+      var v = rs[r] || 0;
+      var op = (maxInRow>0 && v>0) ? (v/maxInRow)*0.4 : 0;
+      var style = v>0 ? 'background:rgba(176,72,72,'+op.toFixed(3)+')' : '';
+      var pct = total ? Math.round(v/total*100) : 0;
+      var tt = escapeAttr(pt+' · '+r+' · '+v+' Items · '+pct+'% der Kategorie');
+      return '<td class="'+(v===0?'cell-zero':'')+'" style="'+style+'" title="'+tt+'">'+(v||'·')+'</td>';
+    }).join('');
+    return '<tr><td>'+escapeHTML(pt)+'</td>'+cells+'<td>'+total+'</td></tr>';
+  }).join('');
+
+  container.innerHTML = insightHTML + '<div class="heatmap-wrap"><table class="heatmap"><thead>'+thead+'</thead><tbody>'+tbody+'</tbody></table></div>';
+}
+
+// ============ V3.1: Mini-Länder-Section ============
+function buildCountryMini(agg, container){
+  var entries = Object.keys(agg.byLand).map(function(l){return [l, agg.byLand[l]]})
+    .filter(function(e){return e[1].total>0})
+    .sort(function(a,b){return b[1].total-a[1].total});
+  if(!entries.length){
+    container.innerHTML = '<h4>Verteilung nach Land</h4><div class="empty">Keine Länder-Daten</div>';
+    return;
+  }
+  var total = entries.reduce(function(s,e){return s+e[1].total},0);
+  var pills = entries.map(function(e){
+    var iso = e[0], d = e[1];
+    var pct = total ? Math.round(d.total/total*100) : 0;
+    var topK = Object.keys(d.byK).sort(function(a,b){return d.byK[b]-d.byK[a]})[0];
+    var reasonTxt = topK ? 'meist '+topK : '';
+    return '<div class="country-pill">'
+      +'<span class="flag">'+flagEmoji(iso)+'</span>'
+      +'<span class="cname">'+escapeHTML(countryName(iso))+'</span>'
+      +'<span class="cnum">'+d.total+'</span>'
+      +'<span class="cpct">'+pct+'%</span>'
+      +(reasonTxt?'<span class="creason">'+escapeHTML(reasonTxt)+'</span>':'')
+      +'</div>';
+  }).join('');
+  container.innerHTML = '<h4>Verteilung nach Land</h4><div class="country-pills">'+pills+'</div>';
+}
+
+// ============ Standard Panel ============
 function renderPanel(panelId, from, to, opts){
   opts = opts || {};
   var compare = opts.compare !== false;
@@ -266,7 +446,6 @@ function renderPanel(panelId, from, to, opts){
   var days = diffDays(from,to)+1;
   var perDay = days>0 ? (agg.total/days) : 0;
 
-  // Compare period
   var prevFrom = addDays(from,-days), prevTo = addDays(from,-1);
   var prevAgg = aggregate(filterCases(prevFrom,prevTo));
 
@@ -282,7 +461,7 @@ function renderPanel(panelId, from, to, opts){
     + '<div class="kpi"><div class="lbl">Quote</div><div class="val">–</div><div class="sub">Order-Daten fehlen</div></div>'
     + '<div class="kpi"><div class="lbl">Schnitt / Tag</div><div class="val">'+perDay.toFixed(1)+'</div>'
       + (compare?'<div class="sub">vs. '+(prevAgg.total/days).toFixed(1)+' '+deltaHTML(perDay,prevAgg.total/days)+'</div>':'<div class="sub">'+days+' Tage</div>')+'</div>'
-    + '<div class="kpi"><div class="lbl">Top-Kategorie</div><div class="val" style="font-size:18px;line-height:1.3">'+topK+'</div><div class="sub">'+(agg.byK[topK]||0)+' Items</div></div>';
+    + '<div class="kpi"><div class="lbl">Top-Kategorie</div><div class="val" style="font-size:18px;line-height:1.3">'+escapeHTML(topK)+'</div><div class="sub">'+(agg.byK[topK]||0)+' Items</div></div>';
 
   var katEntries = Object.keys(agg.byK).map(function(k){return [k,agg.byK[k]]}).sort(function(a,b){return b[1]-a[1]});
   var katListHTML = katEntries.length
@@ -292,7 +471,6 @@ function renderPanel(panelId, from, to, opts){
       }).join('')
     : '<div class="empty">Keine Kategorien</div>';
 
-  // Artikel stats
   var artikelArr = Object.keys(agg.artikelStats).map(function(t){
     return {title:t,total:agg.artikelStats[t].total,gruende:agg.artikelStats[t].gruende};
   });
@@ -304,7 +482,6 @@ function renderPanel(panelId, from, to, opts){
     return '<tr data-title="'+escapeAttr(a.title.toLowerCase())+'" data-total="'+a.total+'"><td>'+escapeHTML(a.title)+'</td><td>'+pills+'</td><td style="text-align:right;font-weight:600">'+a.total+'</td></tr>';
   }).join('') : '<tr><td colspan="3"><div class="empty">Keine Artikel im Zeitraum</div></td></tr>';
 
-  // Cases table
   var casesArr = cases.slice().sort(function(a,b){return a.d<b.d?1:-1});
   var casesTbl = casesArr.length ? casesArr.map(function(c){
     var kats = (c.n||[]).map(function(n){return '<span class="pill pill-kat">'+escapeHTML(n.k)+'</span>'}).join('');
@@ -315,7 +492,6 @@ function renderPanel(panelId, from, to, opts){
     return '<tr><td>'+fmtDE(c.d)+'</td><td>'+escapeHTML(c.o)+'</td><td>'+escapeHTML(c.c)+'</td><td>'+escapeHTML(c.l)+'</td><td>'+kats+'</td><td>'+vTags+'</td><td>'+arts+'</td></tr>';
   }).join('') : '<tr><td colspan="7"><div class="empty">Keine Cases im Zeitraum</div></td></tr>';
 
-  // Trend
   var trend = bucketTrend(agg.byDay,from,to);
 
   panel.querySelector('.compare-bar').innerHTML = compareHTML;
@@ -324,7 +500,18 @@ function renderPanel(panelId, from, to, opts){
   panel.querySelector('.artikel-tbody').innerHTML = artikelTbl;
   panel.querySelector('.cases-tbody').innerHTML = casesTbl;
 
-  // Charts
+  // V3: Inline-Heatmap pro Panel
+  var heatBox = panel.querySelector('.heatmap-section');
+  if(heatBox){
+    buildHeatmap(agg, heatBox, {limit:10});
+  }
+
+  // V3.1: Mini-Länder-Section pro Panel
+  var countryBox = panel.querySelector('.country-mini-section');
+  if(countryBox){
+    buildCountryMini(agg, countryBox);
+  }
+
   var doughnutId = panelId+'_doughnut';
   var barId = panelId+'_bar';
   destroyChart(doughnutId);
@@ -361,12 +548,6 @@ function renderPanel(panelId, from, to, opts){
   }
 }
 
-function escapeHTML(s){
-  if(s==null) return '';
-  return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]});
-}
-function escapeAttr(s){return escapeHTML(s).replace(/'/g,"&#39;")}
-
 function panelTemplate(id){
   return '<div class="panel" id="'+id+'">'
     + '<div class="compare-bar"></div>'
@@ -376,6 +557,10 @@ function panelTemplate(id){
       + '<div class="card"><h3>Kategorien</h3><ul class="kat-list"></ul></div>'
     + '</div>'
     + '<div class="card" style="margin-bottom:18px"><h3>Trend</h3><div class="chart-wrap"><canvas class="bar-canvas"></canvas></div></div>'
+    + '<div class="card" style="margin-bottom:18px"><h3>Neusendungen nach Produktkategorie</h3>'
+      + '<div class="heatmap-section"></div>'
+    + '</div>'
+    + '<div class="card" style="margin-bottom:18px"><div class="country-mini-section country-mini"></div></div>'
     + '<div class="card" style="margin-bottom:18px"><h3>Nachgesendete Original-Artikel</h3>'
       + '<input type="search" class="search artikel-search" placeholder="Artikel suchen ...">'
       + '<div style="overflow-x:auto"><table class="artikel-table"><thead><tr>'
@@ -405,6 +590,10 @@ function customPanelTemplate(){
       + '<div class="card"><h3>Kategorien</h3><ul class="kat-list"></ul></div>'
     + '</div>'
     + '<div class="card" style="margin-bottom:18px"><h3>Trend</h3><div class="chart-wrap"><canvas class="bar-canvas"></canvas></div></div>'
+    + '<div class="card" style="margin-bottom:18px"><h3>Neusendungen nach Produktkategorie</h3>'
+      + '<div class="heatmap-section"></div>'
+    + '</div>'
+    + '<div class="card" style="margin-bottom:18px"><div class="country-mini-section country-mini"></div></div>'
     + '<div class="card" style="margin-bottom:18px"><h3>Nachgesendete Original-Artikel</h3>'
       + '<input type="search" class="search artikel-search" placeholder="Artikel suchen ...">'
       + '<div style="overflow-x:auto"><table class="artikel-table"><thead><tr>'
@@ -419,20 +608,324 @@ function customPanelTemplate(){
     + '</div>';
 }
 
+// ============ V3: Produktkategorien Top-Level Panel ============
+function ptPanelTemplate(){
+  return '<div class="panel" id="panel-pt">'
+    + '<div class="compare-bar" id="pt-summary"></div>'
+    + '<div class="card" style="margin-bottom:18px"><h3>Welche Kategorien sind am stärksten betroffen</h3>'
+      + '<div class="chart-wrap tall"><canvas id="ptBarCanvas"></canvas></div>'
+    + '</div>'
+    + '<div class="card" style="margin-bottom:18px"><h3>Heatmap · Kategorie × Grund (letzte 90 Tage)</h3>'
+      + '<div id="ptBigHeatmap"></div>'
+    + '</div>'
+    + '<div class="card" style="margin-bottom:18px"><h3>Top-5 Kategorien im Detail</h3>'
+      + '<div class="pt-grid" id="ptMiniGrid"></div>'
+    + '</div>'
+    + '<div class="strat" id="ptStrat"></div>'
+    + '</div>';
+}
+
+function renderPTPanel(){
+  // Verwendet die letzten 90 Tage
+  var anchor = MAX_DATE;
+  var from = addDays(anchor, -89);
+  var to = anchor;
+  var cases = filterCases(from, to);
+  var agg = aggregate(cases);
+
+  var ptEntries = Object.keys(agg.byPT).map(function(p){return [p, agg.byPT[p]]}).sort(function(a,b){return b[1]-a[1]});
+
+  document.getElementById('pt-summary').innerHTML =
+    '<div><strong>'+ptEntries.length+'</strong> Produktkategorien im Zeitraum '+fmtDE(from)+'–'+fmtDE(to)
+    +' · <strong>'+ptEntries.reduce(function(s,e){return s+e[1]},0)+'</strong> Item-Vorfälle gesamt</div>'
+    +'<div>Sortiert nach Häufigkeit</div>';
+
+  // Horizontal Bar
+  destroyChart('ptBar');
+  var pCtx = document.getElementById('ptBarCanvas');
+  charts['ptBar'] = new Chart(pCtx, {
+    type:'bar',
+    data:{
+      labels: ptEntries.map(function(e){return e[0]}),
+      datasets:[{
+        data: ptEntries.map(function(e){return e[1]}),
+        backgroundColor:'#b04848',
+        borderRadius:4,
+        maxBarThickness:22
+      }]
+    },
+    options:{
+      indexAxis:'y',
+      responsive:true,
+      maintainAspectRatio:false,
+      plugins:{legend:{display:false},
+        tooltip:{callbacks:{label:function(c){return c.parsed.x+' Item-Vorfälle'}}}
+      },
+      scales:{x:{beginAtZero:true,ticks:{precision:0,font:{size:11}},grid:{color:'#f0ece6'}},
+              y:{ticks:{font:{size:11}},grid:{display:false}}}
+    }
+  });
+
+  // Big Heatmap
+  buildHeatmap(agg, document.getElementById('ptBigHeatmap'), {});
+
+  // Mini-Cards für Top 5
+  var top5 = ptEntries.slice(0,5);
+  var miniHTML = top5.map(function(e, idx){
+    var pt = e[0], total = e[1];
+    var rs = agg.ptReason[pt] || {};
+    var arts = agg.ptArtikel[pt] || {};
+    var topArts = Object.keys(arts).map(function(a){return [a,arts[a]]}).sort(function(a,b){return b[1]-a[1]}).slice(0,3);
+    var topList = topArts.map(function(a){return '<li><span class="t" title="'+escapeAttr(a[0])+'">'+escapeHTML(a[0])+'</span><span class="n">'+a[1]+'</span></li>'}).join('');
+    return '<div class="pt-card">'
+      +'<h4>'+escapeHTML(pt)+'</h4>'
+      +'<div class="pt-total">'+total+' Item-Vorfälle</div>'
+      +'<div class="pt-chart"><canvas id="ptMini_'+idx+'"></canvas></div>'
+      +'<ul class="pt-top">'+(topList||'<li>—</li>')+'</ul>'
+      +'</div>';
+  }).join('');
+  document.getElementById('ptMiniGrid').innerHTML = miniHTML;
+
+  top5.forEach(function(e, idx){
+    var pt = e[0];
+    var rs = agg.ptReason[pt] || {};
+    var keys = Object.keys(rs).sort(function(a,b){return rs[b]-rs[a]});
+    var labels = keys;
+    var values = keys.map(function(k){return rs[k]});
+    var colors = ['#b04848','#c4934a','#7d8fa3','#6b8e7f','#a892b8','#b08968','#9a9a9a'];
+    destroyChart('ptMini_'+idx);
+    var ctx = document.getElementById('ptMini_'+idx);
+    if(!ctx) return;
+    charts['ptMini_'+idx] = new Chart(ctx, {
+      type:'doughnut',
+      data:{labels:labels,datasets:[{data:values,backgroundColor:keys.map(function(k,i){return colors[i%colors.length]}),borderColor:'#fff',borderWidth:2}]},
+      options:{responsive:true,maintainAspectRatio:false,cutout:'58%',
+        plugins:{legend:{position:'bottom',labels:{boxWidth:8,padding:8,font:{size:10}}}}}
+    });
+  });
+
+  // Strategische Insights
+  var strat = [];
+  top5.forEach(function(e){
+    var pt = e[0], total = e[1];
+    var rs = agg.ptReason[pt] || {};
+    var sorted = Object.keys(rs).map(function(k){return [k,rs[k]]}).sort(function(a,b){return b[1]-a[1]});
+    if(!sorted.length) return;
+    var topR = sorted[0];
+    var pct = Math.round(topR[1]/total*100);
+    if(pct < 35) return; // nur klare Muster
+    var action = '';
+    var v = (topR[0]==='Defekt/Bruch' || topR[0]==='Transportschaden') ? 'Verpackungs-Audit & Inlay-Verstärkung priorisieren'
+          : topR[0]==='Produktionsfehler' ? 'Lieferantengespräch & QC-Stichprobe ansetzen'
+          : topR[0]==='Paket zurückgekommen' ? 'Carrier-Performance & Adress-Validierung prüfen'
+          : topR[0]==='Falsche Adresse' ? 'Address Validation API im Checkout aktivieren'
+          : (topR[0]==='Artikel fehlt' || topR[0]==='Falscher Artikel' || topR[0]==='Falsche Menge') ? 'Pick&Pack-Prozess im Lager auditieren'
+          : 'Kategorie tiefer analysieren';
+    strat.push({pt:pt,reason:topR[0],pct:pct,total:total,action:v});
+  });
+
+  // Carrier overall
+  var carrierTotal = (agg.byV['carrier']||0);
+  if(agg.total>0 && carrierTotal/agg.total > 0.1){
+    strat.push({pt:'Alle Kategorien',reason:'Carrier-Probleme',pct:Math.round(carrierTotal/agg.total*100),total:carrierTotal,
+      action:'Quartalsgespräch mit Versanddienstleister & Region-Analyse'});
+  }
+
+  var stratHTML = '<h3>Strategische Erkenntnisse</h3><div class="sub">Automatisch generiert aus der Heatmap (letzte 90 Tage)</div>';
+  if(strat.length){
+    stratHTML += strat.map(function(s, i){
+      return '<div class="strat-item"><div class="strat-icon">'+(i+1)+'</div>'
+        +'<div class="strat-text"><strong>'+escapeHTML(s.pt)+'</strong>: '+s.pct+'% '+escapeHTML(s.reason)+' ('+s.total+' Vorfälle) → '+escapeHTML(s.action)+'</div></div>';
+    }).join('');
+  } else {
+    stratHTML += '<div class="empty">Keine dominanten Muster — Probleme verteilen sich gleichmäßig.</div>';
+  }
+  document.getElementById('ptStrat').innerHTML = stratHTML;
+}
+
+// ============ V3.1: Länder Top-Level Panel ============
+function countryPanelTemplate(){
+  return '<div class="panel" id="panel-country">'
+    + '<div class="compare-bar" id="country-summary"></div>'
+    + '<div class="card" style="margin-bottom:18px"><h3>Top 10 Länder nach Neusendungen (letzte 90 Tage)</h3>'
+      + '<div class="chart-wrap tall"><canvas id="countryBarCanvas"></canvas></div>'
+    + '</div>'
+    + '<div class="card" style="margin-bottom:18px"><h3>Heatmap · Land × Neusendungsgrund (letzte 90 Tage)</h3>'
+      + '<div id="countryBigHeatmap"></div>'
+    + '</div>'
+    + '<div class="card" style="margin-bottom:18px"><h3>Top-3 Länder im Detail</h3>'
+      + '<div class="country-grid" id="countryMiniGrid"></div>'
+    + '</div>'
+    + '<div class="strat" id="countryStrat"></div>'
+    + '</div>';
+}
+
+function buildCountryHeatmap(agg, container){
+  var entries = Object.keys(agg.byLand).map(function(l){return [l,agg.byLand[l]]})
+    .filter(function(e){return e[1].total>0})
+    .sort(function(a,b){return b[1].total-a[1].total});
+  if(!entries.length){container.innerHTML='<div class="empty">Keine Daten</div>';return}
+  var reasonsSet = {};
+  entries.forEach(function(e){
+    Object.keys(e[1].byK).forEach(function(k){reasonsSet[k]=true});
+  });
+  var reasons = REASON_ORDER.filter(function(r){return reasonsSet[r]});
+  Object.keys(reasonsSet).forEach(function(r){if(reasons.indexOf(r)<0) reasons.push(r)});
+
+  var thead = '<tr><th>Land</th>' + reasons.map(function(r){return '<th>'+escapeHTML(r)+'</th>'}).join('') + '<th>Gesamt</th></tr>';
+  var tbody = entries.map(function(e){
+    var iso = e[0], d = e[1];
+    var rs = d.byK || {};
+    var maxInRow = 0;
+    reasons.forEach(function(r){if((rs[r]||0)>maxInRow) maxInRow=(rs[r]||0)});
+    var cells = reasons.map(function(r){
+      var v = rs[r]||0;
+      var op = (maxInRow>0 && v>0) ? (v/maxInRow)*0.4 : 0;
+      var style = v>0 ? 'background:rgba(176,72,72,'+op.toFixed(3)+')' : '';
+      var pct = d.total ? Math.round(v/d.total*100) : 0;
+      var tt = escapeAttr(countryName(iso)+' · '+r+' · '+v+' · '+pct+'% des Landes');
+      return '<td class="'+(v===0?'cell-zero':'')+'" style="'+style+'" title="'+tt+'">'+(v||'·')+'</td>';
+    }).join('');
+    var label = flagEmoji(iso)+' '+countryName(iso);
+    return '<tr><td>'+escapeHTML(label)+'</td>'+cells+'<td>'+d.total+'</td></tr>';
+  }).join('');
+  container.innerHTML = '<div class="heatmap-wrap"><table class="heatmap"><thead>'+thead+'</thead><tbody>'+tbody+'</tbody></table></div>';
+}
+
+function renderCountryPanel(){
+  var anchor = MAX_DATE;
+  var from = addDays(anchor, -89);
+  var to = anchor;
+  var cases = filterCases(from, to);
+  var agg = aggregate(cases);
+
+  var entries = Object.keys(agg.byLand).map(function(l){return [l,agg.byLand[l]]})
+    .filter(function(e){return e[1].total>0})
+    .sort(function(a,b){return b[1].total-a[1].total});
+
+  document.getElementById('country-summary').innerHTML =
+    '<div><strong>'+entries.length+'</strong> Länder im Zeitraum '+fmtDE(from)+'–'+fmtDE(to)
+    +' · <strong>'+entries.reduce(function(s,e){return s+e[1].total},0)+'</strong> Neusendungen gesamt</div>'
+    +'<div>Sortiert nach Häufigkeit</div>';
+
+  // Horizontal Bar (Top 10)
+  var top10 = entries.slice(0,10);
+  destroyChart('countryBar');
+  var cCtx = document.getElementById('countryBarCanvas');
+  charts['countryBar'] = new Chart(cCtx, {
+    type:'bar',
+    data:{
+      labels: top10.map(function(e){return flagEmoji(e[0])+' '+countryName(e[0])}),
+      datasets:[{
+        data: top10.map(function(e){return e[1].total}),
+        backgroundColor:'#b04848',
+        borderRadius:4,
+        maxBarThickness:22
+      }]
+    },
+    options:{
+      indexAxis:'y',
+      responsive:true,
+      maintainAspectRatio:false,
+      plugins:{legend:{display:false},
+        tooltip:{callbacks:{label:function(c){return c.parsed.x+' Neusendungen'}}}
+      },
+      scales:{x:{beginAtZero:true,ticks:{precision:0,font:{size:11}},grid:{color:'#f0ece6'}},
+              y:{ticks:{font:{size:11}},grid:{display:false}}}
+    }
+  });
+
+  // Heatmap Land × Grund
+  buildCountryHeatmap(agg, document.getElementById('countryBigHeatmap'));
+
+  // Mini-Cards für Top 3
+  var top3 = entries.slice(0,3);
+  var miniHTML = top3.map(function(e, idx){
+    var iso = e[0], d = e[1];
+    var arts = d.byArtikel || {};
+    var topArts = Object.keys(arts).map(function(a){return [a,arts[a]]}).sort(function(a,b){return b[1]-a[1]}).slice(0,3);
+    var topList = topArts.map(function(a){return '<li><span class="t" title="'+escapeAttr(a[0])+'">'+escapeHTML(a[0])+'</span><span class="n">'+a[1]+'</span></li>'}).join('');
+    return '<div class="country-card">'
+      +'<h4><span class="flag">'+flagEmoji(iso)+'</span>'+escapeHTML(countryName(iso))+'</h4>'
+      +'<div class="c-total">'+d.total+' Neusendungen</div>'
+      +'<div class="c-chart"><canvas id="countryMini_'+idx+'"></canvas></div>'
+      +'<ul class="c-top">'+(topList||'<li>—</li>')+'</ul>'
+      +'</div>';
+  }).join('');
+  document.getElementById('countryMiniGrid').innerHTML = miniHTML || '<div class="empty">Keine Länder-Daten</div>';
+
+  top3.forEach(function(e, idx){
+    var d = e[1];
+    var vKeys = Object.keys(d.byV);
+    if(!vKeys.length) return;
+    destroyChart('countryMini_'+idx);
+    var ctx = document.getElementById('countryMini_'+idx);
+    if(!ctx) return;
+    charts['countryMini_'+idx] = new Chart(ctx, {
+      type:'doughnut',
+      data:{labels:vKeys.map(function(k){return VLABEL[k]||k}),
+        datasets:[{data:vKeys.map(function(k){return d.byV[k]}),
+          backgroundColor:vKeys.map(function(k){return VCOL[k]||'#9a9a9a'}),
+          borderColor:'#fff',borderWidth:2}]},
+      options:{responsive:true,maintainAspectRatio:false,cutout:'58%',
+        plugins:{legend:{position:'bottom',labels:{boxWidth:8,padding:8,font:{size:10}}}}}
+    });
+  });
+
+  // Strategische Insights
+  var strat = [];
+  entries.forEach(function(e){
+    var iso = e[0], d = e[1];
+    if(d.total < 2) return;
+    var sortedK = Object.keys(d.byK).map(function(k){return [k,d.byK[k]]}).sort(function(a,b){return b[1]-a[1]});
+    if(!sortedK.length) return;
+    var topK = sortedK[0];
+    var pct = Math.round(topK[1]/d.total*100);
+    var carrierPct = d.byV['carrier'] ? Math.round(d.byV['carrier']/d.total*100) : 0;
+    var bruchPct = (d.byK['Defekt/Bruch']||0) + (d.byK['Transportschaden']||0);
+    bruchPct = Math.round(bruchPct/d.total*100);
+
+    if(iso==='CH' && (d.byK['Schweiz']||0)/d.total > 0.5){
+      strat.push({iso:iso,text:'Schweiz: '+Math.round((d.byK['Schweiz']||0)/d.total*100)+'% Zoll-/Schweiz-Sonderfall ('+d.total+' Neusendungen) → CH-Versand-Prozess separat behandeln.'});
+    } else if(carrierPct >= 25){
+      strat.push({iso:iso,text:countryName(iso)+': hohe Carrier-Quote ('+carrierPct+'% Paket-Rückläufer bei '+d.total+' Neusendungen) → Versanddienstleister & Adress-Validierung prüfen.'});
+    } else if(bruchPct >= 50 && d.total >= 5){
+      strat.push({iso:iso,text:countryName(iso)+': Bruchquote überdurchschnittlich ('+bruchPct+'% Defekt/Transport) → Verpackungs-Audit für diese Region.'});
+    } else if(pct >= 50 && d.total >= 3){
+      strat.push({iso:iso,text:countryName(iso)+': '+pct+'% '+topK[0]+' ('+d.total+' Neusendungen) → Muster im Auge behalten.'});
+    }
+  });
+
+  var stratHTML = '<h3>Internationale Erkenntnisse</h3><div class="sub">Automatisch generiert aus Land × Grund (letzte 90 Tage)</div>';
+  if(strat.length){
+    stratHTML += strat.slice(0,8).map(function(s, i){
+      return '<div class="strat-item"><div class="strat-icon">'+flagEmoji(s.iso)+'</div>'
+        +'<div class="strat-text">'+escapeHTML(s.text)+'</div></div>';
+    }).join('');
+  } else {
+    stratHTML += '<div class="empty">Keine dominanten Muster — Probleme verteilen sich gleichmäßig.</div>';
+  }
+  document.getElementById('countryStrat').innerHTML = stratHTML;
+}
+
 var panelsDiv = document.getElementById('panels');
 var tabs = ['yesterday','7d','30d','90d','365d'];
-panelsDiv.innerHTML = tabs.map(function(t){return panelTemplate('panel-'+t)}).join('') + customPanelTemplate();
+panelsDiv.innerHTML = tabs.map(function(t){return panelTemplate('panel-'+t)}).join('') + ptPanelTemplate() + countryPanelTemplate() + customPanelTemplate();
 
-// Mark first panel active
 document.getElementById('panel-yesterday').classList.add('active');
 
-// Build all built-in panels
 tabs.forEach(function(t){
   var r = rangeFor(t);
   renderPanel('panel-'+t, r.from, r.to, {compare:true});
 });
 
-// Custom defaults: last 30 days
+// PT-Panel
+renderPTPanel();
+
+// V3.1: Country-Panel
+renderCountryPanel();
+
+// Custom
 var custFrom = document.getElementById('custFrom');
 var custTo = document.getElementById('custTo');
 custFrom.min = MIN_DATE; custFrom.max = MAX_DATE;
@@ -451,7 +944,6 @@ document.getElementById('custCompare').addEventListener('change',function(){
   renderPanel('panel-custom', custFrom.value, custTo.value, {compare:this.checked});
 });
 
-// Tab switching with localStorage persistence
 var savedTab = localStorage.getItem('neusendung_tab') || 'yesterday';
 function activateTab(name){
   document.querySelectorAll('.tab').forEach(function(t){
@@ -461,7 +953,6 @@ function activateTab(name){
     p.classList.toggle('active', p.id==='panel-'+name);
   });
   localStorage.setItem('neusendung_tab', name);
-  // resize charts
   setTimeout(function(){
     Object.keys(charts).forEach(function(k){try{charts[k].resize()}catch(e){}});
   },50);
@@ -474,6 +965,7 @@ if(savedTab && document.querySelector('.tab[data-tab="'+savedTab+'"]')) activate
 // Article search + sort
 document.querySelectorAll('.panel').forEach(function(panel){
   var search = panel.querySelector('.artikel-search');
+  if(!search) return;
   search.addEventListener('input',function(){
     var q = search.value.toLowerCase().trim();
     panel.querySelectorAll('.artikel-tbody tr').forEach(function(tr){
@@ -482,6 +974,7 @@ document.querySelectorAll('.panel').forEach(function(panel){
     });
   });
   var table = panel.querySelector('.artikel-table');
+  if(!table) return;
   table.querySelectorAll('th[data-sort]').forEach(function(th){
     th.addEventListener('click',function(){
       var key = th.dataset.sort;
@@ -506,30 +999,40 @@ var FIX_RECS = [
   {id:'fix-1', title:'Support-Team schulen: neue Neusendungs-SKUs nutzen', desc:'Statt "NEUSENDUNG" immer die spezifische Kategorie (Defekt/Bruch, Artikel fehlt, etc.). Ohne saubere Kategorisierung bleibt das Reporting wertlos.'},
   {id:'fix-2', title:'Nia-Teller Verpackung A/B-testen', desc:'Top-Bruchware. Verstärktes Inlay, dickere Pappumhüllung oder neues Karton-Format speziell für große Teller testen.'},
   {id:'fix-3', title:'Adressvalidierung im Checkout aktivieren', desc:'Google Address Validation API einbauen, um Carrier-Rückläufer zu reduzieren.'},
-  {id:'fix-4', title:'Monats-COGS-Tracking für Neusendungen', desc:'Versteckte Kosten der Nachsendungen als KPI in der Monatsauswertung sichtbar machen.'}
+  {id:'fix-4', title:'Monats-COGS-Tracking für Neusendungen', desc:'Versteckte Kosten der Nachsendungen als KPI in der Monatsauswertung sichtbar machen.'},
+  {id:'fix-5', title:'productType in Shopify für Nia-Produkte nachpflegen', desc:'Viele Nia-Produkte hatten keinen productType. Die Heatmap nutzt aktuell eine Titel-Heuristik. Sauberer wäre, das Feld in Shopify final zu setzen.'}
 ];
 
 function generateAIRecs(){
   var allAgg = aggregate(CASES);
   var recs = [];
-  // 1. Sonstiges (alt) dominanz
   var sonstigesK = allAgg.byK['Sonstiges (alt)'] || 0;
   if(allAgg.total>0 && sonstigesK/allAgg.total > 0.4){
     recs.push({id:'ai-1', ai:true, title:'Altdaten-Audit: "Sonstiges (alt)" ist '+Math.round(sonstigesK/allAgg.total*100)+'% aller Cases',
       desc:'Die Sammel-SKU "Sonstiges (alt)" macht den Großteil der Neusendungen aus. Diese Tickets manuell auf die neuen Kategorien umlabeln, damit das Reporting echte Ursachen zeigt.'});
   }
-  // 2. Top artikel >10x
   var topArt = Object.keys(allAgg.artikelStats).map(function(t){return [t,allAgg.artikelStats[t].total]})
     .sort(function(a,b){return b[1]-a[1]})[0];
   if(topArt && topArt[1]>=10){
     recs.push({id:'ai-2', ai:true, title:'Lieferantengespräch: "'+topArt[0]+'" wurde '+topArt[1]+'× nachgesendet',
       desc:'Dieser Artikel ist der mit Abstand häufigste Nachsende-Grund. Mit dem Lieferanten Qualität, Verpackung am Werk und mögliche Konstruktionsänderungen besprechen.'});
   }
-  // 3. Carrier-Anteil
   var carrierV = allAgg.byV['carrier'] || 0;
   if(allAgg.total>0 && carrierV/allAgg.total > 0.07){
     recs.push({id:'ai-3', ai:true, title:'Carrier-Performance prüfen: '+Math.round(carrierV/allAgg.total*100)+'% Paket-Rückläufer',
       desc:'Auffällig viele Carrier-bedingte Neusendungen. Quartalsgespräch mit dem Versanddienstleister, Sendungsverfolgungs-Daten je Region analysieren.'});
+  }
+  // V3: Top-Kategorie/Reason-Insight
+  var ptEntries = Object.keys(allAgg.byPT).map(function(p){return [p, allAgg.byPT[p]]}).sort(function(a,b){return b[1]-a[1]});
+  if(ptEntries.length){
+    var topPT = ptEntries[0];
+    var rs = allAgg.ptReason[topPT[0]] || {};
+    var sortedR = Object.keys(rs).map(function(k){return [k,rs[k]]}).sort(function(a,b){return b[1]-a[1]});
+    if(sortedR.length && sortedR[0][1]/topPT[1] > 0.3){
+      var pct = Math.round(sortedR[0][1]/topPT[1]*100);
+      recs.push({id:'ai-4', ai:true, title:'Heatmap-Insight: '+topPT[0]+' → '+pct+'% wegen '+sortedR[0][0],
+        desc:'Größte Produktkategorie hat ein klares Muster. Maßnahme: siehe Empfehlungen im Tab "Produktkategorien".'});
+    }
   }
   return recs;
 }
