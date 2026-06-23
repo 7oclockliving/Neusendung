@@ -158,7 +158,40 @@ tr:hover td{background:#fdfcfa}
 .country-card .c-top li .t{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--ink)}
 .country-card .c-top li .n{font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums}
 
+/* === V4: Cases-Tabelle Filter === */
+.cases-filterbar{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:2px 0 12px;flex-wrap:wrap;font-size:13px}
+.cases-filterbar .count{color:var(--ink-soft)}
+.cases-filterbar .count strong{color:var(--ink);font-weight:600}
+.cases-filterbar button{background:#fdfcfa;border:1px solid var(--line);border-radius:6px;padding:6px 12px;font-family:inherit;font-size:12px;color:var(--ink);cursor:pointer}
+.cases-filterbar button:hover{background:#f7f3ec}
+.cases-table .filter-row th{padding:6px 6px;border-bottom:1px solid var(--line);background:#fdfcfa;font-weight:400;text-transform:none;letter-spacing:0;color:var(--ink);cursor:default}
+.cases-table .filter-row input,.cases-table .filter-row select{width:100%;font-family:inherit;font-size:11px;padding:4px 6px;border:1px solid var(--line);border-radius:5px;background:#fff;color:var(--ink);min-width:0}
+.cases-table .filter-row input:focus,.cases-table .filter-row select:focus{outline:none;border-color:var(--accent)}
+.cases-table .filter-row .date-pair{display:flex;gap:3px}
+.cases-table .filter-row .date-pair input{font-size:10px;padding:3px 4px}
+
+/* === V4: Artikel-Suche mit Live-Total === */
+.search-row{display:flex;align-items:center;gap:14px;margin-bottom:14px;flex-wrap:wrap}
+.search-row .search{margin:0;flex:1;min-width:200px}
+.search-row .art-total{font-size:13px;color:var(--ink-soft);white-space:nowrap}
+.search-row .art-total strong{color:var(--ink);font-weight:600;font-variant-numeric:tabular-nums}
+
+/* === V4: Verteilung nach Land (gesamt) — Zeilen statt Pills === */
+.country-rows{list-style:none;padding:0;margin:0}
+.country-rows li{display:grid;grid-template-columns:28px 1fr auto auto 1fr;align-items:center;gap:10px;padding:7px 4px;border-bottom:1px solid var(--line);font-size:13px}
+.country-rows li:last-child{border-bottom:none}
+.country-rows .flag{font-size:18px;line-height:1}
+.country-rows .cname{font-weight:500;color:var(--ink)}
+.country-rows .cnum{font-variant-numeric:tabular-nums;color:var(--ink);font-weight:600;text-align:right}
+.country-rows .cpct{font-variant-numeric:tabular-nums;color:var(--ink-soft);font-size:12px;text-align:right;min-width:42px}
+.country-rows .creason{color:var(--ink-soft);font-size:12px;border-left:1px solid var(--line);padding-left:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.country-mini-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start}
+.country-mini-grid .country-chart-wrap{position:relative;height:max(260px, 100%);min-height:260px}
+
 @media (max-width:780px){
+  .country-mini-grid{grid-template-columns:1fr}
+  .country-rows li{grid-template-columns:24px 1fr auto auto;row-gap:2px}
+  .country-rows .creason{grid-column:2 / -1;border-left:none;padding-left:0;font-size:11px}
   .wrap{padding:24px 14px}
   h1{font-size:24px}
   .kpis{grid-template-columns:repeat(2,1fr)}
@@ -187,8 +220,6 @@ tr:hover td{background:#fdfcfa}
     <button class="tab" data-tab="30d">Letzte 30 Tage</button>
     <button class="tab" data-tab="90d">Letzte 90 Tage</button>
     <button class="tab" data-tab="365d">Letzte 365 Tage</button>
-    <button class="tab" data-tab="pt">Produktkategorien</button>
-    <button class="tab" data-tab="country">Länder</button>
     <button class="tab" data-tab="custom">Custom</button>
   </div>
 
@@ -213,9 +244,24 @@ var CASES = DATA.cases || [];
 
 var VCOL = {lager:'#6b8e7f',produkt:'#c4934a',carrier:'#7d8fa3',kunde:'#b08968',kulanz:'#a892b8',sonstiges:'#9a9a9a'};
 var VLABEL = {lager:'Lager',produkt:'Produkt',carrier:'Carrier',kunde:'Kunde',kulanz:'Kulanz',sonstiges:'Sonstiges'};
+// V4: Konsistente Verursacher-Reihenfolge
+var V_ORDER = ['lager','produkt','carrier','kunde','kulanz','sonstiges'];
 
-// Konsistente Heatmap-Spaltenreihenfolge
-var REASON_ORDER = ['Defekt/Bruch','Produktionsfehler','Transportschaden','Artikel fehlt','Falscher Artikel','Falsche Menge','Paket zurückgekommen','Packstation','Falsche Adresse','Schweiz','Kulanz','Sonstiges (alt)'];
+// V4: Vollständige Heatmap-Spaltenreihenfolge (immer alle 13 Spalten, auch wenn 0)
+var REASON_ORDER = ['Defekt/Bruch','Defekt (Lager-Kontrolle)','Produktionsfehler','Artikel fehlt','Falscher Artikel','Falsche Menge','Packstation','Transportschaden','Falsche Adresse','Paket zurückgekommen','Schweiz','Kulanz','Sonstiges (alt)'];
+
+// V5 KRITISCH: SKU-Mapping-Fix.
+// SKU 8797853122892 hieß historisch "Defekt/Bruch" (Produktion), heißt jetzt aber
+// "Defekt (Lager-Kontrolle)" (= Lager hat den Schaden vor Versand kontrolliert).
+// Der echte neue unkontrollierte "Defekt/Bruch" hat noch keine SKU → in der Datenbasis taucht
+// "Defekt/Bruch" historisch noch auf und wird hier zu "Defekt (Lager-Kontrolle)" umgemappt.
+// Zusätzlich: legacy "Wegen Defekt" → "Defekt (Lager-Kontrolle)" (falls vorhanden).
+DATA.cases.forEach(function(c){
+  (c.n||[]).forEach(function(n){
+    if(n.k === 'Defekt/Bruch'){ n.k = 'Defekt (Lager-Kontrolle)'; }
+    else if(n.k === 'Wegen Defekt'){ n.k = 'Defekt (Lager-Kontrolle)'; }
+  });
+});
 
 // V3.1: Länder-Mapping
 var COUNTRY_NAMES = {DE:'Deutschland',AT:'Österreich',CH:'Schweiz',FR:'Frankreich',NL:'Niederlande',BE:'Belgien',FI:'Finnland',IT:'Italien',ES:'Spanien',PL:'Polen',CZ:'Tschechien',DK:'Dänemark',SE:'Schweden',LU:'Luxemburg',GB:'Großbritannien',UK:'Großbritannien',US:'USA',IE:'Irland',PT:'Portugal',HU:'Ungarn',SK:'Slowakei',SI:'Slowenien',HR:'Kroatien',RO:'Rumänien',BG:'Bulgarien',GR:'Griechenland',NO:'Norwegen',EE:'Estland',LV:'Lettland',LT:'Litauen',MT:'Malta',CY:'Zypern',IS:'Island',LI:'Liechtenstein'};
@@ -237,6 +283,8 @@ function fmtDE(s){var p=s.split('-');return p[2]+'.'+p[1]+'.'+p[0]}
 var ALL_DATES = CASES.map(function(c){return c.d}).sort();
 var MIN_DATE = ALL_DATES[0] || '2026-01-01';
 var MAX_DATE = ALL_DATES[ALL_DATES.length-1] || DATA.targetDate;
+// V4: Gesamt-Aggregation für "Verteilung nach Land (gesamt)" — einmal berechnet
+var ALL_AGG = null; // wird nach aggregate-Definition gesetzt
 
 document.getElementById('updatedLine').textContent = 'Aktualisiert am ' + fmtDE(DATA.lastUpdated || MAX_DATE);
 document.getElementById('dataHint').textContent = 'Datensatz: ' + fmtDE(MIN_DATE) + ' bis ' + fmtDE(MAX_DATE) + ' · ' + CASES.length + ' Cases · Zeiträume relativ zum letzten Datum.';
@@ -292,6 +340,9 @@ function aggregate(cases){
   return {total:total,byK:byK,byV:byV,byDay:byDay,artikelStats:artikelStats,
           byPT:byPT,ptReason:ptReason,ptArtikel:ptArtikel,byLand:byLand,cases:cases};
 }
+
+// V4: Gesamt-Aggregation einmal berechnen
+ALL_AGG = aggregate(CASES);
 
 function deltaPct(cur,prev){
   if(prev===0) return cur===0 ? 0 : 100;
@@ -356,17 +407,16 @@ function buildHeatmap(agg, container, opts){
   // pts sortiert nach Gesamt absteigend
   var ptEntries = Object.keys(agg.byPT).map(function(p){return [p, agg.byPT[p]]}).sort(function(a,b){return b[1]-a[1]});
   if(opts.limit) ptEntries = ptEntries.slice(0, opts.limit);
-  // Welche Gründe kommen vor?
+  // V4: Wir zeigen IMMER alle Gründe aus REASON_ORDER + ggf. unbekannte am Ende
   var reasonsSet = {};
   ptEntries.forEach(function(e){
     var pr = agg.ptReason[e[0]] || {};
     Object.keys(pr).forEach(function(k){reasonsSet[k]=true});
   });
-  // Reihenfolge: REASON_ORDER, dann unbekannte am Ende
-  var reasons = REASON_ORDER.filter(function(r){return reasonsSet[r]});
+  var reasons = REASON_ORDER.slice();
   Object.keys(reasonsSet).forEach(function(r){if(reasons.indexOf(r)<0) reasons.push(r)});
 
-  if(!ptEntries.length || !reasons.length){
+  if(!ptEntries.length){
     container.innerHTML = '<div class="empty">Keine Daten</div>';
     return;
   }
@@ -400,7 +450,7 @@ function buildHeatmap(agg, container, opts){
       var style = v>0 ? 'background:rgba(176,72,72,'+op.toFixed(3)+')' : '';
       var pct = total ? Math.round(v/total*100) : 0;
       var tt = escapeAttr(pt+' · '+r+' · '+v+' Items · '+pct+'% der Kategorie');
-      return '<td class="'+(v===0?'cell-zero':'')+'" style="'+style+'" title="'+tt+'">'+(v||'·')+'</td>';
+      return '<td class="'+(v===0?'cell-zero':'')+'" style="'+style+'" title="'+tt+'">'+(v||'–')+'</td>';
     }).join('');
     return '<tr><td>'+escapeHTML(pt)+'</td>'+cells+'<td>'+total+'</td></tr>';
   }).join('');
@@ -408,30 +458,197 @@ function buildHeatmap(agg, container, opts){
   container.innerHTML = insightHTML + '<div class="heatmap-wrap"><table class="heatmap"><thead>'+thead+'</thead><tbody>'+tbody+'</tbody></table></div>';
 }
 
-// ============ V3.1: Mini-Länder-Section ============
-function buildCountryMini(agg, container){
+// ============ V4: Mini-Länder-Section (zeigt IMMER alle Cases, mit Bar-Chart) ============
+function buildCountryMini(agg, container, chartId){
   var entries = Object.keys(agg.byLand).map(function(l){return [l, agg.byLand[l]]})
     .filter(function(e){return e[1].total>0})
     .sort(function(a,b){return b[1].total-a[1].total});
   if(!entries.length){
-    container.innerHTML = '<h4>Verteilung nach Land</h4><div class="empty">Keine Länder-Daten</div>';
+    container.innerHTML = '<h4>Verteilung nach Land (gesamt)</h4><div class="empty">Keine Länder-Daten</div>';
     return;
   }
   var total = entries.reduce(function(s,e){return s+e[1].total},0);
-  var pills = entries.map(function(e){
+  var rows = entries.map(function(e){
     var iso = e[0], d = e[1];
     var pct = total ? Math.round(d.total/total*100) : 0;
     var topK = Object.keys(d.byK).sort(function(a,b){return d.byK[b]-d.byK[a]})[0];
     var reasonTxt = topK ? 'meist '+topK : '';
-    return '<div class="country-pill">'
+    return '<li>'
       +'<span class="flag">'+flagEmoji(iso)+'</span>'
       +'<span class="cname">'+escapeHTML(countryName(iso))+'</span>'
       +'<span class="cnum">'+d.total+'</span>'
       +'<span class="cpct">'+pct+'%</span>'
-      +(reasonTxt?'<span class="creason">'+escapeHTML(reasonTxt)+'</span>':'')
-      +'</div>';
+      +'<span class="creason">'+escapeHTML(reasonTxt)+'</span>'
+      +'</li>';
   }).join('');
-  container.innerHTML = '<h4>Verteilung nach Land</h4><div class="country-pills">'+pills+'</div>';
+  container.innerHTML = '<h4>Verteilung nach Land (gesamt · '+total+' Cases)</h4>'
+    +'<div class="country-mini-grid">'
+    +'<ul class="country-rows">'+rows+'</ul>'
+    +'<div class="country-chart-wrap"><canvas class="country-mini-canvas"></canvas></div>'
+    +'</div>';
+
+  // Bar-Chart (horizontal)
+  if(chartId){
+    destroyChart(chartId);
+    var cv = container.querySelector('.country-mini-canvas');
+    if(cv){
+      charts[chartId] = new Chart(cv, {
+        type:'bar',
+        data:{
+          labels: entries.map(function(e){return flagEmoji(e[0])+' '+countryName(e[0])}),
+          datasets:[{
+            data: entries.map(function(e){return e[1].total}),
+            backgroundColor:'#c4934a',
+            borderRadius:4,
+            maxBarThickness:18
+          }]
+        },
+        options:{
+          indexAxis:'y',
+          responsive:true,
+          maintainAspectRatio:false,
+          plugins:{legend:{display:false},
+            tooltip:{callbacks:{label:function(c){
+              var pct = total ? Math.round(c.parsed.x/total*100) : 0;
+              return c.parsed.x+' Cases ('+pct+'%)';
+            }}}
+          },
+          scales:{x:{beginAtZero:true,ticks:{precision:0,font:{size:11}},grid:{color:'#f0ece6'}},
+                  y:{ticks:{font:{size:11}},grid:{display:false}}}
+        }
+      });
+    }
+  }
+}
+
+// ============ V4: Artikel-Such-Gesamt ============
+function updateArtTotal(panel){
+  var totalEl = panel.querySelector('.art-total-num');
+  if(!totalEl) return;
+  var sum = 0;
+  panel.querySelectorAll('.artikel-tbody tr').forEach(function(tr){
+    if(!tr.dataset.title) return;
+    if(tr.style.display === 'none') return;
+    sum += (+tr.dataset.total || 0);
+  });
+  totalEl.textContent = sum;
+}
+
+// ============ V4: Cases-Tabelle Filter ============
+function applyCasesFilters(panel){
+  var f = panel._casesFilters || {};
+  var rows = panel.querySelectorAll('.cases-tbody tr');
+  var shown = 0, total = 0;
+  rows.forEach(function(tr){
+    if(tr.classList.contains('empty-row')){ return; }
+    if(!tr.dataset.d){ return; }
+    total++;
+    var visible = true;
+    if(f.dateFrom && tr.dataset.d < f.dateFrom) visible = false;
+    if(visible && f.dateTo && tr.dataset.d > f.dateTo) visible = false;
+    if(visible && f.land && tr.dataset.l !== f.land) visible = false;
+    if(visible && f.kat){
+      var keys = (tr.dataset.k || '').split('|');
+      if(keys.indexOf(f.kat) < 0) visible = false;
+    }
+    if(visible && f.verus){
+      var vs = (tr.dataset.v || '').split('|');
+      if(vs.indexOf(f.verus) < 0) visible = false;
+    }
+    if(visible && f.art && (tr.dataset.a || '').indexOf(f.art) < 0) visible = false;
+    if(visible && f.ord){
+      var o = tr.dataset.o || '', cu = tr.dataset.c || '';
+      if(o.indexOf(f.ord) < 0 && cu.indexOf(f.ord) < 0) visible = false;
+    }
+    if(visible && f.cust){
+      var o2 = tr.dataset.o || '', cu2 = tr.dataset.c || '';
+      if(o2.indexOf(f.cust) < 0 && cu2.indexOf(f.cust) < 0) visible = false;
+    }
+    tr.style.display = visible ? '' : 'none';
+    if(visible) shown++;
+  });
+  var countShown = panel.querySelector('.cases-count-shown');
+  var countTotal = panel.querySelector('.cases-count-total');
+  if(countShown) countShown.textContent = shown;
+  if(countTotal) countTotal.textContent = total;
+}
+
+function setupCasesFilters(panel, casesArr){
+  // Filter-State pro Panel
+  panel._casesFilters = panel._casesFilters || {};
+  // Dropdowns füllen
+  var landSel = panel.querySelector('.f-land');
+  var katSel = panel.querySelector('.f-kat');
+  var verusSel = panel.querySelector('.f-verus');
+  if(landSel){
+    // V4: ALLE Länder aus dem gesamten Datensatz (nicht nur zeitraumabhängig)
+    var lands = Object.keys(ALL_AGG.byLand).sort();
+    landSel.innerHTML = '<option value="">Alle</option>' + lands.map(function(l){
+      return '<option value="'+escapeAttr(l)+'">'+escapeHTML(flagEmoji(l)+' '+countryName(l))+'</option>';
+    }).join('');
+    if(panel._casesFilters.land) landSel.value = panel._casesFilters.land;
+  }
+  if(katSel){
+    katSel.innerHTML = '<option value="">Alle</option>' + REASON_ORDER.map(function(r){
+      return '<option value="'+escapeAttr(r)+'">'+escapeHTML(r)+'</option>';
+    }).join('');
+    if(panel._casesFilters.kat) katSel.value = panel._casesFilters.kat;
+  }
+  if(verusSel){
+    verusSel.innerHTML = '<option value="">Alle</option>' + V_ORDER.map(function(v){
+      return '<option value="'+escapeAttr(v)+'">'+escapeHTML(VLABEL[v]||v)+'</option>';
+    }).join('');
+    if(panel._casesFilters.verus) verusSel.value = panel._casesFilters.verus;
+  }
+  // Datums-Range vom Panel ggf. übernehmen
+  var fromEl = panel.querySelector('.f-date-from');
+  var toEl = panel.querySelector('.f-date-to');
+  if(fromEl) fromEl.value = panel._casesFilters.dateFrom || '';
+  if(toEl) toEl.value = panel._casesFilters.dateTo || '';
+  var ordEl = panel.querySelector('.f-order');
+  var custEl = panel.querySelector('.f-customer');
+  var artEl = panel.querySelector('.f-art');
+  if(ordEl) ordEl.value = panel._casesFilters.ord || '';
+  if(custEl) custEl.value = panel._casesFilters.cust || '';
+  if(artEl) artEl.value = panel._casesFilters.art || '';
+
+  // Event-Wiring (idempotent über _filtersBound-Flag)
+  if(!panel._filtersBound){
+    panel._filtersBound = true;
+    function bindInput(el, key, lower){
+      if(!el) return;
+      el.addEventListener('input', function(){
+        panel._casesFilters[key] = lower ? el.value.toLowerCase().trim() : el.value;
+        applyCasesFilters(panel);
+      });
+    }
+    function bindSelect(el, key){
+      if(!el) return;
+      el.addEventListener('change', function(){
+        panel._casesFilters[key] = el.value;
+        applyCasesFilters(panel);
+      });
+    }
+    bindInput(panel.querySelector('.f-date-from'), 'dateFrom', false);
+    bindInput(panel.querySelector('.f-date-to'), 'dateTo', false);
+    bindSelect(panel.querySelector('.f-land'), 'land');
+    bindSelect(panel.querySelector('.f-kat'), 'kat');
+    bindSelect(panel.querySelector('.f-verus'), 'verus');
+    bindInput(panel.querySelector('.f-art'), 'art', true);
+    bindInput(panel.querySelector('.f-order'), 'ord', true);
+    bindInput(panel.querySelector('.f-customer'), 'cust', true);
+    var resetBtn = panel.querySelector('.cases-reset');
+    if(resetBtn){
+      resetBtn.addEventListener('click', function(){
+        panel._casesFilters = {};
+        ['.f-date-from','.f-date-to','.f-land','.f-kat','.f-verus','.f-art','.f-order','.f-customer'].forEach(function(sel){
+          var el = panel.querySelector(sel); if(el) el.value = '';
+        });
+        applyCasesFilters(panel);
+      });
+    }
+  }
+  applyCasesFilters(panel);
 }
 
 // ============ Standard Panel ============
@@ -489,8 +706,13 @@ function renderPanel(panelId, from, to, opts){
     (c.n||[]).forEach(function(n){verus[n.v]=true});
     var vTags = Object.keys(verus).map(function(v){return '<span class="tag tag-'+v+'">'+VLABEL[v]+'</span>'}).join(' ');
     var arts = (c.p||[]).map(function(p){return escapeHTML(p.t)+(p.q>1?' ('+p.q+'×)':'')}).join('<br>');
-    return '<tr><td>'+fmtDE(c.d)+'</td><td>'+escapeHTML(c.o)+'</td><td>'+escapeHTML(c.c)+'</td><td>'+escapeHTML(c.l)+'</td><td>'+kats+'</td><td>'+vTags+'</td><td>'+arts+'</td></tr>';
-  }).join('') : '<tr><td colspan="7"><div class="empty">Keine Cases im Zeitraum</div></td></tr>';
+    // V4: data-Attribute für Spalten-Filter
+    var katsRaw = (c.n||[]).map(function(n){return n.k}).join('|');
+    var verusRaw = Object.keys(verus).join('|');
+    var artsRaw = (c.p||[]).map(function(p){return p.t}).join(' ');
+    return '<tr data-d="'+escapeAttr(c.d)+'" data-l="'+escapeAttr(c.l||'')+'" data-k="'+escapeAttr(katsRaw)+'" data-v="'+escapeAttr(verusRaw)+'" data-o="'+escapeAttr((c.o||'').toLowerCase())+'" data-c="'+escapeAttr((c.c||'').toLowerCase())+'" data-a="'+escapeAttr(artsRaw.toLowerCase())+'">'
+      +'<td>'+fmtDE(c.d)+'</td><td>'+escapeHTML(c.o)+'</td><td>'+escapeHTML(c.c)+'</td><td>'+escapeHTML(c.l)+'</td><td>'+kats+'</td><td>'+vTags+'</td><td>'+arts+'</td></tr>';
+  }).join('') : '<tr class="empty-row"><td colspan="7"><div class="empty">Keine Cases im Zeitraum</div></td></tr>';
 
   var trend = bucketTrend(agg.byDay,from,to);
 
@@ -500,16 +722,20 @@ function renderPanel(panelId, from, to, opts){
   panel.querySelector('.artikel-tbody').innerHTML = artikelTbl;
   panel.querySelector('.cases-tbody').innerHTML = casesTbl;
 
-  // V3: Inline-Heatmap pro Panel
-  var heatBox = panel.querySelector('.heatmap-section');
-  if(heatBox){
-    buildHeatmap(agg, heatBox, {limit:10});
+  // V4: Artikel-Gesamt initialisieren
+  updateArtTotal(panel);
+
+  // V4: Cases-Tabelle: Filter aufsetzen
+  setupCasesFilters(panel, casesArr);
+
+  // V5: Produktkategorien-Sektion (zeitraumabhängig)
+  if(panel.querySelector('.pt-heatmap')){
+    buildPTSection(panel, agg, panelId);
   }
 
-  // V3.1: Mini-Länder-Section pro Panel
-  var countryBox = panel.querySelector('.country-mini-section');
-  if(countryBox){
-    buildCountryMini(agg, countryBox);
+  // V5: Länder-Sektion (zeitraumabhängig)
+  if(panel.querySelector('.country-heatmap')){
+    buildCountrySection(panel, agg, panelId);
   }
 
   var doughnutId = panelId+'_doughnut';
@@ -517,7 +743,9 @@ function renderPanel(panelId, from, to, opts){
   destroyChart(doughnutId);
   destroyChart(barId);
 
-  var vKeys = Object.keys(agg.byV);
+  // V4: feste Verursacher-Reihenfolge (V_ORDER), nur die mit Daten zeigen
+  var vKeys = V_ORDER.filter(function(k){return (agg.byV[k]||0)>0});
+  Object.keys(agg.byV).forEach(function(k){if(vKeys.indexOf(k)<0 && agg.byV[k]>0) vKeys.push(k)});
   var dCtx = panel.querySelector('.doughnut-canvas');
   if(vKeys.length){
     charts[doughnutId] = new Chart(dCtx,{
@@ -557,21 +785,37 @@ function panelTemplate(id){
       + '<div class="card"><h3>Kategorien</h3><ul class="kat-list"></ul></div>'
     + '</div>'
     + '<div class="card" style="margin-bottom:18px"><h3>Trend</h3><div class="chart-wrap"><canvas class="bar-canvas"></canvas></div></div>'
-    + '<div class="card" style="margin-bottom:18px"><h3>Neusendungen nach Produktkategorie</h3>'
-      + '<div class="heatmap-section"></div>'
-    + '</div>'
-    + '<div class="card" style="margin-bottom:18px"><div class="country-mini-section country-mini"></div></div>'
     + '<div class="card" style="margin-bottom:18px"><h3>Nachgesendete Original-Artikel</h3>'
-      + '<input type="search" class="search artikel-search" placeholder="Artikel suchen ...">'
+      + '<div class="search-row">'
+        + '<input type="search" class="search artikel-search" placeholder="Artikel suchen ...">'
+        + '<div class="art-total">Gesamt: <strong class="art-total-num">0</strong></div>'
+      + '</div>'
       + '<div style="overflow-x:auto"><table class="artikel-table"><thead><tr>'
         + '<th data-sort="title">Artikel</th><th>Gründe</th><th data-sort="total" class="sorted" style="text-align:right">Gesamt</th>'
       + '</tr></thead><tbody class="artikel-tbody"></tbody></table></div>'
     + '</div>'
-    + '<div class="card"><h3>Alle Cases im Zeitraum</h3>'
-      + '<div style="overflow-x:auto"><table><thead><tr>'
+    + '<div class="card" style="margin-bottom:18px"><h3>Alle Cases im Zeitraum</h3>'
+      + '<div class="cases-filterbar">'
+        + '<div class="count"><strong class="cases-count-shown">0</strong> von <strong class="cases-count-total">0</strong> Cases</div>'
+        + '<button class="cases-reset" type="button">Filter zurücksetzen</button>'
+      + '</div>'
+      + '<div style="overflow-x:auto"><table class="cases-table"><thead>'
+        + '<tr>'
         + '<th>Datum</th><th>Bestellung</th><th>Kunde</th><th>Land</th><th>Kategorie</th><th>Verursacher</th><th>Artikel</th>'
-      + '</tr></thead><tbody class="cases-tbody"></tbody></table></div>'
+        + '</tr>'
+        + '<tr class="filter-row">'
+          + '<th><div class="date-pair"><input type="date" class="f-date-from" title="von"><input type="date" class="f-date-to" title="bis"></div></th>'
+          + '<th><input type="search" class="f-order" placeholder="Suche..."></th>'
+          + '<th><input type="search" class="f-customer" placeholder="Suche..."></th>'
+          + '<th><select class="f-land"><option value="">Alle</option></select></th>'
+          + '<th><select class="f-kat"><option value="">Alle</option></select></th>'
+          + '<th><select class="f-verus"><option value="">Alle</option></select></th>'
+          + '<th><input type="search" class="f-art" placeholder="Suche..."></th>'
+        + '</tr>'
+        + '</thead><tbody class="cases-tbody"></tbody></table></div>'
     + '</div>'
+    + ptSectionTemplate()
+    + countrySectionTemplate()
     + '</div>';
 }
 
@@ -590,115 +834,112 @@ function customPanelTemplate(){
       + '<div class="card"><h3>Kategorien</h3><ul class="kat-list"></ul></div>'
     + '</div>'
     + '<div class="card" style="margin-bottom:18px"><h3>Trend</h3><div class="chart-wrap"><canvas class="bar-canvas"></canvas></div></div>'
-    + '<div class="card" style="margin-bottom:18px"><h3>Neusendungen nach Produktkategorie</h3>'
-      + '<div class="heatmap-section"></div>'
-    + '</div>'
-    + '<div class="card" style="margin-bottom:18px"><div class="country-mini-section country-mini"></div></div>'
     + '<div class="card" style="margin-bottom:18px"><h3>Nachgesendete Original-Artikel</h3>'
-      + '<input type="search" class="search artikel-search" placeholder="Artikel suchen ...">'
+      + '<div class="search-row">'
+        + '<input type="search" class="search artikel-search" placeholder="Artikel suchen ...">'
+        + '<div class="art-total">Gesamt: <strong class="art-total-num">0</strong></div>'
+      + '</div>'
       + '<div style="overflow-x:auto"><table class="artikel-table"><thead><tr>'
         + '<th data-sort="title">Artikel</th><th>Gründe</th><th data-sort="total" class="sorted" style="text-align:right">Gesamt</th>'
       + '</tr></thead><tbody class="artikel-tbody"></tbody></table></div>'
     + '</div>'
-    + '<div class="card"><h3>Alle Cases im Zeitraum</h3>'
-      + '<div style="overflow-x:auto"><table><thead><tr>'
+    + '<div class="card" style="margin-bottom:18px"><h3>Alle Cases im Zeitraum</h3>'
+      + '<div class="cases-filterbar">'
+        + '<div class="count"><strong class="cases-count-shown">0</strong> von <strong class="cases-count-total">0</strong> Cases</div>'
+        + '<button class="cases-reset" type="button">Filter zurücksetzen</button>'
+      + '</div>'
+      + '<div style="overflow-x:auto"><table class="cases-table"><thead>'
+        + '<tr>'
         + '<th>Datum</th><th>Bestellung</th><th>Kunde</th><th>Land</th><th>Kategorie</th><th>Verursacher</th><th>Artikel</th>'
-      + '</tr></thead><tbody class="cases-tbody"></tbody></table></div>'
+        + '</tr>'
+        + '<tr class="filter-row">'
+          + '<th><div class="date-pair"><input type="date" class="f-date-from" title="von"><input type="date" class="f-date-to" title="bis"></div></th>'
+          + '<th><input type="search" class="f-order" placeholder="Suche..."></th>'
+          + '<th><input type="search" class="f-customer" placeholder="Suche..."></th>'
+          + '<th><select class="f-land"><option value="">Alle</option></select></th>'
+          + '<th><select class="f-kat"><option value="">Alle</option></select></th>'
+          + '<th><select class="f-verus"><option value="">Alle</option></select></th>'
+          + '<th><input type="search" class="f-art" placeholder="Suche..."></th>'
+        + '</tr>'
+        + '</thead><tbody class="cases-tbody"></tbody></table></div>'
     + '</div>'
+    + ptSectionTemplate()
+    + countrySectionTemplate()
     + '</div>';
 }
 
-// ============ V3: Produktkategorien Top-Level Panel ============
-function ptPanelTemplate(){
-  return '<div class="panel" id="panel-pt">'
-    + '<div class="compare-bar" id="pt-summary"></div>'
-    + '<div class="card" style="margin-bottom:18px"><h3>Welche Kategorien sind am stärksten betroffen</h3>'
-      + '<div class="chart-wrap tall"><canvas id="ptBarCanvas"></canvas></div>'
-    + '</div>'
-    + '<div class="card" style="margin-bottom:18px"><h3>Heatmap · Kategorie × Grund (letzte 90 Tage)</h3>'
-      + '<div id="ptBigHeatmap"></div>'
+// ============ V5: Produktkategorien-Sektion (zeitraumabhängig, in jedem Panel) ============
+function ptSectionTemplate(){
+  return '<div class="card" style="margin-bottom:18px"><h3>Neusendungen nach Produktkategorie</h3>'
+      + '<div class="pt-summary-line" style="font-size:12px;color:var(--ink-soft);margin-bottom:10px"></div>'
+      + '<div class="pt-bar-wrap chart-wrap tall" style="margin-bottom:14px"><canvas class="pt-bar-canvas"></canvas></div>'
+      + '<div class="pt-heatmap"></div>'
     + '</div>'
     + '<div class="card" style="margin-bottom:18px"><h3>Top-5 Kategorien im Detail</h3>'
-      + '<div class="pt-grid" id="ptMiniGrid"></div>'
+      + '<div class="pt-grid pt-mini-grid"></div>'
     + '</div>'
-    + '<div class="strat" id="ptStrat"></div>'
-    + '</div>';
+    + '<div class="strat pt-strat" style="margin-bottom:18px"></div>';
 }
 
-function renderPTPanel(){
-  // Verwendet die letzten 90 Tage
-  var anchor = MAX_DATE;
-  var from = addDays(anchor, -89);
-  var to = anchor;
-  var cases = filterCases(from, to);
-  var agg = aggregate(cases);
-
+function buildPTSection(panel, agg, idPrefix){
   var ptEntries = Object.keys(agg.byPT).map(function(p){return [p, agg.byPT[p]]}).sort(function(a,b){return b[1]-a[1]});
+  var sumLine = panel.querySelector('.pt-summary-line');
+  if(sumLine){
+    sumLine.innerHTML = '<strong>'+ptEntries.length+'</strong> Produktkategorien · <strong>'+ptEntries.reduce(function(s,e){return s+e[1]},0)+'</strong> Item-Vorfälle im Zeitraum';
+  }
 
-  document.getElementById('pt-summary').innerHTML =
-    '<div><strong>'+ptEntries.length+'</strong> Produktkategorien im Zeitraum '+fmtDE(from)+'–'+fmtDE(to)
-    +' · <strong>'+ptEntries.reduce(function(s,e){return s+e[1]},0)+'</strong> Item-Vorfälle gesamt</div>'
-    +'<div>Sortiert nach Häufigkeit</div>';
-
-  // Horizontal Bar
-  destroyChart('ptBar');
-  var pCtx = document.getElementById('ptBarCanvas');
-  charts['ptBar'] = new Chart(pCtx, {
-    type:'bar',
-    data:{
-      labels: ptEntries.map(function(e){return e[0]}),
-      datasets:[{
-        data: ptEntries.map(function(e){return e[1]}),
-        backgroundColor:'#b04848',
-        borderRadius:4,
-        maxBarThickness:22
-      }]
-    },
-    options:{
-      indexAxis:'y',
-      responsive:true,
-      maintainAspectRatio:false,
-      plugins:{legend:{display:false},
-        tooltip:{callbacks:{label:function(c){return c.parsed.x+' Item-Vorfälle'}}}
+  // Bar Chart (horizontal)
+  destroyChart(idPrefix+'_ptBar');
+  var pCtx = panel.querySelector('.pt-bar-canvas');
+  if(pCtx && ptEntries.length){
+    charts[idPrefix+'_ptBar'] = new Chart(pCtx, {
+      type:'bar',
+      data:{
+        labels: ptEntries.map(function(e){return e[0]}),
+        datasets:[{data: ptEntries.map(function(e){return e[1]}), backgroundColor:'#b04848', borderRadius:4, maxBarThickness:22}]
       },
-      scales:{x:{beginAtZero:true,ticks:{precision:0,font:{size:11}},grid:{color:'#f0ece6'}},
-              y:{ticks:{font:{size:11}},grid:{display:false}}}
-    }
-  });
+      options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{display:false},tooltip:{callbacks:{label:function(c){return c.parsed.x+' Item-Vorfälle'}}}},
+        scales:{x:{beginAtZero:true,ticks:{precision:0,font:{size:11}},grid:{color:'#f0ece6'}},
+                y:{ticks:{font:{size:11}},grid:{display:false}}}}
+    });
+  }
 
-  // Big Heatmap
-  buildHeatmap(agg, document.getElementById('ptBigHeatmap'), {});
+  // Heatmap (alle Kategorien)
+  var heatBox = panel.querySelector('.pt-heatmap');
+  if(heatBox) buildHeatmap(agg, heatBox, {});
 
-  // Mini-Cards für Top 5
+  // Mini-Cards Top 5
+  var miniGrid = panel.querySelector('.pt-mini-grid');
   var top5 = ptEntries.slice(0,5);
-  var miniHTML = top5.map(function(e, idx){
-    var pt = e[0], total = e[1];
-    var rs = agg.ptReason[pt] || {};
-    var arts = agg.ptArtikel[pt] || {};
-    var topArts = Object.keys(arts).map(function(a){return [a,arts[a]]}).sort(function(a,b){return b[1]-a[1]}).slice(0,3);
-    var topList = topArts.map(function(a){return '<li><span class="t" title="'+escapeAttr(a[0])+'">'+escapeHTML(a[0])+'</span><span class="n">'+a[1]+'</span></li>'}).join('');
-    return '<div class="pt-card">'
-      +'<h4>'+escapeHTML(pt)+'</h4>'
-      +'<div class="pt-total">'+total+' Item-Vorfälle</div>'
-      +'<div class="pt-chart"><canvas id="ptMini_'+idx+'"></canvas></div>'
-      +'<ul class="pt-top">'+(topList||'<li>—</li>')+'</ul>'
-      +'</div>';
-  }).join('');
-  document.getElementById('ptMiniGrid').innerHTML = miniHTML;
+  if(miniGrid){
+    var miniHTML = top5.map(function(e, idx){
+      var pt = e[0], total = e[1];
+      var arts = agg.ptArtikel[pt] || {};
+      var topArts = Object.keys(arts).map(function(a){return [a,arts[a]]}).sort(function(a,b){return b[1]-a[1]}).slice(0,3);
+      var topList = topArts.map(function(a){return '<li><span class="t" title="'+escapeAttr(a[0])+'">'+escapeHTML(a[0])+'</span><span class="n">'+a[1]+'</span></li>'}).join('');
+      return '<div class="pt-card">'
+        +'<h4>'+escapeHTML(pt)+'</h4>'
+        +'<div class="pt-total">'+total+' Item-Vorfälle</div>'
+        +'<div class="pt-chart"><canvas id="'+idPrefix+'_ptMini_'+idx+'"></canvas></div>'
+        +'<ul class="pt-top">'+(topList||'<li>—</li>')+'</ul>'
+        +'</div>';
+    }).join('') || '<div class="empty">Keine Produktkategorien im Zeitraum</div>';
+    miniGrid.innerHTML = miniHTML;
+  }
 
   top5.forEach(function(e, idx){
     var pt = e[0];
     var rs = agg.ptReason[pt] || {};
     var keys = Object.keys(rs).sort(function(a,b){return rs[b]-rs[a]});
-    var labels = keys;
     var values = keys.map(function(k){return rs[k]});
     var colors = ['#b04848','#c4934a','#7d8fa3','#6b8e7f','#a892b8','#b08968','#9a9a9a'];
-    destroyChart('ptMini_'+idx);
-    var ctx = document.getElementById('ptMini_'+idx);
+    destroyChart(idPrefix+'_ptMini_'+idx);
+    var ctx = panel.querySelector('#'+idPrefix+'_ptMini_'+idx);
     if(!ctx) return;
-    charts['ptMini_'+idx] = new Chart(ctx, {
+    charts[idPrefix+'_ptMini_'+idx] = new Chart(ctx, {
       type:'doughnut',
-      data:{labels:labels,datasets:[{data:values,backgroundColor:keys.map(function(k,i){return colors[i%colors.length]}),borderColor:'#fff',borderWidth:2}]},
+      data:{labels:keys,datasets:[{data:values,backgroundColor:keys.map(function(k,i){return colors[i%colors.length]}),borderColor:'#fff',borderWidth:2}]},
       options:{responsive:true,maintainAspectRatio:false,cutout:'58%',
         plugins:{legend:{position:'bottom',labels:{boxWidth:8,padding:8,font:{size:10}}}}}
     });
@@ -713,51 +954,187 @@ function renderPTPanel(){
     if(!sorted.length) return;
     var topR = sorted[0];
     var pct = Math.round(topR[1]/total*100);
-    if(pct < 35) return; // nur klare Muster
-    var action = '';
-    var v = (topR[0]==='Defekt/Bruch' || topR[0]==='Transportschaden') ? 'Verpackungs-Audit & Inlay-Verstärkung priorisieren'
+    if(pct < 35) return;
+    var action = (topR[0]==='Defekt/Bruch' || topR[0]==='Defekt (Lager-Kontrolle)' || topR[0]==='Transportschaden') ? 'Verpackungs-Audit & Inlay-Verstärkung priorisieren'
           : topR[0]==='Produktionsfehler' ? 'Lieferantengespräch & QC-Stichprobe ansetzen'
           : topR[0]==='Paket zurückgekommen' ? 'Carrier-Performance & Adress-Validierung prüfen'
           : topR[0]==='Falsche Adresse' ? 'Address Validation API im Checkout aktivieren'
           : (topR[0]==='Artikel fehlt' || topR[0]==='Falscher Artikel' || topR[0]==='Falsche Menge') ? 'Pick&Pack-Prozess im Lager auditieren'
           : 'Kategorie tiefer analysieren';
-    strat.push({pt:pt,reason:topR[0],pct:pct,total:total,action:v});
+    strat.push({pt:pt,reason:topR[0],pct:pct,total:total,action:action});
   });
-
-  // Carrier overall
   var carrierTotal = (agg.byV['carrier']||0);
   if(agg.total>0 && carrierTotal/agg.total > 0.1){
     strat.push({pt:'Alle Kategorien',reason:'Carrier-Probleme',pct:Math.round(carrierTotal/agg.total*100),total:carrierTotal,
       action:'Quartalsgespräch mit Versanddienstleister & Region-Analyse'});
   }
-
-  var stratHTML = '<h3>Strategische Erkenntnisse</h3><div class="sub">Automatisch generiert aus der Heatmap (letzte 90 Tage)</div>';
-  if(strat.length){
-    stratHTML += strat.map(function(s, i){
-      return '<div class="strat-item"><div class="strat-icon">'+(i+1)+'</div>'
-        +'<div class="strat-text"><strong>'+escapeHTML(s.pt)+'</strong>: '+s.pct+'% '+escapeHTML(s.reason)+' ('+s.total+' Vorfälle) → '+escapeHTML(s.action)+'</div></div>';
-    }).join('');
-  } else {
-    stratHTML += '<div class="empty">Keine dominanten Muster — Probleme verteilen sich gleichmäßig.</div>';
+  var stratBox = panel.querySelector('.pt-strat');
+  if(stratBox){
+    var stratHTML = '<h3>Strategische Erkenntnisse</h3><div class="sub">Automatisch generiert aus der Heatmap des Zeitraums</div>';
+    if(strat.length){
+      stratHTML += strat.map(function(s, i){
+        return '<div class="strat-item"><div class="strat-icon">'+(i+1)+'</div>'
+          +'<div class="strat-text"><strong>'+escapeHTML(s.pt)+'</strong>: '+s.pct+'% '+escapeHTML(s.reason)+' ('+s.total+' Vorfälle) → '+escapeHTML(s.action)+'</div></div>';
+      }).join('');
+    } else {
+      stratHTML += '<div class="empty">Keine dominanten Muster — Probleme verteilen sich gleichmäßig.</div>';
+    }
+    stratBox.innerHTML = stratHTML;
   }
-  document.getElementById('ptStrat').innerHTML = stratHTML;
 }
 
-// ============ V3.1: Länder Top-Level Panel ============
-function countryPanelTemplate(){
-  return '<div class="panel" id="panel-country">'
-    + '<div class="compare-bar" id="country-summary"></div>'
-    + '<div class="card" style="margin-bottom:18px"><h3>Top 10 Länder nach Neusendungen (letzte 90 Tage)</h3>'
-      + '<div class="chart-wrap tall"><canvas id="countryBarCanvas"></canvas></div>'
+// ============ V5: Länder-Sektion (zeitraumabhängig, in jedem Panel) ============
+function countrySectionTemplate(){
+  return '<div class="card" style="margin-bottom:18px"><h3>Verteilung nach Land</h3>'
+      + '<div class="country-summary-line" style="font-size:12px;color:var(--ink-soft);margin-bottom:10px"></div>'
+      + '<div class="country-mini-grid">'
+        + '<ul class="country-rows"></ul>'
+        + '<div class="country-chart-wrap"><canvas class="country-bar-canvas"></canvas></div>'
+      + '</div>'
     + '</div>'
-    + '<div class="card" style="margin-bottom:18px"><h3>Heatmap · Land × Neusendungsgrund (letzte 90 Tage)</h3>'
-      + '<div id="countryBigHeatmap"></div>'
+    + '<div class="card" style="margin-bottom:18px"><h3>Heatmap · Land × Neusendungsgrund</h3>'
+      + '<div class="country-heatmap"></div>'
     + '</div>'
     + '<div class="card" style="margin-bottom:18px"><h3>Top-3 Länder im Detail</h3>'
-      + '<div class="country-grid" id="countryMiniGrid"></div>'
+      + '<div class="country-grid country-mini-cards"></div>'
     + '</div>'
-    + '<div class="strat" id="countryStrat"></div>'
-    + '</div>';
+    + '<div class="strat country-strat" style="margin-bottom:18px"></div>';
+}
+
+function buildCountrySection(panel, agg, idPrefix){
+  var entries = Object.keys(agg.byLand).map(function(l){return [l, agg.byLand[l]]})
+    .filter(function(e){return e[1].total>0})
+    .sort(function(a,b){return b[1].total-a[1].total});
+  var total = entries.reduce(function(s,e){return s+e[1].total},0);
+
+  // Summary line
+  var sumLine = panel.querySelector('.country-summary-line');
+  if(sumLine){
+    sumLine.innerHTML = '<strong>'+entries.length+'</strong> Länder · <strong>'+total+'</strong> Cases im Zeitraum';
+  }
+
+  // Rows untereinander
+  var rowsEl = panel.querySelector('.country-rows');
+  if(rowsEl){
+    if(!entries.length){
+      rowsEl.innerHTML = '<li><div class="empty" style="grid-column:1 / -1">Keine Länder-Daten im Zeitraum</div></li>';
+    } else {
+      rowsEl.innerHTML = entries.map(function(e){
+        var iso = e[0], d = e[1];
+        var pct = total ? Math.round(d.total/total*100) : 0;
+        var topK = Object.keys(d.byK).sort(function(a,b){return d.byK[b]-d.byK[a]})[0];
+        var reasonTxt = topK ? 'meist '+topK : '';
+        return '<li>'
+          +'<span class="flag">'+flagEmoji(iso)+'</span>'
+          +'<span class="cname">'+escapeHTML(countryName(iso))+'</span>'
+          +'<span class="cnum">'+d.total+'</span>'
+          +'<span class="cpct">'+pct+'%</span>'
+          +'<span class="creason">'+escapeHTML(reasonTxt)+'</span>'
+          +'</li>';
+      }).join('');
+    }
+  }
+
+  // Horizontal Bar Chart Top 10
+  destroyChart(idPrefix+'_countryBar');
+  var top10 = entries.slice(0,10);
+  var cCtx = panel.querySelector('.country-bar-canvas');
+  if(cCtx && top10.length){
+    charts[idPrefix+'_countryBar'] = new Chart(cCtx, {
+      type:'bar',
+      data:{
+        labels: top10.map(function(e){return flagEmoji(e[0])+' '+countryName(e[0])}),
+        datasets:[{data: top10.map(function(e){return e[1].total}), backgroundColor:'#c4934a', borderRadius:4, maxBarThickness:18}]
+      },
+      options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{display:false},tooltip:{callbacks:{label:function(c){
+          var pct = total ? Math.round(c.parsed.x/total*100) : 0;
+          return c.parsed.x+' Cases ('+pct+'%)';
+        }}}},
+        scales:{x:{beginAtZero:true,ticks:{precision:0,font:{size:11}},grid:{color:'#f0ece6'}},
+                y:{ticks:{font:{size:11}},grid:{display:false}}}}
+    });
+  }
+
+  // Heatmap Land × Grund
+  var heatBox = panel.querySelector('.country-heatmap');
+  if(heatBox) buildCountryHeatmap(agg, heatBox);
+
+  // Mini-Cards Top 3
+  var miniBox = panel.querySelector('.country-mini-cards');
+  var top3 = entries.slice(0,3);
+  if(miniBox){
+    if(!top3.length){
+      miniBox.innerHTML = '<div class="empty">Keine Länder-Daten im Zeitraum</div>';
+    } else {
+      miniBox.innerHTML = top3.map(function(e, idx){
+        var iso = e[0], d = e[1];
+        var arts = d.byArtikel || {};
+        var topArts = Object.keys(arts).map(function(a){return [a,arts[a]]}).sort(function(a,b){return b[1]-a[1]}).slice(0,3);
+        var topList = topArts.map(function(a){return '<li><span class="t" title="'+escapeAttr(a[0])+'">'+escapeHTML(a[0])+'</span><span class="n">'+a[1]+'</span></li>'}).join('');
+        return '<div class="country-card">'
+          +'<h4><span class="flag">'+flagEmoji(iso)+'</span>'+escapeHTML(countryName(iso))+'</h4>'
+          +'<div class="c-total">'+d.total+' Neusendungen</div>'
+          +'<div class="c-chart"><canvas id="'+idPrefix+'_countryMini_'+idx+'"></canvas></div>'
+          +'<ul class="c-top">'+(topList||'<li>—</li>')+'</ul>'
+          +'</div>';
+      }).join('');
+      top3.forEach(function(e, idx){
+        var d = e[1];
+        var vKeys = Object.keys(d.byV);
+        if(!vKeys.length) return;
+        destroyChart(idPrefix+'_countryMini_'+idx);
+        var ctx = panel.querySelector('#'+idPrefix+'_countryMini_'+idx);
+        if(!ctx) return;
+        charts[idPrefix+'_countryMini_'+idx] = new Chart(ctx, {
+          type:'doughnut',
+          data:{labels:vKeys.map(function(k){return VLABEL[k]||k}),
+            datasets:[{data:vKeys.map(function(k){return d.byV[k]}),
+              backgroundColor:vKeys.map(function(k){return VCOL[k]||'#9a9a9a'}),
+              borderColor:'#fff',borderWidth:2}]},
+          options:{responsive:true,maintainAspectRatio:false,cutout:'58%',
+            plugins:{legend:{position:'bottom',labels:{boxWidth:8,padding:8,font:{size:10}}}}}
+        });
+      });
+    }
+  }
+
+  // Internationale Erkenntnisse
+  var strat = [];
+  entries.forEach(function(e){
+    var iso = e[0], d = e[1];
+    if(d.total < 2) return;
+    var sortedK = Object.keys(d.byK).map(function(k){return [k,d.byK[k]]}).sort(function(a,b){return b[1]-a[1]});
+    if(!sortedK.length) return;
+    var topK = sortedK[0];
+    var pct = Math.round(topK[1]/d.total*100);
+    var carrierPct = d.byV['carrier'] ? Math.round(d.byV['carrier']/d.total*100) : 0;
+    var bruchAbs = (d.byK['Defekt/Bruch']||0) + (d.byK['Defekt (Lager-Kontrolle)']||0) + (d.byK['Transportschaden']||0);
+    var bruchPct = Math.round(bruchAbs/d.total*100);
+
+    if(iso==='CH' && (d.byK['Schweiz']||0)/d.total > 0.5){
+      strat.push({iso:iso,text:'Schweiz: '+Math.round((d.byK['Schweiz']||0)/d.total*100)+'% Zoll-/Schweiz-Sonderfall ('+d.total+' Neusendungen) → CH-Versand-Prozess separat behandeln.'});
+    } else if(carrierPct >= 25){
+      strat.push({iso:iso,text:countryName(iso)+': hohe Carrier-Quote ('+carrierPct+'% Paket-Rückläufer bei '+d.total+' Neusendungen) → Versanddienstleister & Adress-Validierung prüfen.'});
+    } else if(bruchPct >= 50 && d.total >= 5){
+      strat.push({iso:iso,text:countryName(iso)+': Bruchquote überdurchschnittlich ('+bruchPct+'% Defekt/Transport) → Verpackungs-Audit für diese Region.'});
+    } else if(pct >= 50 && d.total >= 3){
+      strat.push({iso:iso,text:countryName(iso)+': '+pct+'% '+topK[0]+' ('+d.total+' Neusendungen) → Muster im Auge behalten.'});
+    }
+  });
+  var stratBox = panel.querySelector('.country-strat');
+  if(stratBox){
+    var stratHTML = '<h3>Internationale Erkenntnisse</h3><div class="sub">Automatisch generiert aus Land × Grund (Zeitraum)</div>';
+    if(strat.length){
+      stratHTML += strat.slice(0,8).map(function(s){
+        return '<div class="strat-item"><div class="strat-icon">'+flagEmoji(s.iso)+'</div>'
+          +'<div class="strat-text">'+escapeHTML(s.text)+'</div></div>';
+      }).join('');
+    } else {
+      stratHTML += '<div class="empty">Keine dominanten Muster — Probleme verteilen sich gleichmäßig.</div>';
+    }
+    stratBox.innerHTML = stratHTML;
+  }
 }
 
 function buildCountryHeatmap(agg, container){
@@ -769,7 +1146,8 @@ function buildCountryHeatmap(agg, container){
   entries.forEach(function(e){
     Object.keys(e[1].byK).forEach(function(k){reasonsSet[k]=true});
   });
-  var reasons = REASON_ORDER.filter(function(r){return reasonsSet[r]});
+  // V4: immer alle 13 Gründe zeigen
+  var reasons = REASON_ORDER.slice();
   Object.keys(reasonsSet).forEach(function(r){if(reasons.indexOf(r)<0) reasons.push(r)});
 
   var thead = '<tr><th>Land</th>' + reasons.map(function(r){return '<th>'+escapeHTML(r)+'</th>'}).join('') + '<th>Gesamt</th></tr>';
@@ -784,7 +1162,7 @@ function buildCountryHeatmap(agg, container){
       var style = v>0 ? 'background:rgba(176,72,72,'+op.toFixed(3)+')' : '';
       var pct = d.total ? Math.round(v/d.total*100) : 0;
       var tt = escapeAttr(countryName(iso)+' · '+r+' · '+v+' · '+pct+'% des Landes');
-      return '<td class="'+(v===0?'cell-zero':'')+'" style="'+style+'" title="'+tt+'">'+(v||'·')+'</td>';
+      return '<td class="'+(v===0?'cell-zero':'')+'" style="'+style+'" title="'+tt+'">'+(v||'–')+'</td>';
     }).join('');
     var label = flagEmoji(iso)+' '+countryName(iso);
     return '<tr><td>'+escapeHTML(label)+'</td>'+cells+'<td>'+d.total+'</td></tr>';
@@ -792,125 +1170,9 @@ function buildCountryHeatmap(agg, container){
   container.innerHTML = '<div class="heatmap-wrap"><table class="heatmap"><thead>'+thead+'</thead><tbody>'+tbody+'</tbody></table></div>';
 }
 
-function renderCountryPanel(){
-  var anchor = MAX_DATE;
-  var from = addDays(anchor, -89);
-  var to = anchor;
-  var cases = filterCases(from, to);
-  var agg = aggregate(cases);
-
-  var entries = Object.keys(agg.byLand).map(function(l){return [l,agg.byLand[l]]})
-    .filter(function(e){return e[1].total>0})
-    .sort(function(a,b){return b[1].total-a[1].total});
-
-  document.getElementById('country-summary').innerHTML =
-    '<div><strong>'+entries.length+'</strong> Länder im Zeitraum '+fmtDE(from)+'–'+fmtDE(to)
-    +' · <strong>'+entries.reduce(function(s,e){return s+e[1].total},0)+'</strong> Neusendungen gesamt</div>'
-    +'<div>Sortiert nach Häufigkeit</div>';
-
-  // Horizontal Bar (Top 10)
-  var top10 = entries.slice(0,10);
-  destroyChart('countryBar');
-  var cCtx = document.getElementById('countryBarCanvas');
-  charts['countryBar'] = new Chart(cCtx, {
-    type:'bar',
-    data:{
-      labels: top10.map(function(e){return flagEmoji(e[0])+' '+countryName(e[0])}),
-      datasets:[{
-        data: top10.map(function(e){return e[1].total}),
-        backgroundColor:'#b04848',
-        borderRadius:4,
-        maxBarThickness:22
-      }]
-    },
-    options:{
-      indexAxis:'y',
-      responsive:true,
-      maintainAspectRatio:false,
-      plugins:{legend:{display:false},
-        tooltip:{callbacks:{label:function(c){return c.parsed.x+' Neusendungen'}}}
-      },
-      scales:{x:{beginAtZero:true,ticks:{precision:0,font:{size:11}},grid:{color:'#f0ece6'}},
-              y:{ticks:{font:{size:11}},grid:{display:false}}}
-    }
-  });
-
-  // Heatmap Land × Grund
-  buildCountryHeatmap(agg, document.getElementById('countryBigHeatmap'));
-
-  // Mini-Cards für Top 3
-  var top3 = entries.slice(0,3);
-  var miniHTML = top3.map(function(e, idx){
-    var iso = e[0], d = e[1];
-    var arts = d.byArtikel || {};
-    var topArts = Object.keys(arts).map(function(a){return [a,arts[a]]}).sort(function(a,b){return b[1]-a[1]}).slice(0,3);
-    var topList = topArts.map(function(a){return '<li><span class="t" title="'+escapeAttr(a[0])+'">'+escapeHTML(a[0])+'</span><span class="n">'+a[1]+'</span></li>'}).join('');
-    return '<div class="country-card">'
-      +'<h4><span class="flag">'+flagEmoji(iso)+'</span>'+escapeHTML(countryName(iso))+'</h4>'
-      +'<div class="c-total">'+d.total+' Neusendungen</div>'
-      +'<div class="c-chart"><canvas id="countryMini_'+idx+'"></canvas></div>'
-      +'<ul class="c-top">'+(topList||'<li>—</li>')+'</ul>'
-      +'</div>';
-  }).join('');
-  document.getElementById('countryMiniGrid').innerHTML = miniHTML || '<div class="empty">Keine Länder-Daten</div>';
-
-  top3.forEach(function(e, idx){
-    var d = e[1];
-    var vKeys = Object.keys(d.byV);
-    if(!vKeys.length) return;
-    destroyChart('countryMini_'+idx);
-    var ctx = document.getElementById('countryMini_'+idx);
-    if(!ctx) return;
-    charts['countryMini_'+idx] = new Chart(ctx, {
-      type:'doughnut',
-      data:{labels:vKeys.map(function(k){return VLABEL[k]||k}),
-        datasets:[{data:vKeys.map(function(k){return d.byV[k]}),
-          backgroundColor:vKeys.map(function(k){return VCOL[k]||'#9a9a9a'}),
-          borderColor:'#fff',borderWidth:2}]},
-      options:{responsive:true,maintainAspectRatio:false,cutout:'58%',
-        plugins:{legend:{position:'bottom',labels:{boxWidth:8,padding:8,font:{size:10}}}}}
-    });
-  });
-
-  // Strategische Insights
-  var strat = [];
-  entries.forEach(function(e){
-    var iso = e[0], d = e[1];
-    if(d.total < 2) return;
-    var sortedK = Object.keys(d.byK).map(function(k){return [k,d.byK[k]]}).sort(function(a,b){return b[1]-a[1]});
-    if(!sortedK.length) return;
-    var topK = sortedK[0];
-    var pct = Math.round(topK[1]/d.total*100);
-    var carrierPct = d.byV['carrier'] ? Math.round(d.byV['carrier']/d.total*100) : 0;
-    var bruchPct = (d.byK['Defekt/Bruch']||0) + (d.byK['Transportschaden']||0);
-    bruchPct = Math.round(bruchPct/d.total*100);
-
-    if(iso==='CH' && (d.byK['Schweiz']||0)/d.total > 0.5){
-      strat.push({iso:iso,text:'Schweiz: '+Math.round((d.byK['Schweiz']||0)/d.total*100)+'% Zoll-/Schweiz-Sonderfall ('+d.total+' Neusendungen) → CH-Versand-Prozess separat behandeln.'});
-    } else if(carrierPct >= 25){
-      strat.push({iso:iso,text:countryName(iso)+': hohe Carrier-Quote ('+carrierPct+'% Paket-Rückläufer bei '+d.total+' Neusendungen) → Versanddienstleister & Adress-Validierung prüfen.'});
-    } else if(bruchPct >= 50 && d.total >= 5){
-      strat.push({iso:iso,text:countryName(iso)+': Bruchquote überdurchschnittlich ('+bruchPct+'% Defekt/Transport) → Verpackungs-Audit für diese Region.'});
-    } else if(pct >= 50 && d.total >= 3){
-      strat.push({iso:iso,text:countryName(iso)+': '+pct+'% '+topK[0]+' ('+d.total+' Neusendungen) → Muster im Auge behalten.'});
-    }
-  });
-
-  var stratHTML = '<h3>Internationale Erkenntnisse</h3><div class="sub">Automatisch generiert aus Land × Grund (letzte 90 Tage)</div>';
-  if(strat.length){
-    stratHTML += strat.slice(0,8).map(function(s, i){
-      return '<div class="strat-item"><div class="strat-icon">'+flagEmoji(s.iso)+'</div>'
-        +'<div class="strat-text">'+escapeHTML(s.text)+'</div></div>';
-    }).join('');
-  } else {
-    stratHTML += '<div class="empty">Keine dominanten Muster — Probleme verteilen sich gleichmäßig.</div>';
-  }
-  document.getElementById('countryStrat').innerHTML = stratHTML;
-}
-
 var panelsDiv = document.getElementById('panels');
 var tabs = ['yesterday','7d','30d','90d','365d'];
-panelsDiv.innerHTML = tabs.map(function(t){return panelTemplate('panel-'+t)}).join('') + ptPanelTemplate() + countryPanelTemplate() + customPanelTemplate();
+panelsDiv.innerHTML = tabs.map(function(t){return panelTemplate('panel-'+t)}).join('') + customPanelTemplate();
 
 document.getElementById('panel-yesterday').classList.add('active');
 
@@ -918,12 +1180,6 @@ tabs.forEach(function(t){
   var r = rangeFor(t);
   renderPanel('panel-'+t, r.from, r.to, {compare:true});
 });
-
-// PT-Panel
-renderPTPanel();
-
-// V3.1: Country-Panel
-renderCountryPanel();
 
 // Custom
 var custFrom = document.getElementById('custFrom');
@@ -972,6 +1228,8 @@ document.querySelectorAll('.panel').forEach(function(panel){
       if(!tr.dataset.title){return}
       tr.style.display = tr.dataset.title.indexOf(q)>=0 ? '' : 'none';
     });
+    // V4: Live-Gesamtsumme aktualisieren
+    updateArtTotal(panel);
   });
   var table = panel.querySelector('.artikel-table');
   if(!table) return;
@@ -990,6 +1248,7 @@ document.querySelectorAll('.panel').forEach(function(panel){
         return asc?av.localeCompare(bv):bv.localeCompare(av);
       });
       rows.forEach(function(r){tbody.appendChild(r)});
+      updateArtTotal(panel);
     });
   });
 });
