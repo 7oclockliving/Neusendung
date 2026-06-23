@@ -1,0 +1,43 @@
+name: Daily Dashboard Update
+
+on:
+  schedule:
+    # 8:00 Uhr Berliner Zeit:
+    # Sommerzeit (CEST = UTC+2) → 06:00 UTC
+    # Winterzeit (CET = UTC+1)  → 07:00 UTC
+    # Wir nehmen 06:05 UTC = 8:05 Sommer / 7:05 Winter — pragmatisch nahe 8 Uhr morgens
+    - cron: '5 6 * * *'
+  workflow_dispatch: {}  # erlaubt manuelles Triggern
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Generate dashboard
+        env:
+          SHOPIFY_SHOP_DOMAIN: ${{ secrets.SHOPIFY_SHOP_DOMAIN }}
+          SHOPIFY_ADMIN_TOKEN: ${{ secrets.SHOPIFY_ADMIN_TOKEN }}
+          OUTPUT_PATH: index.html
+        run: python generate_dashboard.py
+
+      - name: Commit & push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          if git diff --staged --quiet; then
+            echo "Keine Änderungen am Dashboard."
+          else
+            git commit -m "Daily update $(date -u +'%Y-%m-%d')"
+            git push
+          fi
