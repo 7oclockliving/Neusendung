@@ -66,31 +66,79 @@ WOCHENTAGE_DE = ["Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Sam
 
 
 # ============================================================
-# Shopify API
+# Shopify API – Multi-Auth-Strategie
 # ============================================================
-def graphql(query, variables=None):
-    payload = json.dumps({"query": query, "variables": variables or {}}).encode("utf-8")
-    req = urllib.request.Request(
-        GRAPHQL_URL,
-        data=payload,
-        headers={
+# Automation Tokens (atkn_...) nutzen Bearer Auth.
+# Klassische Tokens (shpat_...) nutzen X-Shopify-Access-Token.
+# Wir probieren beides durch.
+
+def _headers_variants():
+    """Liefert mögliche Header-Kombinationen je nach Token-Format."""
+    variants = []
+    if ADMIN_TOKEN.startswith("atkn_"):
+        # Neue Automation Tokens: Bearer Auth
+        variants.append({
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {ADMIN_TOKEN}",
+            "Accept": "application/json",
+        })
+        # Fallback
+        variants.append({
             "Content-Type": "application/json",
             "X-Shopify-Access-Token": ADMIN_TOKEN,
             "Accept": "application/json",
-        },
-        method="POST",
-    )
-    try:
-        with urllib.request.urlopen(req, timeout=60) as resp:
-            data = json.loads(resp.read().decode("utf-8"))
-    except urllib.error.HTTPError as e:
-        body = e.read().decode("utf-8", errors="replace")
-        print(f"ERROR: Shopify API HTTP {e.code}: {body}", file=sys.stderr)
-        sys.exit(1)
-    if "errors" in data:
-        print(f"ERROR: GraphQL errors: {data['errors']}", file=sys.stderr)
-        sys.exit(1)
-    return data["data"]
+        })
+    else:
+        # Klassisch: X-Shopify-Access-Token
+        variants.append({
+            "Content-Type": "application/json",
+            "X-Shopify-Access-Token": ADMIN_TOKEN,
+            "Accept": "application/json",
+        })
+        variants.append({
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {ADMIN_TOKEN}",
+            "Accept": "application/json",
+        })
+    return variants
+
+_WORKING_HEADERS = None
+
+def graphql(query, variables=None):
+    global _WORKING_HEADERS
+    payload = json.dumps({"query": query, "variables": variables or {}}).encode("utf-8")
+
+    headers_to_try = [_WORKING_HEADERS] if _WORKING_HEADERS else _headers_variants()
+
+    last_error = None
+    for headers in headers_to_try:
+        if headers is None:
+            continue
+        req = urllib.request.Request(GRAPHQL_URL, data=payload, headers=headers, method="POST")
+        try:
+            with urllib.request.urlopen(req, timeout=60) as resp:
+                data = json.loads(resp.read().decode("utf-8"))
+            if "errors" in data:
+                err_str = json.dumps(data["errors"])
+                # Auth-Fehler? Versuche nächsten Header
+                if "401" in err_str or "unauthorized" in err_str.lower() or "Invalid API" in err_str:
+                    last_error = f"GraphQL errors with this auth: {err_str}"
+                    continue
+                print(f"ERROR: GraphQL errors: {data['errors']}", file=sys.stderr)
+                sys.exit(1)
+            _WORKING_HEADERS = headers  # erfolgreichen Header merken
+            return data["data"]
+        except urllib.error.HTTPError as e:
+            body = e.read().decode("utf-8", errors="replace")
+            last_error = f"HTTP {e.code}: {body}"
+            if e.code in (401, 403):
+                continue
+            print(f"ERROR: Shopify API {last_error}", file=sys.stderr)
+            sys.exit(1)
+
+    print(f"ERROR: Alle Auth-Varianten fehlgeschlagen. Letzter Fehler: {last_error}", file=sys.stderr)
+    print(f"Token-Präfix: {ADMIN_TOKEN[:6]}..., Shop: {SHOP_DOMAIN}", file=sys.stderr)
+    sys.exit(1)
 
 
 def fetch_orders(query_str, page_size=250):
