@@ -438,6 +438,7 @@ function aggregate(cases){
   var artikelSumme=0; // V6: Summe aller nachgesendeten Original-Artikel (p[].q)
   var kostenEK=0, kostenVK=0; // V7.2: Summe EK + VK
   var carrierOnlyCases=0; // V7.3: Anzahl Cases mit reiner Carrier-Logik (nur Pauschale)
+  var ptKosten={}; // V7.7: Kosten pro Warengruppe { pt → {ek, vk, items, cases:Set} }
   cases.forEach(function(c){
     var land = c.l || '??';
     // V7.3: Carrier-Cases haben KEINE EK/VK-Berechnung
@@ -470,6 +471,16 @@ function aggregate(cases){
         if(typeof p.ek === 'number') kostenEK += p.ek * qty * ekMultiplier;
         if(typeof p.vk === 'number') kostenVK += p.vk * qty;
       }
+      // V7.7: Kosten pro Warengruppe (PT) – EK/VK auch nur wenn nicht Carrier; Carrier = 0 EK/VK
+      if(!ptKosten[pt]) ptKosten[pt] = {ek:0, vk:0, items:0, cases:{}, isCarrierItems:0};
+      ptKosten[pt].items += qty;
+      if(c.o) ptKosten[pt].cases[c.o] = true;
+      if(!isCarrierOnly){
+        if(typeof p.ek === 'number') ptKosten[pt].ek += p.ek * qty * ekMultiplier;
+        if(typeof p.vk === 'number') ptKosten[pt].vk += p.vk * qty;
+      } else {
+        ptKosten[pt].isCarrierItems += qty;
+      }
       byLand[land].byArtikel[p.t] = (byLand[land].byArtikel[p.t]||0) + qty;
       if(caseKats.length===0){
         // Case ohne Kategorie: trotzdem die Artikel-Stats füllen ohne Grund-Pill
@@ -493,7 +504,7 @@ function aggregate(cases){
   return {total:total,byK:byK,byV:byV,byDay:byDay,artikelStats:artikelStats,
           byPT:byPT,ptReason:ptReason,ptArtikel:ptArtikel,byLand:byLand,
           artikelSumme:artikelSumme,kostenEK:kostenEK,kostenVK:kostenVK,
-          carrierOnlyCases:carrierOnlyCases,cases:cases};
+          carrierOnlyCases:carrierOnlyCases,ptKosten:ptKosten,cases:cases};
 }
 
 // V7.2: Euro-Formatierung de-DE
@@ -1101,7 +1112,35 @@ function buildPTSection(panel, agg, idPrefix){
         datasets:[{data: ptEntries.map(function(e){return e[1]}), backgroundColor:'#b04848', borderRadius:4, maxBarThickness:22}]
       },
       options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
-        plugins:{legend:{display:false},tooltip:{callbacks:{label:function(c){return c.parsed.x+' Item-Vorfälle'}}}},
+        plugins:{legend:{display:false},tooltip:{
+          // V7.7: Mehrzeiliger Tooltip mit Kosten pro Warengruppe
+          callbacks:{
+            label:function(c){
+              var pt = c.label;
+              var info = (agg.ptKosten||{})[pt] || {ek:0,vk:0,items:0,cases:{},isCarrierItems:0};
+              var caseCount = Object.keys(info.cases||{}).length;
+              var kosten = info.ek + caseCount * KOSTEN_PAUSCHALE;
+              var lines = [];
+              lines.push(c.parsed.x + ' Item-Vorfälle in ' + caseCount + ' Neusendungen');
+              lines.push('');
+              lines.push('Kosten gesamt: ' + fmtEUR(kosten));
+              lines.push('  • EK der Artikel: ' + fmtEUR(info.ek));
+              lines.push('  • Versand-Pauschale: ' + fmtEUR(caseCount * KOSTEN_PAUSCHALE));
+              if(caseCount > 0){
+                lines.push('  • Ø pro Neusendung: ' + fmtEUR(kosten / caseCount));
+              }
+              if(info.vk > 0){
+                lines.push('');
+                lines.push('Möglicher entgangener VK: ' + fmtEUR(info.vk));
+              }
+              if(info.isCarrierItems > 0){
+                lines.push('');
+                lines.push('(' + info.isCarrierItems + ' Items aus Carrier-Cases — nur Pauschale)');
+              }
+              return lines;
+            }
+          }
+        }}},
         scales:{x:{beginAtZero:true,ticks:{precision:0,font:{size:11}},grid:{color:'#f0ece6'}},
                 y:{ticks:{font:{size:11}},grid:{display:false}}}}
     });
