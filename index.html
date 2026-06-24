@@ -243,7 +243,7 @@ tr:hover td{background:#fdfcfa}
   <div class="data-hint" id="dataHint"></div>
 
   <div class="tabs" role="tablist">
-    <button class="tab active" data-tab="yesterday">Gestern</button>
+    <button class="tab active" data-tab="yesterday">Letzter Werktag</button>
     <button class="tab" data-tab="7d">Letzte 7 Tage</button>
     <button class="tab" data-tab="30d">Letzte 30 Tage</button>
     <button class="tab" data-tab="90d">Letzte 90 Tage</button>
@@ -355,20 +355,65 @@ var MAX_DATE = ALL_DATES[ALL_DATES.length-1] || DATA.targetDate;
 var ALL_AGG = null; // wird nach aggregate-Definition gesetzt
 
 document.getElementById('updatedLine').textContent = 'Aktualisiert am ' + fmtDE(DATA.lastUpdated || MAX_DATE);
-document.getElementById('dataHint').textContent = 'Datensatz: ' + fmtDE(MIN_DATE) + ' bis ' + fmtDE(MAX_DATE) + ' · ' + CASES.length + ' Cases · "Gestern" = ' + fmtDE(DATA.targetDate || addDays(MAX_DATE,-1));
+// V7.6: Header zeigt "Letzter Werktag" sauber an — bei Wochenende-Block mit Hinweis
+(function(){
+  var anchor = DATA.targetDate || addDays(MAX_DATE,-1);
+  var r = lastWorkdayRange(anchor);
+  var lastWorkdayLabel;
+  if(r.isWeekendBlock){
+    // anchor war Sonntag oder Samstag → wir nehmen Fr-So zusammen
+    var fri = r.from; // Freitag
+    var weekendDays = [];
+    var d = addDays(fri,1);
+    while(d <= r.to){ weekendDays.push(d); d = addDays(d,1); }
+    lastWorkdayLabel = fmtDE(fri) + ' (inkl. ' + weekendDays.map(function(x){
+      var dow = dowOf(x);
+      return ['So','Mo','Di','Mi','Do','Fr','Sa'][dow];
+    }).join(' + ') + ')';
+  } else {
+    lastWorkdayLabel = fmtDE(anchor);
+  }
+  document.getElementById('dataHint').textContent = 'Datensatz: ' + fmtDE(MIN_DATE) + ' bis ' + fmtDE(MAX_DATE) + ' · ' + CASES.length + ' Cases · "Letzter Werktag" = ' + lastWorkdayLabel;
+})();
 document.getElementById('footer').textContent = "7 o'clock · Interner Kundenservice-Report · Vertraulich · Aktualisiert am " + fmtDE(DATA.lastUpdated || MAX_DATE);
+
+// V7.6: Wochentag-Helfer (0=So, 1=Mo, ..., 5=Fr, 6=Sa)
+function dowOf(iso){ return new Date(iso+'T12:00:00').getDay(); }
+
+// V7.6: Range für "Letzter Werktag" — wenn anchor ein Montag wäre, gehen wir auf Freitag zurück
+// und inkludieren Sa+So in der gleichen Range. Sonst normaler Vortag.
+// Vergleich (Vorperiode): spiegelt diese Logik gespiegelt 1 Woche zurück.
+function lastWorkdayRange(anchor){
+  // anchor ist typischerweise targetDate. Aber wir wollen wissen: ist HEUTE Montag?
+  // Wenn HEUTE Mo → anchor = Sonntag (=targetDate). Wir nehmen Fr (anchor-2) als Start, Sonntag (anchor) als Ende.
+  var anchorDow = dowOf(anchor);
+  if(anchorDow === 0){ // anchor = Sonntag → heute Mo, Range = Fr-So
+    return {from: addDays(anchor,-2), to: anchor, label: 'Fr–So', isWeekendBlock: true};
+  }
+  if(anchorDow === 6){ // anchor = Samstag → heute So (sollte nie über Daily-Task laufen), pragmatisch Fr–Sa
+    return {from: addDays(anchor,-1), to: anchor, label: 'Fr–Sa', isWeekendBlock: true};
+  }
+  // Sonst: ganz normaler Vortag
+  return {from: anchor, to: anchor, label: 'Vortag', isWeekendBlock: false};
+}
 
 function rangeFor(tab){
   // V6-FIX: "Gestern" = targetDate aus dem JSON (= echter Vortag, nicht heute).
-  // Längere Zeiträume enden ebenfalls am Vortag, NICHT am heutigen MAX_DATE.
-  // Sonst würden die Werte vom unvollständigen heutigen Tag den Vergleich verfälschen.
+  // V7.6: Wenn der Vortag ein Sonntag/Samstag ist (also wir laufen am Montag), nehmen wir Fr+Sa+So zusammen.
   var anchor = DATA.targetDate || addDays(MAX_DATE,-1);
-  if(tab==='yesterday') return {from:anchor,to:anchor};
+  if(tab==='yesterday'){
+    return lastWorkdayRange(anchor);
+  }
   if(tab==='7d')   return {from:addDays(anchor,-6),to:anchor};
   if(tab==='30d')  return {from:addDays(anchor,-29),to:anchor};
   if(tab==='90d')  return {from:addDays(anchor,-89),to:anchor};
   if(tab==='365d') return {from:addDays(anchor,-364),to:anchor};
   return null;
+}
+
+// V7.6: Vorperiode für "Letzter Werktag" — eine Woche zurück, gleiche Tageszahl
+function prevRangeFor(r){
+  return {from: addDays(r.from,-7), to: addDays(r.to,-7), label: r.label, isWeekendBlock: r.isWeekendBlock};
 }
 
 function filterCases(from,to){
@@ -771,14 +816,25 @@ function renderPanel(panelId, from, to, opts){
   var days = diffDays(from,to)+1;
   var perDay = days>0 ? (agg.total/days) : 0;
 
-  var prevFrom = addDays(from,-days), prevTo = addDays(from,-1);
+  // V7.6: Vorperiode anpassen — bei "Letzter Werktag" (Mo-Lauf, Fr+Sa+So) wird die Vorwoche genommen
+  var prevFrom, prevTo;
+  if(opts.weekendBlock){
+    // Eine Woche zurück, gleiche Anzahl Tage
+    prevFrom = addDays(from,-7);
+    prevTo = addDays(to,-7);
+  } else {
+    prevFrom = addDays(from,-days);
+    prevTo = addDays(from,-1);
+  }
   var prevAgg = aggregate(filterCases(prevFrom,prevTo));
 
   var topK = Object.keys(agg.byK).sort(function(a,b){return agg.byK[b]-agg.byK[a]})[0] || '–';
 
+  // V7.6: bei Wochenende-Block (Mo-Lauf) extra Hinweis, dass Fr+Sa+So zusammengefasst sind
+  var wkHint = opts.weekendBlock ? ' <span style="color:var(--ink-soft);font-size:12px">· Fr + Sa + So zusammen</span>' : '';
   var compareHTML = compare
-    ? '<div><strong>'+agg.total+'</strong> Neusendungen vs. <strong>'+prevAgg.total+'</strong> in der Vorperiode ('+fmtDE(prevFrom)+'–'+fmtDE(prevTo)+')</div>'+deltaHTML(agg.total,prevAgg.total)
-    : '<div><strong>'+agg.total+'</strong> Neusendungen im Zeitraum '+fmtDE(from)+'–'+fmtDE(to)+'</div>';
+    ? '<div><strong>'+agg.total+'</strong> Neusendungen vs. <strong>'+prevAgg.total+'</strong> in der Vorperiode ('+fmtDE(prevFrom)+'–'+fmtDE(prevTo)+')'+wkHint+'</div>'+deltaHTML(agg.total,prevAgg.total)
+    : '<div><strong>'+agg.total+'</strong> Neusendungen im Zeitraum '+fmtDE(from)+'–'+fmtDE(to)+wkHint+'</div>';
 
   // V5.3: Top-Warengruppe (Produktkategorie aus byPT) statt Quote
   var topPT = Object.keys(agg.byPT||{}).sort(function(a,b){return (agg.byPT[b]||0)-(agg.byPT[a]||0)})[0] || '–';
@@ -1339,7 +1395,8 @@ document.getElementById('panel-yesterday').classList.add('active');
 
 tabs.forEach(function(t){
   var r = rangeFor(t);
-  renderPanel('panel-'+t, r.from, r.to, {compare:true});
+  // V7.6: bei Letzter-Werktag-Tab Wochenende-Block-Vergleich aktivieren
+  renderPanel('panel-'+t, r.from, r.to, {compare:true, weekendBlock: !!r.isWeekendBlock, weekendLabel: r.label});
 });
 
 // Custom
