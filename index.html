@@ -281,7 +281,7 @@ var VLABEL = {lager:'Lager',produkt:'Produkt',carrier:'Carrier',kunde:'Kunde',ku
 var V_ORDER = ['lager','produkt','carrier','kunde','kulanz','sonstiges'];
 
 // V4: Vollständige Heatmap-Spaltenreihenfolge (immer alle 13 Spalten, auch wenn 0)
-var REASON_ORDER = ['Defekt/Bruch','Defekt (Lager-Kontrolle)','Produktionsfehler','Artikel fehlt','Falscher Artikel','Falsche Menge','Packstation','Transportschaden','Falsche Adresse','Paket zurückgekommen','Schweiz','Kulanz','Sonstiges (alt)'];
+var REASON_ORDER = ['Defekt/Bruch','Defekt (Lager-Kontrolle)','Produktionsfehler','Artikel fehlt','Falscher Artikel','Falscher Artikel, behalten','Falsche Menge','Packstation','Transportschaden','Falsche Adresse','Paket zurückgekommen','Schweiz','Kulanz','Sonstiges (alt)'];
 
 // V5.2: Brand-Farben pro Kategorie (für Kategorien-Doughnut)
 var KCOL = {
@@ -290,6 +290,7 @@ var KCOL = {
   'Produktionsfehler':'#b08350',
   'Artikel fehlt':'#6b8e7f',
   'Falscher Artikel':'#7c9d8e',
+  'Falscher Artikel, behalten':'#5a7a6c',
   'Falsche Menge':'#8badad',
   'Packstation':'#7d8fa3',
   'Transportschaden':'#8d9fb3',
@@ -381,6 +382,10 @@ var KOSTEN_PAUSCHALE = 5.0;
 // weil die Originalprodukte bezahlt sind und nur die Sendung erneut durchgeführt wird.
 var CARRIER_KATS_NO_EKVK = ['Paket zurückgekommen','Falsche Adresse','Packstation'];
 
+// V7.5: Bei "Falscher Artikel, behalten" zählt der EK DOPPELT
+// (1x für den ursprünglich falsch gelieferten Artikel + 1x für die korrigierende Neusendung)
+var KATS_DOUBLE_EK = ['Falscher Artikel, behalten'];
+
 function aggregate(cases){
   // V6: 1 Case = 1 Neusendung (eine Hauptkategorie c.k, ein Verursacher c.v)
   var total=0, byK={}, byV={}, byDay={}, artikelStats={}, byPT={}, ptReason={}, ptArtikel={};
@@ -393,6 +398,8 @@ function aggregate(cases){
     // V7.3: Carrier-Cases haben KEINE EK/VK-Berechnung
     var isCarrierOnly = c.k && CARRIER_KATS_NO_EKVK.indexOf(c.k) >= 0;
     if(isCarrierOnly) carrierOnlyCases++;
+    // V7.5: EK-Multiplikator (1x normal, 2x bei "Falscher Artikel, behalten")
+    var ekMultiplier = (c.k && KATS_DOUBLE_EK.indexOf(c.k) >= 0) ? 2 : 1;
     if(!byLand[land]) byLand[land]={total:0,byK:{},byV:{},byArtikel:{}};
     if(c.k){
       total += 1;
@@ -413,8 +420,9 @@ function aggregate(cases){
       var qty = p.q || 1; // V5.4/V6: Quantity korrekt berücksichtigen
       artikelSumme += qty;
       // V7.2/V7.3: EK + VK aufsummieren — aber NICHT bei Carrier-Cases (Produkte sind ja bezahlt)
+      // V7.5: Bei "Falscher Artikel, behalten" zählt der EK DOPPELT (Original verschenkt + Korrektur versendet)
       if(!isCarrierOnly){
-        if(typeof p.ek === 'number') kostenEK += p.ek * qty;
+        if(typeof p.ek === 'number') kostenEK += p.ek * qty * ekMultiplier;
         if(typeof p.vk === 'number') kostenVK += p.vk * qty;
       }
       byLand[land].byArtikel[p.t] = (byLand[land].byArtikel[p.t]||0) + qty;
@@ -1525,6 +1533,10 @@ document.querySelectorAll('.recs-tab').forEach(function(tab){
       '<div class="tt-row"><strong style="font-size:11.5px">Carrier-Neusendung (nur Versand)</strong>' +
       '<div class="tt-formula">nur 5 € Pauschale</div></div>' +
       '<div class="tt-row" style="color:#d5d3cf;margin-top:4px">Bei <em>Paket zurückgekommen</em>, <em>Falsche Adresse</em> und <em>Packstation</em>. Die Produkte sind bereits bezahlt — es entstehen keine EK-Kosten und auch kein entgangener Verkauf.</div>' +
+      '<div class="tt-sep"></div>' +
+      '<div class="tt-row"><strong style="font-size:11.5px">Falscher Artikel, behalten</strong>' +
+      '<div class="tt-formula">2× EK der Artikel + 5 € Pauschale</div></div>' +
+      '<div class="tt-row" style="color:#d5d3cf;margin-top:4px">Wenn der Kunde den falsch gelieferten Artikel behalten darf und wir den richtigen Artikel zusätzlich versenden. EK zählt doppelt: einmal für den verlorenen Artikel beim Kunden, einmal für die korrigierende Sendung.</div>' +
       '<div class="tt-sep"></div>' +
       '<div class="tt-row" style="font-size:11px;color:#a8a6a2">Pauschale 5 € deckt Versandkosten + Verpackungsmaterial ab.</div>'
   };
