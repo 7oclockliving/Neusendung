@@ -79,6 +79,16 @@ h1{font-size:32px;font-weight:600;letter-spacing:-.01em;margin:0 0 8px}
 .kat-list .dot{width:9px;height:9px;border-radius:50%;display:inline-block}
 .kat-list .count{font-weight:600;color:var(--ink)}
 .kat-list .pct{color:var(--ink-soft);font-size:12px;margin-left:8px}
+/* V8.2: Verursacher-Analyse */
+.vur-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:4px}
+.vur-item{position:relative;background:#fdfcfa;border:1px solid var(--line);border-radius:8px;padding:16px 14px;overflow:hidden}
+.vur-item .vur-bar{position:absolute;left:0;top:0;bottom:0;width:4px}
+.vur-item .vur-lbl{font-size:11px;text-transform:uppercase;letter-spacing:.09em;color:var(--ink-soft);font-weight:600;margin-bottom:6px}
+.vur-item .vur-pct{font-size:26px;font-weight:600;letter-spacing:-.01em;line-height:1.1;color:var(--ink)}
+.vur-item .vur-abs{font-size:12px;color:var(--ink-soft);margin-top:4px}
+.vur-item .vur-kats{font-size:10.5px;color:var(--ink-soft);margin-top:10px;line-height:1.5;opacity:.85}
+.vur-footer{margin-top:14px;padding-top:12px;border-top:1px solid var(--line);font-size:11.5px;color:var(--ink-soft);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+@media(max-width:820px){.vur-grid{grid-template-columns:repeat(2,1fr)}}
 table{width:100%;border-collapse:collapse;font-size:13px}
 th{text-align:left;font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-soft);
   padding:10px 8px;border-bottom:1px solid var(--line);cursor:pointer;user-select:none}
@@ -437,6 +447,16 @@ var KATS_DOUBLE_EK = ['Falscher Artikel, behalten'];
 // V8.0: Kategorien OHNE jegliche Kosten — die Bestellung hat das Lager nie verlassen
 // (nur Label gedruckt, nichts gepackt, kein Versand). Keine 5€-Pauschale, kein EK, kein VK.
 var NULL_KOSTEN_KATS = ['Elektronisch angekündigt'];
+
+// V8.2: Verursacher-Analyse — Zuordnung Kategorie → verantwortlicher Bereich
+// Achtung: "Elektronisch angekündigt" zählt hier zu LAGER (Paket hat das Lager nie verlassen),
+// obwohl es kategorisch bei "carrier" liegt.
+var VERURSACHER_GROUPS = [
+  {name:'Lager', color:'#6b8e7f', kats:['Artikel fehlt','Falscher Artikel, behalten','Falscher Artikel','Falsche Menge','Elektronisch angekündigt']},
+  {name:'Produktion', color:'#c4934a', kats:['Defekt/Bruch','Defekt (Lager-Kontrolle)','Produktionsfehler']},
+  {name:'Versanddienstleister', color:'#7d8fa3', kats:['Packstation','Transportschaden','Paket zurückgekommen']},
+  {name:'Kunde', color:'#b08968', kats:['Falsche Adresse']}
+];
 
 function aggregate(cases){
   // V6: 1 Case = 1 Neusendung (eine Hauptkategorie c.k, ein Verursacher c.v)
@@ -1010,6 +1030,41 @@ function renderPanel(panelId, from, to, opts){
   } else {
     bCtx.getContext('2d').clearRect(0,0,bCtx.width,bCtx.height);
   }
+
+  // V8.2: Verursacher-Analyse rendern
+  renderVerursacherSection(panel, agg);
+}
+
+// V8.2: Verursacher-Analyse — 4 Cards + Footer
+function renderVerursacherSection(panel, agg){
+  var grid = panel.querySelector('.vur-grid');
+  var footer = panel.querySelector('.vur-footer');
+  if(!grid) return;
+  // Aggregation: Cases pro Verursacher-Gruppe (basierend auf Kategorie, nicht c.v!)
+  var byGroup = VERURSACHER_GROUPS.map(function(g){
+    var count = g.kats.reduce(function(s,k){return s + (agg.byK[k]||0)}, 0);
+    return {name:g.name, color:g.color, count:count, kats:g.kats};
+  });
+  var zugeordnet = byGroup.reduce(function(s,g){return s + g.count}, 0);
+  var nichtZugeordnet = agg.total - zugeordnet;
+  // Sortiere absteigend nach count für optische Priorität, aber Feste Positionen wäre auch OK.
+  // Wir behalten die feste Reihenfolge (Lager, Produktion, Versand, Kunde) für Konsistenz.
+  grid.innerHTML = byGroup.map(function(g){
+    var pct = zugeordnet ? Math.round(g.count / zugeordnet * 100) : 0;
+    var katHint = g.kats.slice(0,3).join(' · ') + (g.kats.length>3 ? ' …' : '');
+    return '<div class="vur-item">'
+      + '<div class="vur-bar" style="background:'+g.color+'"></div>'
+      + '<div class="vur-lbl">'+g.name+'</div>'
+      + '<div class="vur-pct">'+pct+'%</div>'
+      + '<div class="vur-abs">'+g.count+' Cases</div>'
+      + '<div class="vur-kats">'+katHint+'</div>'
+      + '</div>';
+  }).join('');
+  var footerHtml = '<div>Basis: <strong>'+zugeordnet+'</strong> von <strong>'+agg.total+'</strong> Cases zugeordnet</div>';
+  if(nichtZugeordnet > 0){
+    footerHtml += '<div>Nicht zugeordnet: <strong>'+nichtZugeordnet+'</strong> (Schweiz, Kulanz, Sonstiges)</div>';
+  }
+  footer.innerHTML = footerHtml;
 }
 
 function panelTemplate(id){
@@ -1019,6 +1074,10 @@ function panelTemplate(id){
     + '<div class="grid-2">'
       + '<div class="card"><h3>Verteilung nach Kategorie</h3><div class="chart-wrap"><canvas class="doughnut-canvas"></canvas></div></div>'
       + '<div class="card"><h3>Kategorien</h3><ul class="kat-list"></ul></div>'
+    + '</div>'
+    + '<div class="card verursacher-card" style="margin-bottom:22px"><h3>Verursacher-Analyse</h3>'
+      + '<div class="vur-grid"></div>'
+      + '<div class="vur-footer"></div>'
     + '</div>'
     + '<div class="card" style="margin-bottom:18px"><h3>Trend</h3><div class="chart-wrap"><canvas class="bar-canvas"></canvas></div></div>'
     + '<div class="card" style="margin-bottom:18px"><h3>Nachgesendete Original-Artikel</h3>'
@@ -1067,6 +1126,10 @@ function customPanelTemplate(){
     + '<div class="grid-2">'
       + '<div class="card"><h3>Verteilung nach Kategorie</h3><div class="chart-wrap"><canvas class="doughnut-canvas"></canvas></div></div>'
       + '<div class="card"><h3>Kategorien</h3><ul class="kat-list"></ul></div>'
+    + '</div>'
+    + '<div class="card verursacher-card" style="margin-bottom:22px"><h3>Verursacher-Analyse</h3>'
+      + '<div class="vur-grid"></div>'
+      + '<div class="vur-footer"></div>'
     + '</div>'
     + '<div class="card" style="margin-bottom:18px"><h3>Trend</h3><div class="chart-wrap"><canvas class="bar-canvas"></canvas></div></div>'
     + '<div class="card" style="margin-bottom:18px"><h3>Nachgesendete Original-Artikel</h3>'
