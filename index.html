@@ -193,6 +193,9 @@ h1{font-size:32px;font-weight:600;letter-spacing:-.01em;margin:0 0 8px}
 .refund-item{display:grid;grid-template-columns:90px 1fr 90px auto;gap:10px;align-items:center;padding:8px 6px;border-top:1px solid var(--line);font-size:12.5px}
 .refund-item:first-child{border-top:none;padding-top:12px}
 .refund-item .ri-order{font-weight:500;color:var(--ink)}
+/* V9.1.4: Klickbare Bestellnummern */
+a.order-link, .ri-order.order-link{color:var(--accent);text-decoration:none;border-bottom:1px dashed transparent;transition:border-color .15s ease}
+a.order-link:hover, .ri-order.order-link:hover{border-bottom-color:var(--accent)}
 .refund-item .ri-title{color:var(--ink-soft);line-height:1.35;font-size:12px}
 .refund-item .ri-title .ri-note{display:block;font-size:10.5px;color:var(--ink-soft);opacity:.75;font-style:italic;margin-top:2px}
 .refund-item .ri-amount{text-align:right;font-variant-numeric:tabular-nums;color:var(--ink)}
@@ -1177,7 +1180,7 @@ function renderPanel(panelId, from, to, opts){
     var katsRaw = c.k || '';
     var artsRaw = (c.p||[]).map(function(p){return p.t}).join(' ');
     return '<tr data-d="'+escapeAttr(c.d)+'" data-l="'+escapeAttr(c.l||'')+'" data-k="'+escapeAttr(katsRaw)+'" data-o="'+escapeAttr((c.o||'').toLowerCase())+'" data-c="'+escapeAttr((c.c||'').toLowerCase())+'" data-a="'+escapeAttr(artsRaw.toLowerCase())+'">'
-      +'<td>'+fmtDE(c.d)+'</td><td>'+escapeHTML(c.o)+'</td><td>'+escapeHTML(c.c)+'</td><td>'+escapeHTML(c.l)+'</td><td>'+kats+'</td><td>'+arts+'</td></tr>';
+      +'<td>'+fmtDE(c.d)+'</td><td>'+orderLinkHtml(c.o)+'</td><td>'+escapeHTML(c.c)+'</td><td>'+escapeHTML(c.l)+'</td><td>'+kats+'</td><td>'+arts+'</td></tr>';
   }).join('') : '<tr class="empty-row"><td colspan="6"><div class="empty">Keine Cases im Zeitraum</div></td></tr>';
 
   var trend = bucketTrend(agg.byDay,from,to);
@@ -1358,7 +1361,7 @@ function renderRefundSection(panel, from, to){
           var titleTxt = r.t || '<em style="opacity:.6">keine Artikel</em>';
           var noteTxt = r.n && r.n.toLowerCase().indexOf('resolvia')<0 ? '<span class="ri-note">„'+escapeHtml(r.n)+'"</span>' : '';
           return '<div class="refund-item">'
-            + '<div class="ri-order">'+r.o+'</div>'
+            + '<div class="ri-order">'+orderLinkHtml(r.o)+'</div>'
             + '<div class="ri-title">'+escapeHtml(titleTxt)+noteTxt+'</div>'
             + '<div class="ri-amount">'+fmtEUR(r.a)+'</div>'
             + '<div class="ri-tags"><span class="ri-src '+srcCls+'">'+srcLbl+'</span></div>'
@@ -1394,6 +1397,19 @@ function renderRefundSection(panel, from, to){
 
 function escapeHtml(s){
   return String(s||'').replace(/[&<>"']/g, function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]});
+}
+// V9.1.4: Shopify-Order-Link-Helper
+function shopifyOrderLink(orderName){
+  if(!orderName) return '';
+  var num = String(orderName).replace('#','');
+  // Shopify Admin Suche mit name-filter — öffnet direkt die Order
+  return 'https://admin.shopify.com/store/7oclock-de/orders?query=name:' + encodeURIComponent(num);
+}
+function orderLinkHtml(orderName, extraClass){
+  var name = escapeHtml(orderName || '');
+  var url = shopifyOrderLink(orderName);
+  var cls = 'order-link' + (extraClass ? ' '+extraClass : '');
+  return '<a class="'+cls+'" href="'+url+'" target="_blank" rel="noopener" title="In Shopify Admin öffnen">'+name+'</a>';
 }
 function daysBetween(a,b){
   return Math.round((new Date(b+'T00:00:00') - new Date(a+'T00:00:00')) / (24*3600*1000));
