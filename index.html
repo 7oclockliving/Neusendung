@@ -49,13 +49,12 @@ a{color:inherit}
 h1{font-size:32px;font-weight:600;letter-spacing:-.01em;margin:0 0 8px}
 .sub{color:var(--ink-soft);font-size:14px;margin-bottom:6px}
 .data-hint{font-size:12px;color:var(--ink-soft);margin-top:6px;font-style:italic}
-.tabs{display:flex;gap:6px;margin:28px 0 8px;overflow-x:auto;padding-bottom:4px;-webkit-overflow-scrolling:touch}
+/* V9.1.2: Tabs vereinheitlicht mit .ov-tabs Design */
+.tabs{display:flex;gap:4px;padding:4px;background:#fdfcfa;border:1px solid var(--line);border-radius:8px;width:fit-content;margin:28px 0 8px;flex-wrap:wrap;overflow-x:auto;-webkit-overflow-scrolling:touch}
 .tabs::-webkit-scrollbar{height:0}
-.tab{flex:0 0 auto;background:var(--card);border:1px solid var(--line);border-radius:999px;
-  padding:9px 16px;font-size:13px;color:var(--ink);cursor:pointer;white-space:nowrap;
-  transition:all .15s ease;font-weight:500}
-.tab:hover{background:#fdfcfa}
-.tab.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.tab{appearance:none;background:transparent;border:none;padding:8px 16px;font-family:inherit;font-size:13px;color:var(--ink-soft);cursor:pointer;border-radius:6px;transition:all .15s ease;white-space:nowrap;font-weight:500;flex:0 0 auto}
+.tab:hover{color:var(--ink);background:transparent}
+.tab.active{background:var(--card);color:var(--ink);font-weight:600;box-shadow:0 1px 2px rgba(0,0,0,.04);border-color:transparent}
 .panel{display:none;animation:fade .25s ease}
 .panel.active{display:block}
 @keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
