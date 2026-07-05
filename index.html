@@ -245,7 +245,15 @@ a.order-link:hover, .ri-order.order-link:hover{border-bottom-color:var(--accent)
 .rab-tbl .r-value{font-variant-numeric:tabular-nums;font-weight:500}
 .rab-tbl .r-used{text-align:right;font-variant-numeric:tabular-nums;color:var(--ink-soft)}
 .rab-tbl .r-used strong{color:var(--ink)}
-.rab-src-pill{display:inline-block;padding:2px 8px;border-radius:999px;font-size:10.5px;font-weight:500}
+.rab-src-pill{display:inline-block;padding:2px 8px;border-radius:999px;font-size:10.5px;font-weight:500;cursor:pointer;transition:filter .12s ease}
+.rab-src-pill:hover{filter:brightness(1.08)}
+.rab-src-card{cursor:pointer;transition:transform .12s ease,box-shadow .12s ease}
+.rab-src-card:hover{transform:translateY(-1px);box-shadow:0 2px 6px rgba(0,0,0,.04)}
+.rab-src-card.filter-active{border-color:var(--accent);box-shadow:0 0 0 2px rgba(176,72,72,.12)}
+.rab-filter-bar{display:flex;align-items:center;gap:12px;margin:16px 0 4px;font-size:13px;color:var(--ink-soft);flex-wrap:wrap}
+.rab-filter-bar .rf-badge{background:#f0ece6;color:var(--accent);padding:4px 10px;border-radius:999px;font-weight:600;font-size:12px}
+.rab-filter-bar .rf-reset{background:transparent;border:1px solid var(--line);color:var(--ink-soft);padding:4px 10px;border-radius:6px;font-family:inherit;font-size:12px;cursor:pointer;transition:all .15s ease}
+.rab-filter-bar .rf-reset:hover{color:var(--ink);border-color:var(--ink-soft)}
 .rab-src-manual{background:#e8dfc9;color:#7d5a2a}
 .rab-src-klaviyo{background:#d8e1e8;color:#3a5a7d}
 .rab-src-mageworx{background:#e0d8e8;color:#5a3a7d}
@@ -2768,15 +2776,11 @@ function renderRabatteSection(){
   var box = document.getElementById('rabatteContent');
   if(!box) return;
   var range = ov_getRange(window.__rabTab||'30d', window.__rabCustFrom, window.__rabCustTo);
-  var discounts = (DATA.discounts||[]).filter(function(x){return x.d>=range.from && x.d<=range.to});
-  // KPIs
-  var total = discounts.length;
-  var usedTotal = discounts.reduce(function(s,x){return s+(x.used||0)},0);
-  var actuallyUsed = discounts.filter(function(x){return x.used>0}).length;
-  var conversion = total ? (actuallyUsed/total*100) : 0;
-  // Nach Quelle
+  var allInRange = (DATA.discounts||[]).filter(function(x){return x.d>=range.from && x.d<=range.to});
+  var currentFilter = window.__rabFilter || null;
+  // Nach Quelle (basierend auf ALLEN im Zeitraum, für Card-Overview)
   var bySrc = {};
-  discounts.forEach(function(x){
+  allInRange.forEach(function(x){
     var s = x.src || 'manual';
     if(!bySrc[s]) bySrc[s] = {count:0, used:0};
     bySrc[s].count++;
@@ -2784,49 +2788,81 @@ function renderRabatteSection(){
   });
   var srcLabels = {manual:'Manuell', klaviyo:'Klaviyo (Winback)', mageworx:'Mageworx (Bundles)', app:'Andere Apps'};
   var srcColors = {manual:'#7d5a2a', klaviyo:'#3a5a7d', mageworx:'#5a3a7d', app:'#9a9a9a'};
+  // Gefilterte Ansicht
+  var discounts = currentFilter ? allInRange.filter(function(x){return (x.src||'manual')===currentFilter}) : allInRange;
+  // KPIs (basierend auf gefilterter Ansicht)
+  var total = discounts.length;
+  var usedTotal = discounts.reduce(function(s,x){return s+(x.used||0)},0);
+  var actuallyUsed = discounts.filter(function(x){return x.used>0}).length;
+  var conversion = total ? (actuallyUsed/total*100) : 0;
+  // Source-Cards
   var srcHtml = Object.keys(bySrc).sort(function(a,b){return bySrc[b].count-bySrc[a].count}).map(function(s){
     var info = bySrc[s];
     var color = srcColors[s] || '#9a9a9a';
-    return '<div class="rab-src-card"><div class="rs-bar" style="background:'+color+'"></div>'
+    var activeCls = currentFilter===s ? ' filter-active' : '';
+    return '<div class="rab-src-card'+activeCls+'" data-src-filter="'+s+'"><div class="rs-bar" style="background:'+color+'"></div>'
       + '<div class="rs-name">'+(srcLabels[s]||s)+'</div>'
       + '<div class="rs-val">'+info.count+'</div>'
       + '<div class="rs-sub">'+info.used+' Einlösungen</div>'
     + '</div>';
   }).join('');
-  // Tabelle sortiert nach Datum
+  // Filter-Bar wenn aktiv
+  var filterBarHtml = currentFilter
+    ? '<div class="rab-filter-bar">Filter aktiv: <span class="rf-badge">'+(srcLabels[currentFilter]||currentFilter)+'</span>'
+      + ' <span style="color:var(--ink-soft)">·</span> '
+      + '<span><strong style="color:var(--ink)">'+total+'</strong> Codes · <strong style="color:var(--accent)">'+usedTotal+'</strong> Einlösungen · '+conversion.toFixed(0)+'% Conversion</span>'
+      + ' <button class="rf-reset" data-clear-filter>× Filter zurücksetzen</button></div>'
+    : '';
+  // Tabelle
   var tblRows = discounts.slice().sort(function(a,b){return b.d.localeCompare(a.d)}).map(function(x){
     var val = x.pct ? (x.pct*100).toFixed(0)+'%' : (x.amt ? fmtEURcompact(x.amt) : '—');
     var code = x.code ? '<span class="r-code">'+escapeHtml(x.code)+'</span>' : '<em style="color:var(--ink-soft);font-size:11.5px">automatisch</em>';
     var title = escapeHtml(x.title||'') || '';
-    var srcCls = 'rab-src-'+(x.src||'manual');
-    var srcLbl = srcLabels[x.src] || (x.src||'manual');
+    var xSrc = x.src||'manual';
+    var srcCls = 'rab-src-'+xSrc;
+    var srcLbl = srcLabels[x.src] || xSrc;
     var usedTxt = (x.used||0)>0 ? '<strong>'+x.used+'</strong>'+(x.limit?' / '+x.limit:'') : (x.limit?'0 / '+x.limit:'0');
     return '<tr>'
       + '<td>'+fmtDE(x.d)+'</td>'
       + '<td>'+code+'</td>'
       + '<td>'+title+'</td>'
       + '<td class="r-value">'+val+'</td>'
-      + '<td><span class="rab-src-pill '+srcCls+'">'+srcLbl+'</span></td>'
+      + '<td><span class="rab-src-pill '+srcCls+'" data-src-filter="'+xSrc+'" title="Auf diese Quelle filtern">'+srcLbl+'</span></td>'
       + '<td class="r-used">'+usedTxt+'</td>'
     + '</tr>';
   }).join('');
   var content = '<div class="alert-card a-info" style="margin:14px 0 22px"><div class="a-title"><span class="a-icon">◐</span>Zu Resolvia-Attribution</div>'
-    + '<div class="a-detail">Resolvia stellt <strong>keine sichtbaren Discount-Codes oder Gift Cards</strong> über die Shopify-API aus — die Kompensation läuft über Draft-Orders (Ersatzsendungen) und Refunds (siehe Erstattungen).<br>Die <strong>Gift-Cards</strong> sind API-seitig gesperrt (fehlender <code>read_gift_cards</code>-Scope). Für vollständige Sicht bitte Scope bei Shopify Support freischalten lassen.<br><strong>Diese Übersicht</strong> zeigt alle Discount-Codes der letzten '+((daysBetween(range.from,range.to)+1))+' Tage — Quelle kannst du am Pill erkennen. Manuelle Codes könnten teils vom Kundenservice / Resolvia sein.</div></div>'
+    + '<div class="a-detail">Resolvia stellt <strong>keine sichtbaren Discount-Codes oder Gift Cards</strong> über die Shopify-API aus — die Kompensation läuft über Draft-Orders (Ersatzsendungen) und Refunds (siehe Erstattungen).<br>Die <strong>Gift-Cards</strong> sind API-seitig gesperrt (fehlender <code>read_gift_cards</code>-Scope). Für vollständige Sicht bitte Scope bei Shopify Support freischalten lassen.<br><strong>Tipp:</strong> Klick auf einen Quelle-Pill oder eine Quelle-Card filtert die Liste.</div></div>'
     + '<div class="kpis" style="grid-template-columns:repeat(4,1fr)">'
-      + '<div class="kpi"><div class="lbl">Codes im Zeitraum</div><div class="val">'+total+'</div><div class="sub">'+fmtDE(range.from)+' – '+fmtDE(range.to)+'</div></div>'
+      + '<div class="kpi"><div class="lbl">Codes '+(currentFilter?' ('+(srcLabels[currentFilter]||currentFilter)+')':'im Zeitraum')+'</div><div class="val">'+total+'</div><div class="sub">'+fmtDE(range.from)+' – '+fmtDE(range.to)+'</div></div>'
       + '<div class="kpi"><div class="lbl">Einlösungen</div><div class="val">'+usedTotal+'</div><div class="sub">'+actuallyUsed+' Codes verwendet</div></div>'
       + '<div class="kpi"><div class="lbl">Conversion-Quote</div><div class="val" style="color:var(--accent)">'+conversion.toFixed(0)+'%</div><div class="sub">Codes mit ≥1 Einlösung</div></div>'
       + '<div class="kpi"><div class="lbl">Ø Einlösungen / Code</div><div class="val">'+(total?(usedTotal/total).toFixed(1):'0')+'</div><div class="sub">bei allen Codes</div></div>'
     + '</div>'
-    + '<h4 style="margin:24px 0 6px;font-size:13px;font-weight:600">Nach Quelle</h4>'
+    + '<h4 style="margin:24px 0 6px;font-size:13px;font-weight:600">Nach Quelle (klickbar)</h4>'
     + '<div class="rab-src-grid">'+srcHtml+'</div>'
-    + '<div class="card"><h3>Alle Codes chronologisch</h3>'
+    + filterBarHtml
+    + '<div class="card" style="margin-top:12px"><h3>Codes chronologisch</h3>'
       + '<div class="tbl-scroll" style="margin-top:8px;overflow-x:auto"><table class="rab-tbl">'
       + '<thead><tr><th>Datum</th><th>Code</th><th>Titel</th><th>Wert</th><th>Quelle</th><th style="text-align:right">Einlösungen</th></tr></thead>'
-      + '<tbody>'+(tblRows||'<tr><td colspan="6" style="text-align:center;padding:32px;color:var(--ink-soft);font-style:italic">Keine Codes im Zeitraum</td></tr>')+'</tbody>'
+      + '<tbody>'+(tblRows||'<tr><td colspan="6" style="text-align:center;padding:32px;color:var(--ink-soft);font-style:italic">Keine Codes im Zeitraum'+(currentFilter?' für Quelle "'+(srcLabels[currentFilter]||currentFilter)+'"':'')+'</td></tr>')+'</tbody>'
       + '</table></div>'
     + '</div>';
   box.innerHTML = content;
+  // Klick-Handler für Filter
+  box.querySelectorAll('[data-src-filter]').forEach(function(el){
+    el.addEventListener('click', function(e){
+      e.stopPropagation();
+      var s = el.getAttribute('data-src-filter');
+      window.__rabFilter = (window.__rabFilter === s) ? null : s;
+      renderRabatteSection();
+    });
+  });
+  var clearBtn = box.querySelector('[data-clear-filter]');
+  if(clearBtn) clearBtn.addEventListener('click', function(){
+    window.__rabFilter = null;
+    renderRabatteSection();
+  });
 }
 
 // V9.1: Erstattungen-Section mit Zeitraum-Tabs + Custom + Chronologische Grund-Sortierung
