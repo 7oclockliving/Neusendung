@@ -1354,23 +1354,32 @@ function renderReturnlessSection(panel){
       + '<div class="rl-reason-count">'+r.c+' · '+r.p.toFixed(1)+'%</div>'
     + '</div>';
   }).join('');
-  // V9.3: Alle Produkte mit expandable Gründen
+  // V9.3: Alle Produkte mit expandable Gründen + Sortier-Richtung
   var allProds = rl.all_products || rl.top_products || [];
   var sortBy = window.__rlSort || 'wert';
+  var sortDir = window.__rlSortDir || 'desc';  // 'asc' oder 'desc'
   var searchQ = (window.__rlSearch || '').toLowerCase();
   var filtered = searchQ ? allProds.filter(function(p){return p.n.toLowerCase().indexOf(searchQ)>=0}) : allProds;
+  var factor = sortDir==='asc' ? 1 : -1;
   var sorted = filtered.slice().sort(function(a,b){
-    if(sortBy==='wert') return b.w - a.w;
-    if(sortBy==='retouren') return b.r - a.r;
-    if(sortBy==='menge') return b.m - a.m;
-    return a.n.localeCompare(b.n);
+    var cmp;
+    if(sortBy==='wert') cmp = a.w - b.w;
+    else if(sortBy==='retouren') cmp = a.r - b.r;
+    else if(sortBy==='menge') cmp = a.m - b.m;
+    else cmp = a.n.localeCompare(b.n);
+    return cmp * factor;
   });
+  function sortLabel(key){
+    if(sortBy !== key) return '';
+    return ' ' + (sortDir==='asc' ? '▲' : '▼');
+  }
   var searchHtml = '<input type="search" class="rl-prod-search" placeholder="Produkt suchen..." value="'+escapeHtml(window.__rlSearch||'')+'">'
     + '<div class="rl-prod-sort">Sortieren nach:'
-      + '<button data-sort="wert" class="'+(sortBy==='wert'?'active':'')+'">Warenwert</button>'
-      + '<button data-sort="retouren" class="'+(sortBy==='retouren'?'active':'')+'">Retouren</button>'
-      + '<button data-sort="menge" class="'+(sortBy==='menge'?'active':'')+'">Menge</button>'
-      + '<button data-sort="name" class="'+(sortBy==='name'?'active':'')+'">Name</button>'
+      + '<button data-sort="wert" class="'+(sortBy==='wert'?'active':'')+'">Warenwert'+sortLabel('wert')+'</button>'
+      + '<button data-sort="retouren" class="'+(sortBy==='retouren'?'active':'')+'">Retouren'+sortLabel('retouren')+'</button>'
+      + '<button data-sort="menge" class="'+(sortBy==='menge'?'active':'')+'">Menge'+sortLabel('menge')+'</button>'
+      + '<button data-sort="name" class="'+(sortBy==='name'?'active':'')+'">Name'+sortLabel('name')+'</button>'
+      + '<span style="margin-left:8px;color:var(--ink-soft);font-size:11px">Klick tauscht ▼/▲</span>'
     + '</div>'
     + '<div class="rl-prod-count">'+sorted.length+' von '+allProds.length+' Produkten '+(searchQ?'(Filter aktiv)':'')+'</div>';
   var listHtml = '<div class="rl-top-hd"><div>Produkt</div><div class="rl-num">Retouren</div><div class="rl-num rl-menge">Menge</div><div class="rl-num">Warenwert</div><div style="width:20px"></div></div>'
@@ -1417,10 +1426,18 @@ function renderReturnlessSection(panel){
       }, 250);
     });
   }
-  // Sort-Buttons
+  // Sort-Buttons: Klick auf denselben Button toggelt Richtung; anderer Button = neue Sortierung mit Default-Richtung
   topBox.querySelectorAll('.rl-prod-sort button').forEach(function(btn){
     btn.addEventListener('click', function(){
-      window.__rlSort = btn.getAttribute('data-sort');
+      var key = btn.getAttribute('data-sort');
+      if(window.__rlSort === key){
+        // Toggle Richtung
+        window.__rlSortDir = window.__rlSortDir === 'asc' ? 'desc' : 'asc';
+      } else {
+        window.__rlSort = key;
+        // Standard-Richtung: Name → asc, Rest → desc
+        window.__rlSortDir = (key === 'name') ? 'asc' : 'desc';
+      }
       renderReturnlessSection(panel);
     });
   });
