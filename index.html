@@ -1152,12 +1152,27 @@ function renderPanel(panelId, from, to, opts){
   var days = diffDays(from,to)+1;
   var perDay = days>0 ? (agg.total/days) : 0;
 
-  // V7.6: Vorperiode anpassen — bei "Letzter Werktag" (Mo-Lauf, Fr+Sa+So) wird die Vorwoche genommen
-  var prevFrom, prevTo;
-  if(opts.weekendBlock){
-    // Eine Woche zurück, gleiche Anzahl Tage
-    prevFrom = addDays(from,-7);
-    prevTo = addDays(to,-7);
+  // V9.4: Werktagsbewusste Vorperiode — bei "Letzter Werktag" wird der vorherige Werktag-Block genommen.
+  //   • Fr-So Block (Mo-Lauf)  → Vorperiode = Do allein
+  //   • Mo allein (Di-Lauf)    → Vorperiode = Fr+Sa+So (weil So/Sa keine eigene Vorperiode ergeben)
+  //   • Sonst Einzeltag        → Vorperiode = Vortag (Werktag)
+  //   • 7d/30d/90d/365d        → gleicher Zeitraum zurück (Standard)
+  var prevFrom, prevTo, prevIsWeekendBlock = false;
+  if(opts.weekendBlock || days === 1){
+    var pd = addDays(from, -1);
+    var pdDow = dowOf(pd);
+    if(pdDow === 0){ // Sonntag → Fr-So Block
+      prevTo = pd;
+      prevFrom = addDays(pd, -2);
+      prevIsWeekendBlock = true;
+    } else if(pdDow === 6){ // Samstag → Fr-Sa (selten)
+      prevTo = pd;
+      prevFrom = addDays(pd, -1);
+      prevIsWeekendBlock = true;
+    } else {
+      prevTo = pd;
+      prevFrom = pd;
+    }
   } else {
     prevFrom = addDays(from,-days);
     prevTo = addDays(from,-1);
@@ -1168,8 +1183,9 @@ function renderPanel(panelId, from, to, opts){
 
   // V7.6: bei Wochenende-Block (Mo-Lauf) extra Hinweis, dass Fr+Sa+So zusammengefasst sind
   var wkHint = opts.weekendBlock ? ' <span style="color:var(--ink-soft);font-size:12px">· Fr + Sa + So zusammen</span>' : '';
+  var prevWkHint = prevIsWeekendBlock ? ' <span style="color:var(--ink-soft);font-size:12px">· Fr + Sa + So zusammen</span>' : '';
   var compareHTML = compare
-    ? '<div><strong>'+agg.total+'</strong> Neusendungen vs. <strong>'+prevAgg.total+'</strong> in der Vorperiode ('+fmtDE(prevFrom)+'–'+fmtDE(prevTo)+')'+wkHint+'</div>'+deltaHTML(agg.total,prevAgg.total)
+    ? '<div><strong>'+agg.total+'</strong> Neusendungen'+wkHint+' vs. <strong>'+prevAgg.total+'</strong> in der Vorperiode ('+fmtDE(prevFrom)+'–'+fmtDE(prevTo)+')'+prevWkHint+'</div>'+deltaHTML(agg.total,prevAgg.total)
     : '<div><strong>'+agg.total+'</strong> Neusendungen im Zeitraum '+fmtDE(from)+'–'+fmtDE(to)+wkHint+'</div>';
 
   // V5.3: Top-Warengruppe (Produktkategorie aus byPT) statt Quote
@@ -2578,9 +2594,27 @@ function renderOverviewSection(){
   var range = ov_getRange(window.__ovTab||'30d', window.__ovCustFrom, window.__ovCustTo);
   var days = daysBetween(range.from, range.to) + 1;
   var cur = ov_computeMetrics(range.from, range.to);
-  // Vorperiode gleicher Länge
-  var prevTo = shiftDate(range.from, -1);
-  var prevFrom = shiftDate(prevTo, -(days-1));
+  // V9.4: Werktagsbewusste Vorperiode für "Letzter Werktag"-Tab
+  //   Wenn Vortag von range.from ein Sonntag/Samstag ist → Vorperiode = Fr-So Block statt Einzeltag.
+  var prevTo, prevFrom;
+  var isYesterdayTab = (window.__ovTab||'30d') === 'yesterday';
+  if(isYesterdayTab){
+    var pdOv = shiftDate(range.from, -1);
+    var pdDowOv = dowOf(pdOv);
+    if(pdDowOv === 0){       // So → Fr-So
+      prevTo = pdOv;
+      prevFrom = shiftDate(pdOv, -2);
+    } else if(pdDowOv === 6){ // Sa → Fr-Sa
+      prevTo = pdOv;
+      prevFrom = shiftDate(pdOv, -1);
+    } else {
+      prevTo = pdOv;
+      prevFrom = pdOv;
+    }
+  } else {
+    prevTo = shiftDate(range.from, -1);
+    prevFrom = shiftDate(prevTo, -(days-1));
+  }
   var prev = ov_computeMetrics(prevFrom, prevTo);
   var rl = DATA.returnless || {};
 
