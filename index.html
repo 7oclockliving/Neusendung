@@ -76,8 +76,9 @@ h1{font-size:32px;font-weight:600;letter-spacing:-.01em;margin:0 0 8px}
 .kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:14px;margin-bottom:22px}
 .kpi{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:18px 18px 16px;position:relative}
 .kpi-with-info .lbl{display:flex;align-items:center;gap:6px;flex-wrap:nowrap}
-.kpi-info{display:inline-flex;align-items:center;justify-content:center;width:14px;height:14px;border-radius:50%;background:var(--line);color:var(--ink-soft);font-size:9px;font-weight:600;font-family:Georgia,serif;font-style:italic;cursor:help;transition:background .15s;flex-shrink:0;line-height:1}
-.kpi-info:hover,.kpi-info:focus{background:var(--ink);color:#fff;outline:none}
+/* V9.7: Prominentere Info-Icons */
+.kpi-info{display:inline-flex;align-items:center;justify-content:center;width:17px;height:17px;border-radius:50%;background:var(--accent);color:#fff;font-size:11px;font-weight:700;font-family:Georgia,serif;font-style:italic;cursor:help;transition:transform .15s,background .15s,box-shadow .15s;flex-shrink:0;line-height:1;box-shadow:0 1px 3px rgba(196,147,74,.35);margin-left:6px;vertical-align:middle}
+.kpi-info:hover,.kpi-info:focus{background:var(--ink);transform:scale(1.15);outline:none;box-shadow:0 2px 6px rgba(0,0,0,.25)}
 .kpi-tooltip{position:fixed;z-index:100;background:#1a1a1a;color:#fafafa;padding:14px 16px;border-radius:8px;font-size:12px;line-height:1.5;max-width:320px;box-shadow:0 8px 24px rgba(0,0,0,0.18);pointer-events:auto;opacity:0;transform:translateY(4px);transition:opacity .15s,transform .15s;font-weight:400;overflow-y:auto;overscroll-behavior:contain}
 .kpi-tooltip.show{opacity:1;transform:translateY(0)}
 .kpi-tooltip strong{color:#fff;font-weight:600;display:block;margin-bottom:6px;font-size:12.5px}
@@ -1214,10 +1215,12 @@ function renderPanel(panelId, from, to, opts){
   // V6: Neue KPI "Neusendungs-Artikel" = Summe der p[].q (Original-Items)
   var artikelSumme = agg.artikelSumme || 0;
   var prevArtikelSumme = prevAgg.artikelSumme || 0;
+  // V9.7: Info-Icon-Helper
+  var ii = function(key){ return '<span class="kpi-info" tabindex="0" aria-label="Info" data-tooltip="'+key+'">i</span>'; };
   var kpis = ''
-    + '<div class="kpi"><div class="lbl">Neusendungen gesamt</div><div class="val">'+agg.total+'</div>'
+    + '<div class="kpi"><div class="lbl">Neusendungen gesamt '+ii('neusendungen-count')+'</div><div class="val">'+agg.total+'</div>'
       + (compare?'<div class="sub">vs. '+prevAgg.total+' '+deltaHTML(agg.total,prevAgg.total)+'</div>':'<div class="sub">'+days+' Tage</div>')+'</div>'
-    + '<div class="kpi"><div class="lbl">Neusendungs-Artikel</div><div class="val">'+artikelSumme+'</div>'
+    + '<div class="kpi"><div class="lbl">Neusendungs-Artikel '+ii('neusendungs-artikel')+'</div><div class="val">'+artikelSumme+'</div>'
       + (compare?'<div class="sub">vs. '+prevArtikelSumme+' '+deltaHTML(artikelSumme,prevArtikelSumme)+'</div>':'<div class="sub">aus Original-Items</div>')+'</div>'
     + (function(){
         // V7.3: Kosten pro Neusendung (Ø) – differenzierte Logik je Kategorie
@@ -1246,10 +1249,10 @@ function renderPanel(panelId, from, to, opts){
         var carrierHint = carrierCount > 0 ? '<div class="sub" style="font-size:10px;color:var(--ink-soft);margin-top:4px"><strong>'+carrierCount+'</strong> davon nur Versand (Carrier)</div>' : '';
         return '<div class="kpi kpi-with-info"><div class="lbl">Ø Kosten / Neusendung '+infoIcon+'</div><div class="val">'+fmtEUR(oeKostenCase)+'</div><div class="sub">'+subText+'</div>'+carrierHint+vkSub+'</div>';
       })()
-    + '<div class="kpi"><div class="lbl">Top-Warengruppe</div><div class="val" style="font-size:18px;line-height:1.3">'+escapeHTML(topPT)+'</div><div class="sub">'+topPTCount+' Items</div></div>'
-    + '<div class="kpi"><div class="lbl">Schnitt / Tag</div><div class="val">'+perDay.toFixed(1)+'</div>'
+    + '<div class="kpi"><div class="lbl">Top-Warengruppe '+ii('top-warengruppe')+'</div><div class="val" style="font-size:18px;line-height:1.3">'+escapeHTML(topPT)+'</div><div class="sub">'+topPTCount+' Items</div></div>'
+    + '<div class="kpi"><div class="lbl">Schnitt / Tag '+ii('schnitt-tag')+'</div><div class="val">'+perDay.toFixed(1)+'</div>'
       + (compare?'<div class="sub">vs. '+(prevAgg.total/days).toFixed(1)+' '+deltaHTML(perDay,prevAgg.total/days)+'</div>':'<div class="sub">'+days+' Tage</div>')+'</div>'
-    + '<div class="kpi"><div class="lbl">Top-Kategorie</div><div class="val" style="font-size:18px;line-height:1.3">'+escapeHTML(topK)+'</div><div class="sub">'+(agg.byK[topK]||0)+' Items</div></div>';
+    + '<div class="kpi"><div class="lbl">Top-Kategorie '+ii('top-kategorie')+'</div><div class="val" style="font-size:18px;line-height:1.3">'+escapeHTML(topK)+'</div><div class="sub">'+(agg.byK[topK]||0)+' Items</div></div>';
 
   // V5.3: Immer ALLE 13 Kategorien aus REASON_ORDER zeigen, fehlende mit 0
   // Zuerst alle aus REASON_ORDER mit aktuellem Count, dann unbekannte Kategorien anhängen
@@ -1538,14 +1541,16 @@ function renderRefundSection(panel, from, to){
   var avg = inRange.length ? sum/inRange.length : 0;
   var automatisiert = resolvia.length + returnless.length;
   var automatisiertPct = inRange.length ? (automatisiert/inRange.length*100) : 0;
+  // V9.7: Info-Icons für Refund-KPIs
+  var iiR = function(key){ return '<span class="kpi-info" tabindex="0" aria-label="Info" data-tooltip="'+key+'">i</span>'; };
   kpis.innerHTML = ''
-    + '<div class="refund-kpi"><div class="rk-lbl">Refunds im Zeitraum</div><div class="rk-val">'+inRange.length+'</div>'
+    + '<div class="refund-kpi"><div class="rk-lbl">Refunds im Zeitraum '+iiR('refunds-summe')+'</div><div class="rk-val">'+inRange.length+'</div>'
       + '<div class="rk-sub">vs. '+inPrev.length+' Vorperiode '+deltaHTML(inRange.length, inPrev.length)+'</div></div>'
-    + '<div class="refund-kpi"><div class="rk-lbl">Erstattungssumme</div><div class="rk-val">'+fmtEURcompact(sum)+'</div>'
+    + '<div class="refund-kpi"><div class="rk-lbl">Erstattungssumme '+iiR('refunds-summe')+'</div><div class="rk-val">'+fmtEURcompact(sum)+'</div>'
       + '<div class="rk-sub">vs. '+fmtEURcompact(sumPrev)+' '+deltaHTML(sum, sumPrev)+'</div></div>'
     + '<div class="refund-kpi"><div class="rk-lbl">Ø pro Refund</div><div class="rk-val">'+fmtEUR(avg)+'</div>'
       + '<div class="rk-sub">'+resolvia.length+' Resolvia · '+returnless.length+' Returnless</div></div>'
-    + '<div class="refund-kpi"><div class="rk-lbl">Anteil automatisiert</div><div class="rk-val">'+automatisiertPct.toFixed(0)+'%</div>'
+    + '<div class="refund-kpi"><div class="rk-lbl">Anteil automatisiert '+iiR('automatisiert')+'</div><div class="rk-val">'+automatisiertPct.toFixed(0)+'%</div>'
       + '<div class="rk-sub">'+automatisiert+' Bots · '+manuell.length+' Manuell</div></div>';
   // Tages-Gruppen
   var byDay = {};
@@ -1708,21 +1713,23 @@ function renderQuoteSection(panel, from, to){
   var perDayBest = days>0 ? (ordersCur/days) : 0;
   var perDayRekl = days>0 ? (reklCur/days) : 0;
   var prevWkHint = (prevDays === 3 && dowOf(prevFrom) === 5) ? ' · Fr + Sa + So' : '';
+  // V9.7: Info-Icons für Quote-Items
+  var ii = function(key){ return '<span class="kpi-info" tabindex="0" aria-label="Info" data-tooltip="'+key+'">i</span>'; };
   grid.innerHTML = ''
     + '<div class="quote-item">'
-      + '<div class="q-lbl">Bestellungen'+lblSuffix+'</div>'
+      + '<div class="q-lbl">Bestellungen'+lblSuffix+' '+ii('bestellungen')+'</div>'
       + '<div class="q-val">'+fmtInt(ordersCur)+'</div>'
       + '<div class="q-sub">'+fmtDE(from)+' – '+fmtDE(to)+'</div>'
       + '<div class="q-formula">Ø '+fmtInt(Math.round(perDayBest))+' Bestellungen / Tag</div>'
     + '</div>'
     + '<div class="quote-item">'
-      + '<div class="q-lbl">Reklamationen'+lblSuffix+'</div>'
+      + '<div class="q-lbl">Reklamationen'+lblSuffix+' '+ii('neusendungen-count')+'</div>'
       + '<div class="q-val">'+reklCur+'</div>'
       + '<div class="q-sub">im gleichen Zeitraum</div>'
       + '<div class="q-formula">Ø '+perDayRekl.toFixed(1)+' Neusendungen / Tag</div>'
     + '</div>'
     + '<div class="quote-item">'
-      + '<div class="q-lbl">Reklamationsquote</div>'
+      + '<div class="q-lbl">Reklamationsquote '+ii('reklamationsquote')+'</div>'
       + '<div class="q-val q-highlight">'+qCur.toFixed(2)+'%</div>'
       + '<div class="q-sub"><span class="delta '+deltaCls+'">'+deltaArrow+' '+deltaTxt+'</span></div>'
       + '<div class="q-formula">Rekl. / Bestellungen · '+days+'d</div>'
@@ -2460,7 +2467,93 @@ document.querySelectorAll('.recs-tab').forEach(function(tab){
       '<div class="tt-formula">keine Kosten</div></div>' +
       '<div class="tt-row" style="color:#d5d3cf;margin-top:4px">Die Bestellung hat das Lager nie verlassen — nur das Versandlabel wurde elektronisch erstellt, aber nichts gepackt oder verschickt. Keine EK-Kosten, keine Pauschale, kein entgangener Verkauf.</div>' +
       '<div class="tt-sep"></div>' +
-      '<div class="tt-row" style="font-size:11px;color:#a8a6a2">Pauschale 5 € deckt Versandkosten + Verpackungsmaterial ab.</div>'
+      '<div class="tt-row" style="font-size:11px;color:#a8a6a2">Pauschale 5 € deckt Versandkosten + Verpackungsmaterial ab.</div>',
+
+    // V9.7: Info-Tooltips für alle KPIs mit Logik
+    'neusendungen-count':
+      '<strong>Neusendungen im Zeitraum</strong>' +
+      '<div class="tt-row">Anzahl aller Kundenservice-Cases (= Neusendungen/Ersatzlieferungen) im gewählten Zeitraum. 1 Case = 1 Neusendung, unabhängig davon wie viele Artikel darin waren.</div>' +
+      '<div class="tt-sep"></div>' +
+      '<div class="tt-row" style="color:#d5d3cf">Quelle: Shopify-Bestellungen mit SYS-NS-*-SKUs oder Title beginnt mit "Neusendung". Werktäglich via Daily-Task aktualisiert.</div>',
+
+    'neusendungs-artikel':
+      '<strong>Neusendungs-Artikel</strong>' +
+      '<div class="tt-row">Summe aller <em>Original-Artikel</em> (nicht der Neusendungs-SKUs) die aufgrund von Neusendungen erneut versendet wurden.</div>' +
+      '<div class="tt-formula">Σ Menge der ursprünglichen Artikel pro Case</div>' +
+      '<div class="tt-row" style="color:#d5d3cf;margin-top:4px">Beispiel: Kunde bekommt Set mit 12 Gläsern erneut → 12 Artikel. Kann pro Case höher als 1 sein.</div>',
+
+    'top-warengruppe':
+      '<strong>Top-Warengruppe</strong>' +
+      '<div class="tt-row">Die Warengruppe mit den meisten Neusendungs-Artikeln im Zeitraum.</div>' +
+      '<div class="tt-row" style="color:#d5d3cf">Warengruppen werden automatisch aus dem Produkt-Titel abgeleitet (Teller, Gläser-Sets, Karaffen, Bettwäsche, etc.). Für Optimierungs-Fokus geeignet: welche Kategorien machen Probleme?</div>',
+
+    'top-kategorie':
+      '<strong>Top-Kategorie</strong>' +
+      '<div class="tt-row">Die häufigste <em>Ursache-Kategorie</em> im Zeitraum (nicht die Warengruppe).</div>' +
+      '<div class="tt-row" style="color:#d5d3cf">Beispiele: Defekt/Bruch, Artikel fehlt, Falscher Artikel, Paket zurückgekommen. Zeigt wo das Hauptproblem liegt (Versand, Lager, Produktion oder Kunde).</div>',
+
+    'schnitt-tag':
+      '<strong>Schnitt pro Tag</strong>' +
+      '<div class="tt-formula">Cases im Zeitraum ÷ Anzahl Tage</div>' +
+      '<div class="tt-row" style="color:#d5d3cf;margin-top:4px">Bei "Letzter Werktag" = Anzahl Cases in diesem einen Tag (bzw. Fr+Sa+So-Block am Mo). Bei längeren Zeiträumen der tägliche Durchschnitt.</div>',
+
+    'reklamationsquote':
+      '<strong>Reklamationsquote</strong>' +
+      '<div class="tt-formula">Reklamationen ÷ Bestellungen × 100</div>' +
+      '<div class="tt-row" style="color:#d5d3cf;margin-top:4px">Zeigt wie viel Prozent aller Bestellungen zu einem Kundenservice-Case (Neusendung) führen. Zielwert für Premium-Brand: unter 5 %.</div>' +
+      '<div class="tt-sep"></div>' +
+      '<div class="tt-row"><strong style="font-size:11.5px">Datenquellen:</strong></div>' +
+      '<ul class="tt-list"><li>Reklamationen = Cases aus dem Dashboard im gewählten Zeitraum</li>' +
+      '<li>Bestellungen = Shopify-Monatssummen, anteilig auf Zeitraum umgelegt</li></ul>' +
+      '<div class="tt-sep"></div>' +
+      '<div class="tt-row" style="color:#d5d3cf">Vorperiode-Vergleich: gleiche Länge davor. Bei "Letzter Werktag" werktagsbewusst — Mo → Vorperiode = Fr+Sa+So.</div>',
+
+    'bestellungen':
+      '<strong>Bestellungen im Zeitraum</strong>' +
+      '<div class="tt-row">Anzahl Shopify-Bestellungen anteilig aus den Monatssummen berechnet.</div>' +
+      '<div class="tt-formula">Monats-Total × (Tage im Range ÷ Tage im Monat)</div>' +
+      '<div class="tt-row" style="color:#d5d3cf;margin-top:4px">Werktägliche Präzisierung via Daily-Task. Basis: Shopify GraphQL ordersCount pro Kalendermonat.</div>',
+
+    'refunds-summe':
+      '<strong>Rückerstattungen (Shopify Refunds)</strong>' +
+      '<div class="tt-row">Summe aller vom Shopify-System ausgestellten Refunds im Zeitraum — in EUR.</div>' +
+      '<div class="tt-formula">Σ shopMoney.amount aller Refunds</div>' +
+      '<div class="tt-row" style="color:#d5d3cf;margin-top:4px">Beträge werden in Shop-Währung (EUR) gepullt, nicht in Kunden-Währung (SEK/CHF/etc. würden das Ergebnis verzerren).</div>' +
+      '<div class="tt-sep"></div>' +
+      '<div class="tt-row"><strong style="font-size:11.5px">Attribution:</strong></div>' +
+      '<ul class="tt-list"><li><strong style="color:#fff">Resolvia</strong> — automatisch durch die Resolvia-App erstattet</li>' +
+      '<li><strong style="color:#fff">Returnless</strong> — Rücksende-Portal, Kunde hat retourniert</li>' +
+      '<li><strong style="color:#fff">Manuell</strong> — vom Team über Shopify Admin</li>' +
+      '<li><strong style="color:#fff">Storniert</strong> — Order wurde canceled (orange Badge)</li></ul>' +
+      '<div class="tt-row" style="color:#d5d3cf;margin-top:4px">Attribution erfolgt zeitkorreliert (±2h) zu App-Events der Order.</div>',
+
+    'retouren-warenwert':
+      '<strong>Retouren-Warenwert</strong>' +
+      '<div class="tt-row">Gesamt-VK-Wert aller im 30-Tage-Snapshot erfassten Retouren.</div>' +
+      '<div class="tt-formula">Σ shopMoney der zurückgesandten Produkte</div>' +
+      '<div class="tt-row" style="color:#d5d3cf;margin-top:4px">Quelle: Returnless-Portal-Snapshot. 30 Tage rollierend, aktualisiert sich nicht mit Zeitraum-Filter (statischer Snapshot).</div>',
+
+    'discount-codes':
+      '<strong>Rabatt-Codes im Zeitraum</strong>' +
+      '<div class="tt-row">Anzahl der im Zeitraum <em>erstellten</em> Discount-Codes (nicht der eingelösten).</div>' +
+      '<div class="tt-sep"></div>' +
+      '<div class="tt-row"><strong style="font-size:11.5px">Quelle-Attribution:</strong></div>' +
+      '<ul class="tt-list"><li><strong style="color:#fff">Klaviyo</strong> — Winback-Automatisierung</li>' +
+      '<li><strong style="color:#fff">Resolvia</strong> — vom AI-Assistenten ausgestellt</li>' +
+      '<li><strong style="color:#fff">Mageworx</strong> — Bundle-App-Codes</li>' +
+      '<li><strong style="color:#fff">Manuell</strong> — vom Team im Shopify Admin</li></ul>' +
+      '<div class="tt-row" style="color:#d5d3cf;margin-top:4px">Einlösungen zeigen wie viele davon tatsächlich verwendet wurden. Conversion = Codes mit ≥1 Einlösung ÷ alle Codes.</div>',
+
+    'automatisiert':
+      '<strong>Anteil automatisiert</strong>' +
+      '<div class="tt-formula">(Resolvia + Returnless) ÷ Gesamt-Refunds × 100</div>' +
+      '<div class="tt-row" style="color:#d5d3cf;margin-top:4px">Zeigt wie viel Prozent der Refunds ohne manuellen Eingriff verarbeitet wurden. Hohe Quote = effizienter Kundenservice. Ziel: 70 %+.</div>',
+
+    'moeglicher-vk':
+      '<strong>Möglicher entgangener Verkauf</strong>' +
+      '<div class="tt-row">Der VK-Wert der Original-Artikel bei kostenrelevanten Cases — die verloren gegangenen Umsätze durch Neusendungen.</div>' +
+      '<div class="tt-formula">Σ VK der Artikel · nur Kategorien mit EK+VK-Logik</div>' +
+      '<div class="tt-row" style="color:#d5d3cf;margin-top:4px">Zählt nicht bei Paket zurückgekommen, Falsche Adresse, Packstation, Elektronisch angekündigt.</div>'
   };
   function position(el){
     // V7.8: Tooltip immer unter dem Icon platzieren; bei wenig Platz scrollbar machen statt nach oben springen.
@@ -2716,10 +2809,10 @@ function renderOverviewSection(){
 
   // KPI-Row mit Delta + Sparklines
   var kpisHtml = '<div class="kpis" style="grid-template-columns:repeat(auto-fit,minmax(210px,1fr))">'
-    + kpiCard('Neusendungen', String(cur.agg.total), fmtDE(range.from)+' – '+fmtDE(range.to), cur.agg.total, prev.agg.total, cur.casesInRange, 'count')
-    + kpiCard('Reklamationsquote', cur.quote.toFixed(2)+'%', days+' Tage · Rolling', cur.quote, prev.quote, cur.casesInRange, 'quote', cur.orders)
-    + kpiCard('Rückerstattungen', fmtEURcompact(cur.refundSum), cur.refunds.length+' Refunds · '+cur.resolviaCount+' Resolvia', cur.refundSum, prev.refundSum, cur.refunds, 'sum')
-    + kpiCard('Retouren-Warenwert', fmtEURcompact(rl.total_wert_eur||0), (rl.total_returns||0)+' Retouren · Snapshot 30d', 0, 0, null, 'static')
+    + kpiCard('Neusendungen', String(cur.agg.total), fmtDE(range.from)+' – '+fmtDE(range.to), cur.agg.total, prev.agg.total, cur.casesInRange, 'count', null, 'neusendungen-count')
+    + kpiCard('Reklamationsquote', cur.quote.toFixed(2)+'%', days+' Tage · Rolling', cur.quote, prev.quote, cur.casesInRange, 'quote', cur.orders, 'reklamationsquote')
+    + kpiCard('Rückerstattungen', fmtEURcompact(cur.refundSum), cur.refunds.length+' Refunds · '+cur.resolviaCount+' Resolvia', cur.refundSum, prev.refundSum, cur.refunds, 'sum', null, 'refunds-summe')
+    + kpiCard('Retouren-Warenwert', fmtEURcompact(rl.total_wert_eur||0), (rl.total_returns||0)+' Retouren · Snapshot 30d', 0, 0, null, 'static', null, 'retouren-warenwert')
     + (function(){
         var discInRange = (DATA.discounts||[]).filter(function(x){return x.d>=range.from && x.d<=range.to});
         var discPrev = (DATA.discounts||[]).filter(function(x){return x.d>=prevFrom && x.d<=prevTo});
@@ -2727,7 +2820,7 @@ function renderOverviewSection(){
         var discUsedPrev = discPrev.reduce(function(s,x){return s+(x.used||0)},0);
         return kpiCard('Rabatt-Codes', discInRange.length + ' · ' + discUsed + ' Einlösungen',
           discInRange.length+' erstellt · '+discUsed+' verwendet',
-          discInRange.length, discPrev.length, null, 'count');
+          discInRange.length, discPrev.length, null, 'count', null, 'discount-codes');
       })()
     + '</div>';
 
@@ -2834,7 +2927,7 @@ function renderOverviewSection(){
   });
 }
 
-function kpiCard(label, val, sub, curVal, prevVal, sparkData, kind, orders){
+function kpiCard(label, val, sub, curVal, prevVal, sparkData, kind, orders, infoKey){
   var delta = '';
   if(kind !== 'static'){
     var d;
@@ -2861,7 +2954,9 @@ function kpiCard(label, val, sub, curVal, prevVal, sparkData, kind, orders){
   }
   var sparkAttr = sparkArr.length>1 ? ' data-spark=\''+JSON.stringify(sparkArr)+'\'' : '';
   var sparkHtml = sparkArr.length>1 ? '<div class="kpi-spark"'+sparkAttr+'></div>' : '';
-  return '<div class="kpi">'+sparkHtml+'<div class="lbl">'+label+'</div><div class="val">'+val+'</div>'
+  // V9.7: Optional Info-Icon
+  var infoIcon = infoKey ? ' <span class="kpi-info" tabindex="0" aria-label="Info" data-tooltip="'+infoKey+'">i</span>' : '';
+  return '<div class="kpi">'+sparkHtml+'<div class="lbl">'+label+infoIcon+'</div><div class="val">'+val+'</div>'
     + '<div class="sub">'+sub+'</div>' + delta + '</div>';
 }
 function impactRow(label, value){
