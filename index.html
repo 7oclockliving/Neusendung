@@ -219,11 +219,14 @@ a.order-link:hover, .ri-order.order-link:hover{border-bottom-color:var(--accent)
 .hb-hint{font-size:13px;color:var(--ink-soft);margin-bottom:18px;line-height:1.55}
 .hb-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:12px}
 .hb-grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:12px}
-@media(max-width:820px){.hb-grid-2,.hb-grid-3{grid-template-columns:1fr}}
+.hb-grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:12px}
+@media(max-width:1100px){.hb-grid-4{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:820px){.hb-grid-2,.hb-grid-3,.hb-grid-4{grid-template-columns:1fr}}
 /* Cards: 3 Rechtsinstitute */
 .hb-card{background:#fdfcfa;border:1px solid var(--line);border-radius:6px;padding:18px 20px;border-left:3px solid var(--line)}
 .hb-card-widerruf{border-left-color:#7d5a2a}
 .hb-card-gew{border-left-color:var(--accent)}
+.hb-card-beweis{border-left-color:#a15c2a}
 .hb-card-kulanz{border-left-color:#6b8e7f}
 .hb-card-title{font-size:15px;font-weight:600;color:var(--ink);margin-bottom:10px;letter-spacing:-.01em}
 .hb-card-body{font-size:13px;line-height:1.6;color:var(--ink);margin-bottom:12px}
@@ -672,8 +675,8 @@ tr:hover td{background:#fdfcfa}
       <div class="sub">Rechtliche Pflichten, Kulanz &amp; Entscheidungsbaum — für alle Reklamationen, Retouren &amp; Kulanzfälle im 7 o'clock Kundenservice.</div>
 
       <div class="hb-section">
-        <h3 class="hb-h3"><span class="hb-num">1</span>Drei Rechtsinstitute — strikt trennen</h3>
-        <div class="hb-grid-3">
+        <h3 class="hb-h3"><span class="hb-num">1</span>Vier Grundregeln — strikt trennen</h3>
+        <div class="hb-grid-4">
           <div class="hb-card hb-card-widerruf">
             <div class="hb-card-title">Widerruf</div>
             <div class="hb-card-body">Kunde kann Vertrag <strong>ohne Grund</strong> lösen. 14 Tage nach Erhalt. Ware muss zurück. Wir erstatten Kaufpreis + Standard-Hinversand.</div>
@@ -683,6 +686,11 @@ tr:hover td{background:#fdfcfa}
             <div class="hb-card-title">Gewährleistung</div>
             <div class="hb-card-body"><strong>Mangel bei Übergabe.</strong> Gesetzlich 2 Jahre ab Lieferung. Wir schulden Nacherfüllung (Ersatz oder Reparatur).</div>
             <div class="hb-card-foot">§§ 434, 437, 439, 438 BGB</div>
+          </div>
+          <div class="hb-card hb-card-beweis">
+            <div class="hb-card-title">Beweislast nach 1 Jahr</div>
+            <div class="hb-card-body">Nach <strong>12 Monaten</strong> muss <strong>der Kunde</strong> beweisen, dass der Mangel schon bei Übergabe vorlag. Bei Verschleiß oder Bedienfehler dürfen wir ablehnen.</div>
+            <div class="hb-card-foot">§ 477 BGB (Beweislastumkehr)</div>
           </div>
           <div class="hb-card hb-card-kulanz">
             <div class="hb-card-title">Kulanz</div>
@@ -775,11 +783,11 @@ tr:hover td{background:#fdfcfa}
           <div class="hb-opt-card">
             <div class="hb-opt-title">Nachbesserung</div>
             <div class="hb-opt-sub">Reparatur der Ware</div>
-            <div class="hb-opt-body">Für unser Sortiment kaum relevant (Reparatur eines Duftglases lohnt nicht). Nur ausnahmsweise sinnvoll bei größeren Möbeln / komplexen Produkten.</div>
+            <div class="hb-opt-body">Für unser Sortiment kaum relevant (Reparatur einer Karaffe oder eines Trinkglases lohnt sich nicht). Nur ausnahmsweise sinnvoll bei größeren Möbeln oder komplexeren Produkten.</div>
           </div>
         </div>
         <div class="hb-info-block">
-          <strong>Verweigerung möglich (§ 439 Abs. 4 BGB):</strong> Wir dürfen die vom Kunden gewählte Art verweigern, wenn sie unverhältnismäßige Kosten verursacht und die andere Art zumutbar ist. <em>Beispiel: Reparatur eines Kerzenhalters kostet 40 €, Neupreis 19 € → wir verweisen auf Ersatzlieferung.</em>
+          <strong>Verweigerung möglich (§ 439 Abs. 4 BGB):</strong> Wir dürfen die vom Kunden gewählte Art verweigern, wenn sie unverhältnismäßige Kosten verursacht und die andere Art zumutbar ist. <em>Beispiel: Reparatur einer Keramik-Tasse mit kleinem Chip am Henkel kostet 40 €, Neupreis liegt bei 12 € → wir verweisen auf Ersatzlieferung.</em>
         </div>
         <div class="hb-info-block">
           <strong>Kosten der Nacherfüllung tragen wir:</strong> Versand hin und zurück, Material, Arbeit (§ 439 Abs. 2 BGB). Kein Wertersatz für die Nutzung der mangelhaften Ware.
@@ -850,8 +858,8 @@ tr:hover td{background:#fdfcfa}
         <div class="hb-hint">Konkrete Einordnung typischer Reklamationen aus unserem Interior/Home-Portfolio.</div>
         <div class="hb-cases">
           <div class="hb-case">
-            <div class="hb-case-name">Glas / Duftglas mit Riss, Leck, Bruch</div>
-            <div class="hb-case-eval">Materialfehler → <strong>Mangel</strong>. Innerhalb 12 Monaten: Ersatzlieferung. Fotos genügen, keine Rücksendung nötig.</div>
+            <div class="hb-case-name">Trinkglas / Karaffe / Bowl / Teller mit Riss, Sprung oder Bruch</div>
+            <div class="hb-case-eval">Materialfehler → <strong>Mangel</strong>. Innerhalb 12 Monaten: Ersatzlieferung. Fotos genügen, keine Rücksendung nötig (Bruchgefahr, hoher Retour-Aufwand).</div>
             <div class="hb-case-result hb-r-ersatz">Ersatz</div>
           </div>
           <div class="hb-case">
@@ -860,33 +868,33 @@ tr:hover td{background:#fdfcfa}
             <div class="hb-case-result hb-r-ersatz">Ersatz</div>
           </div>
           <div class="hb-case">
-            <div class="hb-case-name">Duft schwächer als erwartet / gefällt nicht</div>
-            <div class="hb-case-eval"><strong>Kein Mangel</strong>, subjektive Wahrnehmung. Innerhalb Widerrufsfrist: Rücknahme möglich. Danach: Kulanz-Entscheidung. Vorschlag: 1× freundlich erklären, keine Erstattung.</div>
+            <div class="hb-case-name">Farbton / Optik weicht leicht ab, gefällt nicht (Cremeweiß, Beige)</div>
+            <div class="hb-case-eval"><strong>Kein Mangel</strong>, sondern subjektive Wahrnehmung (Kameras, Displays, Charge). Innerhalb Widerrufsfrist: Rücknahme möglich. Danach: Kulanz-Entscheidung. Vorschlag: 1× freundlich erklären, keine Erstattung.</div>
             <div class="hb-case-result hb-r-nein">Kein Anspruch</div>
           </div>
           <div class="hb-case">
-            <div class="hb-case-name">Wachs verklebt / Docht knickt / brennt schlecht (&lt; 12 Mon.)</div>
-            <div class="hb-case-eval">Produkt- oder Verarbeitungsfehler möglich → als <strong>Mangel</strong> behandeln. Ersatzlieferung oder Erstattung. Interner Fehler-Log zur Qualitätsprüfung.</div>
+            <div class="hb-case-name">Keramik-Glasur uneben / Bettwäsche mit offener Naht / Fleck (&lt; 12 Mon.)</div>
+            <div class="hb-case-eval">Produktions- oder Verarbeitungsfehler → als <strong>Mangel</strong> behandeln. Ersatzlieferung. Interner Fehler-Log an Produktion für QS-Prüfung.</div>
             <div class="hb-case-result hb-r-ersatz">Ersatz</div>
           </div>
           <div class="hb-case">
-            <div class="hb-case-name">Falsches Produkt / falsche Farbe geliefert</div>
-            <div class="hb-case-eval"><strong>Erfüllungsmangel</strong> → volle Nacherfüllung. Kunde wählt: richtige Ware oder Erstattung. Wir tragen alle Kosten.</div>
+            <div class="hb-case-name">Falsches Produkt / falscher Farbton / falsche Größe geliefert</div>
+            <div class="hb-case-eval"><strong>Erfüllungsmangel</strong> (Kommissionier-Fehler Lager) → volle Nacherfüllung. Kunde wählt: richtige Ware oder Erstattung. Wir tragen alle Kosten.</div>
             <div class="hb-case-result hb-r-ersatz">Ersatz</div>
           </div>
           <div class="hb-case">
-            <div class="hb-case-name">Kleiner Verpackungsdefekt, Ware unbeschädigt</div>
-            <div class="hb-case-eval">Kein Mangel am Produkt. Freundlich erklären, ggf. kleiner Gutschein (5–10 €) als Geste. Keine Ersatzpflicht.</div>
+            <div class="hb-case-name">Verpackung außen leicht gedellt, Ware unbeschädigt</div>
+            <div class="hb-case-eval">Kein Mangel am Produkt selbst (Karton ist Transportverpackung). Freundlich erklären, ggf. kleiner Gutschein (5–10 €) als Geste. Keine Ersatzpflicht.</div>
             <div class="hb-case-result hb-r-kulanz">Kulanz optional</div>
           </div>
           <div class="hb-case">
-            <div class="hb-case-name">Nach über 12 Monaten: Verfärbung, Riss, Verschleiß</div>
-            <div class="hb-case-eval">Beweislast beim Kunden. Bei plausibler Beschwerde &amp; treuem Kunden: Kulanz. Bei offensichtlichem Nutzungsschaden: freundlich ablehnen.</div>
+            <div class="hb-case-name">Nach über 12 Monaten: Sprung im Glas, Bettwäsche pillt, Farbe verblasst</div>
+            <div class="hb-case-eval">Beweislast beim Kunden. Bei plausibler Beschwerde &amp; treuem Kunden: Kulanz. Bei offensichtlichem Nutzungsschaden (Geschirrspüler-Kratzer, Waschmaschinen-Umgang): freundlich ablehnen.</div>
             <div class="hb-case-result hb-r-einzelfall">Einzelfall</div>
           </div>
           <div class="hb-case">
-            <div class="hb-case-name">Nach über 24 Monaten</div>
-            <div class="hb-case-eval">Verjährt. Keine rechtliche Pflicht. Kulanz nur bei hohem Kundenwert / eindeutigem Serienfehler.</div>
+            <div class="hb-case-name">Nach über 24 Monaten (z.B. Bettwäsche pillt nach 3 Jahren)</div>
+            <div class="hb-case-eval">Verjährt. Keine rechtliche Pflicht. Kulanz nur bei hohem Kundenwert / eindeutigem Serienfehler in der Charge.</div>
             <div class="hb-case-result hb-r-kulanz">Nur Kulanz</div>
           </div>
         </div>
@@ -899,7 +907,7 @@ tr:hover td{background:#fdfcfa}
             <div class="hb-rule-title">Rechtlich ablehnen dürfen wir wenn …</div>
             <ul class="hb-check-list">
               <li>Kunde weigert sich, Bestellnummer / Fotos zu liefern (nach 2 Aufforderungen)</li>
-              <li>Kein Mangel vorliegt (subjektive Optik, Duftpräferenz, normaler Verschleiß, unsachgemäßer Gebrauch)</li>
+              <li>Kein Mangel vorliegt (subjektive Optik-Präferenz, normaler Verschleiß, unsachgemäßer Gebrauch)</li>
               <li>Ware verjährt ist (&gt; 24 Monate)</li>
               <li>Schaden nachweislich vom Kunden verursacht (Sturz, Fehlgebrauch, Feuer)</li>
               <li>Schaden bagatellhaft ist und Unverhältnismäßiges verlangt wird</li>
