@@ -212,6 +212,32 @@ a.order-link:hover, .ri-order.order-link:hover{border-bottom-color:var(--accent)
 .refund-grund-hd:first-child{border-top:none;margin-top:0}
 .refund-grund-hd .grund-name{font-size:11.5px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:.06em}
 .refund-grund-hd .grund-meta{font-size:11px;color:var(--ink-soft);font-variant-numeric:tabular-nums}
+/* V10.0: Lager-Analyse-Card */
+.lager-card{border:1.5px solid #6b8e7f;background:linear-gradient(180deg,#fbfdfb 0%,#fdfcfa 100%)}
+.lager-card h3{color:#4a6b5c;display:flex;align-items:center;gap:10px}
+.lager-badge{display:inline-block;padding:2px 10px;background:#6b8e7f;color:#fff;font-size:10px;font-weight:600;letter-spacing:.08em;border-radius:999px;text-transform:uppercase}
+.lager-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:6px}
+@media(max-width:900px){.lager-kpis{grid-template-columns:repeat(2,1fr)}}
+.lager-kpi{background:#fff;border:1px solid #dfe8e2;border-radius:8px;padding:14px 16px}
+.lager-kpi-hero{border-color:#6b8e7f;box-shadow:0 0 0 2px rgba(107,142,127,.1)}
+.lk-lbl{font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:var(--ink-soft);font-weight:600;margin-bottom:6px;display:flex;align-items:center;gap:2px;flex-wrap:wrap}
+.lk-val{font-size:24px;font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.lk-highlight{color:#4a6b5c}
+.lk-sub{font-size:11.5px;color:var(--ink-soft);margin-top:5px;line-height:1.4}
+.lager-breakdown{margin-top:20px;padding-top:18px;border-top:1px solid var(--line)}
+.lager-bd-title{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-soft);margin-bottom:12px}
+.lager-bd-rows{display:flex;flex-direction:column;gap:8px}
+.lager-bd-row{display:grid;grid-template-columns:190px 1fr 55px 75px 85px;gap:12px;align-items:center;font-size:12.5px;color:var(--ink)}
+.lbd-name{font-weight:500}
+.lbd-bar-wrap{background:#eef2ef;border-radius:3px;height:8px;overflow:hidden}
+.lbd-bar{background:#6b8e7f;height:100%;border-radius:3px;transition:width .3s ease}
+.lbd-count{text-align:right;font-variant-numeric:tabular-nums;font-weight:600}
+.lbd-quote{text-align:right;font-variant-numeric:tabular-nums;color:var(--ink-soft);font-size:11.5px}
+.lbd-cost{text-align:right;font-variant-numeric:tabular-nums;color:#4a6b5c;font-weight:600}
+.lager-bd-head{display:grid;grid-template-columns:190px 1fr 55px 75px 85px;gap:12px;margin-top:10px;padding-top:8px;border-top:1px dashed var(--line);font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-soft)}
+.lager-bd-head span:nth-child(n+3){text-align:right}
+.lager-footer{margin-top:16px;padding-top:12px;border-top:1px solid var(--line);font-size:11.5px;color:var(--ink-soft);line-height:1.6}
+@media(max-width:820px){.lager-bd-row,.lager-bd-head{grid-template-columns:1fr 60px 70px 80px}.lbd-bar-wrap{display:none}}
 /* V9.8: Handbuch-Section */
 .hb-section{background:#fff;border:1px solid var(--line);border-radius:8px;padding:28px 32px;margin-top:22px}
 .hb-h3{font-size:18px;font-weight:600;color:var(--ink);margin:0 0 18px 0;display:flex;align-items:center;gap:14px;letter-spacing:-.01em}
@@ -1733,6 +1759,8 @@ function renderPanel(panelId, from, to, opts){
 
   // V8.2: Verursacher-Analyse rendern
   renderVerursacherSection(panel, agg);
+  // V10.0: Lager-Analyse rendern
+  renderLagerSection(panel, from, to, cases);
   // V9.0: Refund/Quote/Returnless sind in eigene Sections ausgelagert (nicht mehr hier).
 }
 
@@ -2174,6 +2202,82 @@ function renderVerursacherSection(panel, agg){
   footer.innerHTML = footerHtml;
 }
 
+// V10.0: Lager-Analyse — Fehlerquote im Bezug auf ALLE Bestellungen + Lager-Kosten separat
+function renderLagerSection(panel, from, to, cases){
+  var kpis = panel.querySelector('.lager-kpis');
+  var breakdown = panel.querySelector('.lager-breakdown');
+  var footer = panel.querySelector('.lager-footer');
+  if(!kpis) return;
+  var lagerCases = cases.filter(function(c){return c.v==='lager'});
+  var lagerCount = lagerCases.length;
+  var obm = (typeof DATA !== 'undefined' && DATA.orders_by_month) ? DATA.orders_by_month : {};
+  var ordersDirekt = estimateOrdersInRange(obm, from, to);
+  var ordersShifted = estimateOrdersInRange(obm, shiftDate(from,-14), shiftDate(to,-14));
+  var quoteDirekt = ordersDirekt ? (lagerCount/ordersDirekt*100) : 0;
+  var quoteShifted = ordersShifted ? (lagerCount/ordersShifted*100) : 0;
+  var lagerEK = 0, lagerVK = 0, lagerPauschaleCases = 0;
+  var byKat = {};
+  lagerCases.forEach(function(c){
+    var isNullKost = NULL_KOSTEN_KATS.indexOf(c.k) >= 0;
+    if(!isNullKost){ lagerPauschaleCases++; }
+    var ekMult = (c.k && KATS_DOUBLE_EK.indexOf(c.k) >= 0) ? 2 : 1;
+    var caseEK = 0, caseVK = 0;
+    (c.p||[]).forEach(function(p){
+      var qty = p.q || 1;
+      if(!isNullKost){
+        if(typeof p.ek === 'number') caseEK += p.ek * qty * ekMult;
+        if(typeof p.vk === 'number') caseVK += p.vk * qty;
+      }
+    });
+    lagerEK += caseEK; lagerVK += caseVK;
+    if(!byKat[c.k]) byKat[c.k] = {c:0, ek:0, vk:0};
+    byKat[c.k].c++;
+    byKat[c.k].ek += caseEK + (isNullKost ? 0 : KOSTEN_PAUSCHALE);
+    byKat[c.k].vk += caseVK;
+  });
+  var lagerKostenGesamt = lagerEK + lagerPauschaleCases * KOSTEN_PAUSCHALE;
+  var lagerKostenProCase = lagerCount ? lagerKostenGesamt / lagerCount : 0;
+  var ii = function(key){ return '<span class="kpi-info" tabindex="0" aria-label="Info" data-tooltip="'+key+'">i</span>'; };
+  kpis.innerHTML = ''
+    + '<div class="lager-kpi"><div class="lk-lbl">Bestellungen im Zeitraum '+ii('lager-bestellungen')+'</div>'
+      + '<div class="lk-val">'+fmtInt(ordersDirekt)+'</div>'
+      + '<div class="lk-sub">'+fmtDE(from)+' – '+fmtDE(to)+'</div></div>'
+    + '<div class="lager-kpi"><div class="lk-lbl">Lager-Fehler '+ii('lager-cases')+'</div>'
+      + '<div class="lk-val">'+lagerCount+'</div>'
+      + '<div class="lk-sub">Artikel fehlt · Falscher Artikel · behalten · Menge</div></div>'
+    + '<div class="lager-kpi lager-kpi-hero"><div class="lk-lbl">Lager-Fehlerquote '+ii('lager-quote-panel')+'</div>'
+      + '<div class="lk-val lk-highlight">'+quoteShifted.toFixed(2)+'%</div>'
+      + '<div class="lk-sub">'+lagerCount+' ÷ '+fmtInt(ordersShifted)+' Bestellungen · 14d Versatz</div></div>'
+    + '<div class="lager-kpi"><div class="lk-lbl">Lager-Kosten gesamt '+ii('lager-kosten')+'</div>'
+      + '<div class="lk-val lk-highlight">'+fmtEURcompact(lagerKostenGesamt)+'</div>'
+      + '<div class="lk-sub">Ø '+fmtEUR(lagerKostenProCase)+' pro Fall</div></div>';
+  var katKeys = Object.keys(byKat).sort(function(a,b){return byKat[b].c - byKat[a].c});
+  if(katKeys.length){
+    breakdown.innerHTML = '<div class="lager-bd-title">Aufschlüsselung nach Fehlerart</div>'
+      + '<div class="lager-bd-rows">'
+      + katKeys.map(function(k){
+          var info = byKat[k];
+          var pctCases = lagerCount ? (info.c/lagerCount*100) : 0;
+          var pctOrders = ordersShifted ? (info.c/ordersShifted*100) : 0;
+          return '<div class="lager-bd-row">'
+            + '<div class="lbd-name">'+escapeHTML(k)+'</div>'
+            + '<div class="lbd-bar-wrap"><div class="lbd-bar" style="width:'+pctCases.toFixed(1)+'%"></div></div>'
+            + '<div class="lbd-count">'+info.c+'</div>'
+            + '<div class="lbd-quote">'+pctOrders.toFixed(3)+'%</div>'
+            + '<div class="lbd-cost">'+fmtEURcompact(info.ek)+'</div>'
+          + '</div>';
+        }).join('')
+      + '</div>'
+      + '<div class="lager-bd-head"><span></span><span></span><span>Fälle</span><span>Quote</span><span>Kosten</span></div>';
+  } else {
+    breakdown.innerHTML = '<div style="padding:20px;text-align:center;color:var(--ink-soft);font-style:italic;font-size:13px">Keine Lager-Fehler im Zeitraum</div>';
+  }
+  var entgVKtxt = lagerVK > 0 ? ' · Möglicher entgangener Verkauf: <strong>'+fmtEURcompact(lagerVK)+'</strong>' : '';
+  footer.innerHTML = 'Direkte Quote (ohne Versatz): <strong>'+quoteDirekt.toFixed(2)+'%</strong> · '
+    + 'Mit 14d-Versatz: <strong style="color:var(--accent)">'+quoteShifted.toFixed(2)+'%</strong>'+entgVKtxt
+    + '<br><span style="opacity:.75">Kosten = EK der Artikel + 5 € Pauschale pro Fall. Bei „Falscher Artikel, behalten" zählt der EK doppelt. „Elektronisch angekündigt" verursacht keine Kosten.</span>';
+}
+
 function panelTemplate(id){
   return '<div class="panel" id="'+id+'">'
     + '<div class="compare-bar"></div>'
@@ -2185,6 +2289,11 @@ function panelTemplate(id){
     + '<div class="card verursacher-card" style="margin-bottom:22px"><h3>Verursacher-Analyse</h3>'
       + '<div class="vur-grid"></div>'
       + '<div class="vur-footer"></div>'
+    + '</div>'
+    + '<div class="card lager-card" style="margin-bottom:22px"><h3>Lager-Analyse <span class="lager-badge">Fokus</span></h3>'
+      + '<div class="lager-kpis"></div>'
+      + '<div class="lager-breakdown"></div>'
+      + '<div class="lager-footer"></div>'
     + '</div>'
     + '<div class="card" style="margin-bottom:18px"><h3>Trend</h3><div class="chart-wrap"><canvas class="bar-canvas"></canvas></div></div>'
     + '<div class="card" style="margin-bottom:18px"><h3>Nachgesendete Original-Artikel</h3>'
@@ -2920,6 +3029,45 @@ document.querySelectorAll('.recs-tab').forEach(function(tab){
       '<strong>Anteil automatisiert</strong>' +
       '<div class="tt-formula">(Resolvia + Returnless) ÷ Gesamt-Refunds × 100</div>' +
       '<div class="tt-row" style="color:#d5d3cf;margin-top:4px">Zeigt wie viel Prozent der Refunds ohne manuellen Eingriff verarbeitet wurden. Hohe Quote = effizienter Kundenservice. Ziel: 70 %+.</div>',
+
+
+    'lager-bestellungen':
+      '<strong>Bestellungen im Zeitraum</strong>' +
+      '<div class="tt-row">Alle Shopify-Bestellungen im gewählten Zeitraum — die Basis für die Lager-Fehlerquote.</div>' +
+      '<div class="tt-formula">Monats-Total × (Tage im Range ÷ Tage im Monat)</div>' +
+      '<div class="tt-row" style="color:#d5d3cf;margin-top:4px">Anteilig aus den Shopify-Monatssummen berechnet. Wird werktäglich vom Daily-Task präzisiert.</div>',
+
+    'lager-cases':
+      '<strong>Lager-Fehler im Zeitraum</strong>' +
+      '<div class="tt-row">Alle Neusendungen, deren Ursache im Lager liegt — also Kommissionier-Fehler beim Packen.</div>' +
+      '<div class="tt-sep"></div>' +
+      '<div class="tt-row"><strong style="font-size:11.5px">Dazu zählen:</strong></div>' +
+      '<ul class="tt-list"><li><strong style="color:#fff">Artikel fehlt</strong> — Position wurde nicht gepackt</li>' +
+      '<li><strong style="color:#fff">Falscher Artikel</strong> — falsches Produkt gepackt</li>' +
+      '<li><strong style="color:#fff">Falscher Artikel, behalten</strong> — falsch geliefert, Kunde darf behalten</li>' +
+      '<li><strong style="color:#fff">Falsche Menge</strong> — zu wenig oder zu viel gepackt</li>' +
+      '<li><strong style="color:#fff">Elektronisch angekündigt</strong> — Label erstellt, aber nichts gepackt</li></ul>' +
+      '<div class="tt-row" style="color:#d5d3cf;margin-top:6px">NICHT dazu: Defekt/Bruch, Transportschaden, Paket zurückgekommen (= Versanddienstleister) und Produktionsfehler (= Produktion).</div>',
+
+    'lager-quote-panel':
+      '<strong>Lager-Fehlerquote</strong>' +
+      '<div class="tt-row">Der zentrale Wert: wie viel Prozent <em>aller Bestellungen</em> führen zu einem Lager-Fehler.</div>' +
+      '<div class="tt-formula">Lager-Fehler ÷ Bestellungen (14 Tage früher) × 100</div>' +
+      '<div class="tt-sep"></div>' +
+      '<div class="tt-row"><strong style="font-size:11.5px">Warum 14 Tage Versatz?</strong></div>' +
+      '<div class="tt-row" style="color:#d5d3cf">Reklamationen kommen erfahrungsgemäß 1–2 Wochen nach der Bestellung rein. Ein Lager-Fehler von heute gehört zu einer Bestellung von vor ~2 Wochen. Ohne Versatz wäre die Quote systematisch zu niedrig.</div>' +
+      '<div class="tt-sep"></div>' +
+      '<div class="tt-row" style="color:#d5d3cf">Im Footer der Card steht auch die direkte Quote ohne Versatz zum Vergleich. Zielwert: unter 1 %.</div>',
+
+    'lager-kosten':
+      '<strong>Lager-Kosten separat</strong>' +
+      '<div class="tt-row">Nur die Kosten, die durch Lager-Fehler entstehen — getrennt von allen anderen Neusendungs-Ursachen.</div>' +
+      '<div class="tt-formula">Σ (EK der Artikel) + 5 € Pauschale pro Fall</div>' +
+      '<div class="tt-sep"></div>' +
+      '<div class="tt-row"><strong style="font-size:11.5px">Sonderfälle:</strong></div>' +
+      '<ul class="tt-list"><li><strong style="color:#fff">Falscher Artikel, behalten</strong> — EK zählt <em>doppelt</em></li>' +
+      '<li><strong style="color:#fff">Elektronisch angekündigt</strong> — keine Kosten, Paket hat das Lager nie verlassen</li></ul>' +
+      '<div class="tt-row" style="color:#d5d3cf;margin-top:6px">Die 5 € Pauschale deckt Versand + Verpackung ab. Der entgangene Verkaufswert steht separat im Footer.</div>',
 
     'lager-quote':
       '<strong>Lager-Fehlerquote (mit 14d Versatz)</strong>' +
