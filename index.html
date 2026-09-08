@@ -3035,39 +3035,38 @@ document.querySelectorAll('.recs-tab').forEach(function(tab){
       '<strong>Bestellungen im Zeitraum</strong>' +
       '<div class="tt-row">Alle Shopify-Bestellungen im gewählten Zeitraum — die Basis für die Lager-Fehlerquote.</div>' +
       '<div class="tt-formula">Monats-Total × (Tage im Range ÷ Tage im Monat)</div>' +
-      '<div class="tt-row" style="color:#d5d3cf;margin-top:4px">Anteilig aus den Shopify-Monatssummen berechnet. Wird werktäglich vom Daily-Task präzisiert.</div>',
+      '<div class="tt-row" style="color:#d5d3cf;margin-top:4px">Anteilig aus den Shopify-Monatssummen berechnet.</div>',
 
     'lager-cases':
       '<strong>Lager-Fehler im Zeitraum</strong>' +
-      '<div class="tt-row">Alle Neusendungen, deren Ursache im Lager liegt — also Kommissionier-Fehler beim Packen.</div>' +
+      '<div class="tt-row">Alle Neusendungen, deren Ursache im Lager liegt — Kommissionier-Fehler beim Packen.</div>' +
       '<div class="tt-sep"></div>' +
       '<div class="tt-row"><strong style="font-size:11.5px">Dazu zählen:</strong></div>' +
-      '<ul class="tt-list"><li><strong style="color:#fff">Artikel fehlt</strong> — Position wurde nicht gepackt</li>' +
+      '<ul class="tt-list"><li><strong style="color:#fff">Artikel fehlt</strong> — Position nicht gepackt</li>' +
       '<li><strong style="color:#fff">Falscher Artikel</strong> — falsches Produkt gepackt</li>' +
-      '<li><strong style="color:#fff">Falscher Artikel, behalten</strong> — falsch geliefert, Kunde darf behalten</li>' +
-      '<li><strong style="color:#fff">Falsche Menge</strong> — zu wenig oder zu viel gepackt</li>' +
-      '<li><strong style="color:#fff">Elektronisch angekündigt</strong> — Label erstellt, aber nichts gepackt</li></ul>' +
-      '<div class="tt-row" style="color:#d5d3cf;margin-top:6px">NICHT dazu: Defekt/Bruch, Transportschaden, Paket zurückgekommen (= Versanddienstleister) und Produktionsfehler (= Produktion).</div>',
+      '<li><strong style="color:#fff">Falscher Artikel, behalten</strong> — Kunde darf behalten</li>' +
+      '<li><strong style="color:#fff">Falsche Menge</strong> — zu wenig oder zu viel</li>' +
+      '<li><strong style="color:#fff">Elektronisch angekündigt</strong> — Label da, nichts gepackt</li></ul>' +
+      '<div class="tt-row" style="color:#d5d3cf;margin-top:6px">NICHT dazu: Defekt/Bruch, Transportschaden, Paket zurückgekommen (Versanddienstleister) und Produktionsfehler.</div>',
 
     'lager-quote-panel':
       '<strong>Lager-Fehlerquote</strong>' +
-      '<div class="tt-row">Der zentrale Wert: wie viel Prozent <em>aller Bestellungen</em> führen zu einem Lager-Fehler.</div>' +
+      '<div class="tt-row">Wie viel Prozent <em>aller Bestellungen</em> führen zu einem Lager-Fehler.</div>' +
       '<div class="tt-formula">Lager-Fehler ÷ Bestellungen (14 Tage früher) × 100</div>' +
       '<div class="tt-sep"></div>' +
       '<div class="tt-row"><strong style="font-size:11.5px">Warum 14 Tage Versatz?</strong></div>' +
-      '<div class="tt-row" style="color:#d5d3cf">Reklamationen kommen erfahrungsgemäß 1–2 Wochen nach der Bestellung rein. Ein Lager-Fehler von heute gehört zu einer Bestellung von vor ~2 Wochen. Ohne Versatz wäre die Quote systematisch zu niedrig.</div>' +
-      '<div class="tt-sep"></div>' +
-      '<div class="tt-row" style="color:#d5d3cf">Im Footer der Card steht auch die direkte Quote ohne Versatz zum Vergleich. Zielwert: unter 1 %.</div>',
+      '<div class="tt-row" style="color:#d5d3cf">Reklamationen kommen 1–2 Wochen nach der Bestellung rein. Ein Lager-Fehler von heute gehört zu einer Bestellung von vor ~2 Wochen. Ohne Versatz wäre die Quote zu niedrig.</div>' +
+      '<div class="tt-row" style="color:#d5d3cf;margin-top:6px">Im Footer steht auch die direkte Quote ohne Versatz. Zielwert: unter 1 %.</div>',
 
     'lager-kosten':
       '<strong>Lager-Kosten separat</strong>' +
-      '<div class="tt-row">Nur die Kosten, die durch Lager-Fehler entstehen — getrennt von allen anderen Neusendungs-Ursachen.</div>' +
+      '<div class="tt-row">Nur die Kosten durch Lager-Fehler — getrennt von allen anderen Ursachen.</div>' +
       '<div class="tt-formula">Σ (EK der Artikel) + 5 € Pauschale pro Fall</div>' +
       '<div class="tt-sep"></div>' +
       '<div class="tt-row"><strong style="font-size:11.5px">Sonderfälle:</strong></div>' +
       '<ul class="tt-list"><li><strong style="color:#fff">Falscher Artikel, behalten</strong> — EK zählt <em>doppelt</em></li>' +
-      '<li><strong style="color:#fff">Elektronisch angekündigt</strong> — keine Kosten, Paket hat das Lager nie verlassen</li></ul>' +
-      '<div class="tt-row" style="color:#d5d3cf;margin-top:6px">Die 5 € Pauschale deckt Versand + Verpackung ab. Der entgangene Verkaufswert steht separat im Footer.</div>',
+      '<li><strong style="color:#fff">Elektronisch angekündigt</strong> — keine Kosten</li></ul>' +
+      '<div class="tt-row" style="color:#d5d3cf;margin-top:6px">Pauschale deckt Versand + Verpackung. Entgangener Verkaufswert steht im Footer.</div>',
 
     'lager-quote':
       '<strong>Lager-Fehlerquote (mit 14d Versatz)</strong>' +
