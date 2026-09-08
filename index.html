@@ -2157,13 +2157,21 @@ function estimateOrdersInRange(obm, from, to){
     var key = y + '-' + String(m).padStart(2,'0');
     var monthTotal = obm[key] || 0;
     var daysInMonth = new Date(y, m, 0).getDate();
+    // V10.1 FIX: Beim laufenden Monat deckt monthTotal nur die bisher erfassten Tage ab,
+    // nicht den ganzen Kalendermonat. Ohne diese Korrektur wird die Zahl massiv zu niedrig.
+    var basisTage = daysInMonth;
+    var lastUp = (typeof DATA !== 'undefined' && DATA.lastUpdated) ? DATA.lastUpdated : null;
+    if(lastUp && lastUp.slice(0,7) === key){
+      var erfasst = parseInt(lastUp.slice(8,10), 10);
+      if(erfasst > 0 && erfasst < daysInMonth) basisTage = erfasst;
+    }
     // Wie viele Tage aus DIESEM Monat sind im Range?
     var monthStart = new Date(y, m-1, 1);
     var monthEnd = new Date(y, m-1, daysInMonth);
     var rangeStart = cur > monthStart ? cur : monthStart;
     var rangeEnd = end < monthEnd ? end : monthEnd;
     var daysUsed = Math.round((rangeEnd - rangeStart) / (24*3600*1000)) + 1;
-    total += monthTotal * daysUsed / daysInMonth;
+    total += monthTotal * daysUsed / basisTage;
     // Zum nächsten Monat springen
     cur = new Date(y, m, 1);
   }
