@@ -212,6 +212,41 @@ a.order-link:hover, .ri-order.order-link:hover{border-bottom-color:var(--accent)
 .refund-grund-hd:first-child{border-top:none;margin-top:0}
 .refund-grund-hd .grund-name{font-size:11.5px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:.06em}
 .refund-grund-hd .grund-meta{font-size:11px;color:var(--ink-soft);font-variant-numeric:tabular-nums}
+/* V10.4: Rückversand-Bilanz */
+.rv-card{border:1.5px solid #7d8fa3;background:linear-gradient(180deg,#fbfcfd 0%,#fdfcfa 100%)}
+.rv-card h3{color:#4a5c6b;display:flex;align-items:center;gap:10px}
+.rv-badge{display:inline-block;padding:2px 10px;background:#7d8fa3;color:#fff;font-size:10px;font-weight:600;letter-spacing:.08em;border-radius:999px;text-transform:uppercase}
+.rv-hint{font-size:12.5px;color:var(--ink-soft);line-height:1.6;margin:6px 0 16px}
+.rv-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+@media(max-width:900px){.rv-kpis{grid-template-columns:repeat(2,1fr)}}
+.rv-kpi{background:#fff;border:1px solid #dfe4e8;border-radius:8px;padding:14px 16px}
+.rv-kpi-hero{border-color:#7d8fa3;box-shadow:0 0 0 2px rgba(125,143,163,.1)}
+.rv-kpi-be{background:#faf7f0;border-color:#e8dfc9}
+.rv-lbl{font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:var(--ink-soft);font-weight:600;margin-bottom:6px;display:flex;align-items:center;gap:2px;flex-wrap:wrap}
+.rv-val{font-size:24px;font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.rv-plus{color:#4a6b5c}
+.rv-minus{color:#a15c2a}
+.rv-sub{font-size:11.5px;color:var(--ink-soft);margin-top:5px;line-height:1.4}
+.rv-tbl{margin-top:20px;padding-top:18px;border-top:1px solid var(--line)}
+.rv-head,.rv-row{display:grid;grid-template-columns:150px 1fr 90px 70px 105px 100px;gap:12px;align-items:center}
+.rv-head{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-soft);margin-bottom:10px}
+.rv-head span:nth-child(n+3){text-align:right}
+.rv-row{padding:9px 0;border-top:1px solid var(--line);font-size:12.5px}
+.rv-land{font-weight:600;color:var(--ink);display:flex;flex-direction:column;gap:2px}
+.rv-satz{font-size:10.5px;font-weight:400;color:var(--ink-soft)}
+.rv-bar-wrap{background:#eef1f3;border-radius:3px;height:8px;overflow:hidden}
+.rv-bar{background:#7d8fa3;height:100%;border-radius:3px}
+.rv-c{text-align:right;font-variant-numeric:tabular-nums;font-weight:600;color:var(--ink)}
+.rv-c-muted{color:var(--ink-soft);font-weight:400}
+.rv-verlauf{margin-top:20px;padding-top:18px;border-top:1px solid var(--line)}
+.rv-vl-title{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-soft);margin-bottom:12px}
+.rv-vl-row{display:grid;grid-template-columns:90px 1fr 90px;gap:12px;align-items:center;margin-bottom:8px;font-size:12.5px}
+.rv-vl-m{color:var(--ink)}
+.rv-vl-bar-wrap{background:#eef1f3;border-radius:3px;height:10px;overflow:hidden}
+.rv-vl-bar{background:#6b8e7f;height:100%;border-radius:3px}
+.rv-vl-v{text-align:right;font-variant-numeric:tabular-nums;font-weight:600;color:#4a6b5c}
+.rv-footer{margin-top:18px;padding-top:12px;border-top:1px solid var(--line);font-size:11.5px;color:var(--ink-soft);line-height:1.6}
+@media(max-width:820px){.rv-head,.rv-row{grid-template-columns:1fr 70px 55px 85px}.rv-bar-wrap{display:none}}
 /* V10.2: Benchmark-Badges */
 .bm-badge{display:inline-block;padding:3px 10px;border-radius:999px;font-size:10.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;cursor:help;transition:filter .15s;white-space:nowrap}
 .bm-badge:hover,.bm-badge:focus{filter:brightness(1.06);outline:none}
@@ -664,6 +699,7 @@ tr:hover td{background:#fdfcfa}
         <label>Bis <input type="date" id="retCustTo"></label>
         <button class="ov-tab active" id="retCustApply" style="cursor:pointer">Anwenden</button>
       </div>
+      <div id="rueckversandBox"></div>
       <div id="retourenContent"></div>
     </section>
 
@@ -1781,6 +1817,7 @@ function renderPanel(panelId, from, to, opts){
 
 // V8.7: Returnless-Snapshot-Card
 function renderReturnlessSection(panel){
+  try{ renderRueckversandSection(); }catch(e){ console.warn("RV:", e); }
   var hint = panel.querySelector('.returnless-hint');
   var kpis = panel.querySelector('.returnless-kpis');
   var reasonsBox = panel.querySelector('.rl-reasons');
@@ -2224,6 +2261,90 @@ function renderVerursacherSection(panel, agg){
     footerHtml += '<div>Nicht zugeordnet: <strong>'+nichtZugeordnet+'</strong> (Schweiz, Kulanz, Sonstiges)</div>';
   }
   footer.innerHTML = footerHtml;
+}
+
+
+// V10.4: Rückversand-Bilanz — einbehaltene Rücksendegebühren vs. getragene Kosten
+// Sätze: DE 5,90 € · AT 14,90 € · CH 24,90 € (pauschal). Kostenlos bei Gutschein-Wahl <14 Tage (nur DE)
+// und bei Defekt/Reklamation (KS-Retourenformular).
+var RV_SATZ = {DE:5.90, AT:14.90, CH:24.90};
+var RUECKVERSAND = [["#222022","2026-07-13",0,"DE","frei",144],["#222137","2026-07-16",0,"DE","frei",34.19],["#222826","2026-07-16",0,"DE","frei",69.25],["#222034","2026-07-20",5.9,"DE","gebuehr",99.98],["#222113","2026-07-20",5.9,"DE","gebuehr",14.99],["#222192","2026-07-21",5.9,"DE","gebuehr",149.99],["#222444","2026-07-21",5.9,"DE","gebuehr",25.63],["#222511","2026-07-21",5.9,"DE","gebuehr",79.99],["#222648","2026-07-21",5.9,"DE","gebuehr",149.99],["#222450","2026-07-22",5.9,"DE","gebuehr",149.99],["#222715","2026-07-22",5.9,"DE","gebuehr",29.99],["#222132","2026-07-23",0,"DE","frei",40.12],["#222136","2026-07-23",5.9,"DE","gebuehr",129.98],["#222262","2026-07-23",5.9,"DE","gebuehr",71.96],["#222317","2026-07-23",5.9,"DE","gebuehr",31.49],["#222425","2026-07-23",5.9,"DE","gebuehr",93.46],["#222706","2026-07-23",5.9,"DE","gebuehr",79.99],["#222733","2026-07-23",5.9,"DE","gebuehr",71.25],["#222822","2026-07-23",5.9,"DE","gebuehr",149.99],["#222878","2026-07-23",0,"DE","frei",124.84],["#222891","2026-07-23",5.9,"DE","gebuehr",44.97],["#222802","2026-07-24",5.9,"DE","gebuehr",135],["#223191","2026-07-24",5.9,"DE","gebuehr",58.5],["#224559","2026-07-24",0,"DE","frei",11.99],["#225089","2026-07-27",0,"DE","frei",118.75],["#222009","2026-07-28",5.9,"DE","gebuehr",175.98],["#222061","2026-07-28",5.9,"DE","gebuehr",80.43],["#222151","2026-07-28",5.9,"DE","gebuehr",130.51],["#223002","2026-07-28",5.9,"DE","gebuehr",189.98],["#223233","2026-07-28",5.9,"DE","gebuehr",88.51],["#223343","2026-07-28",5.9,"DE","gebuehr",64.94],["#223480","2026-07-28",5.9,"DE","gebuehr",94.49],["#223480","2026-07-28",0,"DE","frei",134.99],["#223532","2026-07-28",5.9,"DE","gebuehr",106.19],["#223702","2026-07-28",0,"DE","frei",124.15],["#223717","2026-07-28",5.9,"DE","gebuehr",152.91],["#223763","2026-07-28",5.9,"DE","gebuehr",35.96],["#223801","2026-07-28",5.9,"DE","gebuehr",47.69],["#223925","2026-07-28",0,"DE","frei",79.14],["#224004","2026-07-28",5.9,"DE","gebuehr",154.98],["#224260","2026-07-28",5.9,"DE","gebuehr",66.65],["#224324","2026-07-28",0,"DE","frei",94.02],["#225307","2026-07-28",0,"DE","frei",102.6],["#222264","2026-07-29",0,"DE","frei",113.98],["#222712","2026-07-29",5.9,"DE","gebuehr",29.98],["#222852","2026-07-29",0,"DE","frei",34.01],["#223072","2026-07-29",0,"DE","frei",39.99],["#223396","2026-07-29",5.9,"DE","gebuehr",58.45],["#223485","2026-07-29",5.9,"DE","gebuehr",119.93],["#223704","2026-07-29",5.9,"DE","gebuehr",99.98],["#223759","2026-07-29",5.9,"DE","gebuehr",80.94],["#223974","2026-07-29",5.9,"DE","gebuehr",64.99],["#224295","2026-07-29",5.9,"DE","gebuehr",54.45],["#222065","2026-07-30",5.9,"DE","gebuehr",19.99],["#222674","2026-07-30",0,"DE","frei",19.38],["#222717","2026-07-30",0,"DE","frei",79.03],["#223321","2026-07-30",5.9,"DE","gebuehr",94.99],["#223321","2026-07-30",5.9,"DE","gebuehr",255.47],["#223542","2026-07-30",5.9,"DE","gebuehr",15.29],["#223564","2026-07-30",5.9,"DE","gebuehr",120.6],["#223930","2026-07-30",5.9,"DE","gebuehr",46.26],["#223990","2026-07-30",0,"DE","frei",149.99],["#224242","2026-07-30",30.13,"CH","gebuehr",34.31],["#224388","2026-07-30",5.9,"DE","gebuehr",299.98],["#224508","2026-07-30",5.9,"DE","gebuehr",59.98],["#224622","2026-07-30",0,"DE","frei",49.98],["#222639","2026-07-31",5.99,"DE","gebuehr",118.81],["#222694","2026-07-31",5.9,"DE","gebuehr",176.52],["#223255","2026-07-31",0,"DE","frei",31.5],["#223648","2026-07-31",5.9,"DE","gebuehr",46.77],["#223652","2026-07-31",5.9,"DE","gebuehr",99.98],["#223756","2026-07-31",0,"AT","frei",81.01],["#223886","2026-07-31",5.9,"DE","gebuehr",27.37],["#223954","2026-07-31",5.9,"DE","gebuehr",55.08],["#223972","2026-07-31",5.9,"DE","gebuehr",89.96],["#224505","2026-07-31",5.9,"DE","gebuehr",149.99],["#225458","2026-08-03",0,"DE","frei",66.59],["#225839","2026-08-03",0,"DE","frei",246.54],["#226385","2026-08-03",0,"DE","frei",159.99],["#222213","2026-08-05",5.9,"DE","gebuehr",76.43],["#222259","2026-08-05",5.9,"DE","gebuehr",80.06],["#223289","2026-08-05",5.9,"DE","gebuehr",38.78],["#223312","2026-08-05",5.9,"DE","gebuehr",149.99],["#223496","2026-08-05",5.9,"DE","gebuehr",89.96],["#223578","2026-08-05",5.9,"DE","gebuehr",14.54],["#223595","2026-08-05",5.9,"DE","gebuehr",23.98],["#223644","2026-08-05",5.9,"DE","gebuehr",188.99],["#223766","2026-08-05",5.9,"DE","gebuehr",69.41],["#223955","2026-08-05",0,"DE","frei",26.65],["#224124","2026-08-05",0,"DE","frei",65.5],["#224146","2026-08-05",0,"DE","frei",29.99],["#224402","2026-08-05",5.9,"DE","gebuehr",79.99],["#224485","2026-08-05",5.9,"DE","gebuehr",25.98],["#224557","2026-08-05",5.9,"DE","gebuehr",54.99],["#224564","2026-08-05",5.9,"DE","gebuehr",35.99],["#224667","2026-08-05",5.9,"DE","gebuehr",33.98],["#224668","2026-08-05",5.9,"DE","gebuehr",149.99],["#224687","2026-08-05",5.9,"DE","gebuehr",85.5],["#224733","2026-08-05",5.9,"DE","gebuehr",62.95],["#224766","2026-08-05",5.9,"DE","gebuehr",13.5],["#224802","2026-08-05",5.9,"DE","gebuehr",75],["#224805","2026-08-05",5.9,"DE","gebuehr",64.99],["#224814","2026-08-05",5.9,"DE","gebuehr",116.99],["#224861","2026-08-05",0,"DE","frei",34.17],["#224867","2026-08-05",5.9,"DE","gebuehr",109.98],["#224872","2026-08-05",5.9,"DE","gebuehr",71.22],["#225101","2026-08-05",5.9,"DE","gebuehr",88.74],["#225273","2026-08-05",5.9,"DE","gebuehr",22.78],["#225300","2026-08-05",5.9,"DE","gebuehr",64.99],["#225326","2026-08-05",5.9,"DE","gebuehr",34.19],["#225339","2026-08-05",5.9,"DE","gebuehr",447.94],["#225486","2026-08-05",5.9,"DE","gebuehr",67.5],["#225534","2026-08-05",5.9,"DE","gebuehr",99.98],["#225848","2026-08-05",5.9,"DE","gebuehr",134.99],["#225853","2026-08-05",5.9,"DE","gebuehr",135],["#222013","2026-08-06",5.9,"DE","gebuehr",40.7],["#223458","2026-08-06",0,"DE","frei",26.16],["#223554","2026-08-06",5.9,"DE","gebuehr",71.1],["#223952","2026-08-06",0,"DE","frei",19.38],["#224025","2026-08-06",0,"DE","frei",159.99],["#224115","2026-08-06",5.9,"DE","gebuehr",278.99],["#224349","2026-08-06",5.91,"DE","gebuehr",437.34],["#224515","2026-08-06",5.9,"DE","gebuehr",95.35],["#224561","2026-08-06",5.9,"DE","gebuehr",170.99],["#224700","2026-08-06",5.9,"DE","gebuehr",149.99],["#224769","2026-08-06",5.9,"DE","gebuehr",80.87],["#224797","2026-08-06",5.9,"DE","gebuehr",135],["#224801","2026-08-06",0,"DE","frei",248.98],["#224881","2026-08-06",5.9,"DE","gebuehr",129.98],["#224890","2026-08-06",5.9,"DE","gebuehr",64.94],["#224899","2026-08-06",5.9,"DE","gebuehr",26.22],["#224932","2026-08-06",5.9,"DE","gebuehr",49.38],["#225073","2026-08-06",5.9,"DE","gebuehr",79.93],["#225587","2026-08-06",32.58,"CH","gebuehr",39.45],["#225672","2026-08-06",5.9,"DE","gebuehr",365.97],["#226142","2026-08-06",0,"DE","frei",76.93],["#226248","2026-08-06",0,"DE","frei",245.64],["#223210","2026-08-07",5.9,"DE","gebuehr",266.36],["#223855","2026-08-07",5.9,"DE","gebuehr",102.98],["#223958","2026-08-07",5.9,"DE","gebuehr",44.6],["#224469","2026-08-07",5.9,"DE","gebuehr",50.21],["#224699","2026-08-07",5.9,"DE","gebuehr",135],["#225355","2026-08-07",5.9,"DE","gebuehr",70.29],["#225623","2026-08-07",5.9,"DE","gebuehr",135],["#225809","2026-08-07",5.9,"DE","gebuehr",69.94],["#225898","2026-08-07",5.9,"DE","gebuehr",64.99],["#228310","2026-08-09",0,"??","frei",100],["#222382","2026-08-10",5.9,"DE","gebuehr",62.07],["#223297","2026-08-10",5.9,"DE","gebuehr",39.99],["#223632","2026-08-10",0,"DE","frei",96.17],["#225315","2026-08-10",0,"DE","frei",87.45],["#225412","2026-08-10",5.9,"DE","gebuehr",64.99],["#225618","2026-08-10",5.9,"DE","gebuehr",84.94],["#225819","2026-08-10",0,"DE","frei",102.94],["#226137","2026-08-10",5.9,"DE","gebuehr",84.93],["#226190","2026-08-10",5.9,"DE","gebuehr",71.95],["#226195","2026-08-10",5.9,"DE","gebuehr",129.88],["#226429","2026-08-10",5.9,"DE","gebuehr",40.05],["#226482","2026-08-10",5.9,"DE","gebuehr",30.2],["#226528","2026-08-10",5.9,"DE","gebuehr",129.98],["#226840","2026-08-10",5.9,"DE","gebuehr",44.58],["#226843","2026-08-10",5.9,"DE","gebuehr",28.84],["#226885","2026-08-10",5.9,"DE","gebuehr",96.27],["#226942","2026-08-10",5.9,"DE","gebuehr",69.94],["#227755","2026-08-10",-0.01,"GB","frei",32.69],["#227989","2026-08-10",0,"DE","frei",189.98],["#226432","2026-08-11",0,"DE","frei",99.98],["#226614","2026-08-11",0,"DE","frei",49.99],["#226824","2026-08-11",0,"DE","frei",259.06],["#223583","2026-08-12",0,"DE","frei",9.99],["#223772","2026-08-12",5.9,"DE","gebuehr",69.98],["#224052","2026-08-12",0,"AT","frei",120.04],["#224848","2026-08-12",5.9,"DE","gebuehr",40.48],["#224914","2026-08-12",5.9,"DE","gebuehr",114.17],["#224951","2026-08-12",5.91,"DE","gebuehr",269.99],["#225493","2026-08-12",5.9,"DE","gebuehr",96.81],["#225909","2026-08-12",0,"DE","frei",71.22],["#226141","2026-08-12",5.9,"DE","gebuehr",135],["#226288","2026-08-12",0,"DE","frei",220.48],["#226380","2026-08-12",0,"DE","frei",15.3],["#226594","2026-08-12",5.9,"DE","gebuehr",14.99],["#226612","2026-08-12",0,"DE","frei",53.1],["#226711","2026-08-12",5.9,"DE","gebuehr",44.62],["#226812","2026-08-12",5.9,"DE","gebuehr",26.99],["#226979","2026-08-12",5.9,"DE","gebuehr",44.58],["#227387","2026-08-12",5.9,"DE","gebuehr",113.99],["#227400","2026-08-12",0,"DE","frei",149.99],["#228827","2026-08-12",0,"DE","frei",134.36],["#228891","2026-08-12",0,"??","frei",100],["#228901","2026-08-12",0,"??","frei",100],["#222999","2026-08-13",0.02,"SE","frei",20.52],["#223819","2026-08-13",0,"DE","frei",49.99],["#223934","2026-08-13",5.9,"DE","gebuehr",79.99],["#224204","2026-08-13",14.9,"AT","gebuehr",299.98],["#224413","2026-08-13",5.9,"DE","gebuehr",149.99],["#224418","2026-08-13",5.9,"DE","gebuehr",180.49],["#224713","2026-08-13",5.9,"DE","gebuehr",34.91],["#224732","2026-08-13",0,"AT","frei",129.98],["#224850","2026-08-13",5.9,"DE","gebuehr",16.99],["#225002","2026-08-13",5.9,"DE","gebuehr",77.94],["#225052","2026-08-13",0,"DE","frei",115.71],["#225169","2026-08-13",14.9,"AT","gebuehr",28.5],["#225507","2026-08-13",5.9,"DE","gebuehr",33.31],["#225566","2026-08-13",0,"DE","frei",19.98],["#226682","2026-08-13",5.9,"DE","gebuehr",75],["#226723","2026-08-13",5.9,"DE","gebuehr",72],["#226833","2026-08-13",5.9,"DE","gebuehr",135],["#227113","2026-08-13",5.9,"DE","gebuehr",74.98],["#227135","2026-08-13",0,"DE","frei",80.5],["#227209","2026-08-13",5.9,"DE","gebuehr",149.99],["#227262","2026-08-13",5.9,"DE","gebuehr",150.27],["#227300","2026-08-13",5.9,"DE","gebuehr",142.49],["#227764","2026-08-13",5.9,"DE","gebuehr",218.35],["#228019","2026-08-13",5.9,"DE","gebuehr",85.34],["#225052","2026-08-14",0,"DE","frei",17.09],["#227675","2026-08-14",25.67,"CH","gebuehr",35.7],["#227552","2026-08-17",0,"DE","frei",70.84],["#229660","2026-08-17",0,"DE","frei",379.96],["#225052","2026-08-18",0,"DE","frei",29.99],["#226672","2026-08-18",0,"DE","frei",57.97],["#228514","2026-08-18",0,"DE","frei",25.99],["#230566","2026-08-19",0,"DE","frei",77.73],["#225491","2026-08-20",5.99,"DE","gebuehr",74.99],["#225589","2026-08-20",5.9,"DE","gebuehr",85.07],["#225621","2026-08-20",5.9,"DE","gebuehr",57.94],["#225668","2026-08-20",5.9,"DE","gebuehr",64.94],["#226164","2026-08-20",0,"DE","frei",64.94],["#226203","2026-08-20",0,"DE","frei",34.37],["#226276","2026-08-20",6,"DE","gebuehr",171.9],["#226328","2026-08-20",5.9,"DE","gebuehr",16.69],["#226384","2026-08-20",5.99,"DE","gebuehr",81.83],["#226533","2026-08-20",0,"AT","frei",148.46],["#226671","2026-08-20",5.9,"DE","gebuehr",49.49],["#226854","2026-08-20",5.9,"DE","gebuehr",29.98],["#226975","2026-08-20",5.9,"DE","gebuehr",69.81],["#227097","2026-08-20",5.9,"DE","gebuehr",179.96],["#227120","2026-08-20",5.9,"DE","gebuehr",189.98],["#227147","2026-08-20",5.9,"DE","gebuehr",226.08],["#227216","2026-08-20",5.9,"DE","gebuehr",11.99],["#227240","2026-08-20",5.9,"DE","gebuehr",58.5],["#227430","2026-08-20",5.9,"DE","gebuehr",149.99],["#227499","2026-08-20",5.9,"DE","gebuehr",69.94],["#227526","2026-08-20",5.9,"DE","gebuehr",149.99],["#227534","2026-08-20",5.9,"DE","gebuehr",27.49],["#227667","2026-08-20",5.9,"DE","gebuehr",60.25],["#227728","2026-08-20",5.9,"DE","gebuehr",27.97],["#227802","2026-08-20",5.9,"DE","gebuehr",149.99],["#227849","2026-08-20",5.9,"DE","gebuehr",134.99],["#227910","2026-08-20",0,"DE","frei",99.98],["#227920","2026-08-20",5.9,"DE","gebuehr",99.98],["#228054","2026-08-20",5.9,"DE","gebuehr",99.98],["#228178","2026-08-20",5.9,"DE","gebuehr",149.99],["#228190","2026-08-20",5.9,"DE","gebuehr",37.99],["#228326","2026-08-20",5.9,"DE","gebuehr",25.98],["#228457","2026-08-20",5.9,"DE","gebuehr",14.99],["#228935","2026-08-20",5.9,"DE","gebuehr",73.3],["#229047","2026-08-20",0,"DE","frei",79.09],["#229053","2026-08-20",5.9,"DE","gebuehr",88.21],["#229101","2026-08-20",5.9,"DE","gebuehr",41.23],["#229112","2026-08-20",5.9,"DE","gebuehr",29.99],["#230703","2026-08-20",0,"DE","frei",169.97],["#230878","2026-08-20",0,"DE","frei",142.5],["#225619","2026-08-21",5.9,"DE","gebuehr",74.96],["#226013","2026-08-21",5.9,"DE","gebuehr",76.87],["#226404","2026-08-21",5.9,"DE","gebuehr",149.99],["#226650","2026-08-21",0,"DE","frei",140.47],["#226650","2026-08-21",0,"DE","frei",135],["#227116","2026-08-21",0,"AT","frei",63.37],["#227192","2026-08-21",5.9,"DE","gebuehr",149.99],["#227226","2026-08-21",5.9,"DE","gebuehr",79.99],["#227647","2026-08-21",5.9,"DE","gebuehr",219.97],["#227932","2026-08-21",5.9,"DE","gebuehr",14.38],["#227956","2026-08-21",5.9,"DE","gebuehr",318.03],["#228034","2026-08-21",5.9,"DE","gebuehr",69.94],["#228309","2026-08-21",5.9,"DE","gebuehr",42.97],["#228398","2026-08-21",5.9,"DE","gebuehr",75.98],["#228470","2026-08-21",5.9,"DE","gebuehr",76.5],["#228587","2026-08-21",5.9,"DE","gebuehr",107.94],["#228792","2026-08-21",5.9,"DE","gebuehr",15.69],["#229069","2026-08-21",5.9,"DE","gebuehr",98.99],["#229189","2026-08-21",5.9,"DE","gebuehr",134.99],["#229219","2026-08-21",0,"DE","frei",56.33],["#230972","2026-08-21",0,"DE","frei",79.99],["#224600","2026-08-24",0,"DE","frei",149.99],["#227193","2026-08-24",0,"DE","frei",12.37],["#227569","2026-08-24",25.72,"CH","gebuehr",38.85],["#227682","2026-08-24",0,"DE","frei",18.99],["#231598","2026-08-24",0,"DE","frei",415.4],["#225052","2026-08-25",5.9,"DE","gebuehr",149.99],["#226564","2026-08-25",0,"DE","frei",56.94],["#226911","2026-08-25",5.9,"DE","gebuehr",149.99],["#226971","2026-08-25",5.9,"DE","gebuehr",49.83],["#227240","2026-08-25",5.9,"DE","gebuehr",134.99],["#227421","2026-08-25",5.9,"DE","gebuehr",27.98],["#227537","2026-08-25",0,"DE","frei",113.4],["#227542","2026-08-25",5.9,"DE","gebuehr",79.99],["#227560","2026-08-25",0,"FR","frei",45.95],["#227773","2026-08-25",5.9,"DE","gebuehr",94.98],["#227867","2026-08-25",5.9,"DE","gebuehr",102],["#227894","2026-08-25",5.9,"DE","gebuehr",149.99],["#227937","2026-08-25",5.9,"DE","gebuehr",149.99],["#227983","2026-08-25",5.9,"DE","gebuehr",46.75],["#228185","2026-08-25",0,"DE","frei",19.4],["#228345","2026-08-25",0,"DE","frei",35],["#228400","2026-08-25",5.9,"DE","gebuehr",16.95],["#228535","2026-08-25",5.9,"DE","gebuehr",94.99],["#228591","2026-08-25",5.9,"DE","gebuehr",144],["#228809","2026-08-25",5.9,"DE","gebuehr",84.66],["#228811","2026-08-25",5.9,"DE","gebuehr",36.66],["#228814","2026-08-25",0,"DE","frei",49.99],["#228893","2026-08-25",5.9,"DE","gebuehr",64.99],["#229062","2026-08-25",5.9,"DE","gebuehr",70.06],["#229087","2026-08-25",5.9,"DE","gebuehr",40.49],["#229319","2026-08-25",5.9,"DE","gebuehr",25.73],["#229387","2026-08-25",5.9,"DE","gebuehr",62.44],["#229393","2026-08-25",5.9,"DE","gebuehr",79.99],["#229438","2026-08-25",5.9,"DE","gebuehr",49.99],["#229528","2026-08-25",5.9,"DE","gebuehr",99.98],["#229563","2026-08-25",5.9,"DE","gebuehr",94.93],["#229635","2026-08-25",5.9,"DE","gebuehr",304.37],["#229653","2026-08-25",5.9,"DE","gebuehr",552.55],["#229653","2026-08-25",5.9,"DE","gebuehr",64.94],["#229875","2026-08-25",5.9,"DE","gebuehr",219.97],["#230002","2026-08-25",5.9,"DE","gebuehr",75],["#230085","2026-08-25",5.9,"DE","gebuehr",79],["#230140","2026-08-25",5.9,"DE","gebuehr",80.98],["#230197","2026-08-25",5.9,"DE","gebuehr",149.99],["#230592","2026-08-25",0,"DE","frei",179.99],["#230767","2026-08-25",5.9,"DE","gebuehr",149.99],["#231769","2026-08-25",0,"DE","frei",415.4],["#223553","2026-08-27",0,"DE","frei",71.04],["#225588","2026-08-27",27.36,"CH","gebuehr",148.56],["#228812","2026-08-27",0,"DE","frei",40.72],["#229202","2026-08-27",5.9,"DE","gebuehr",44.6],["#229253","2026-08-27",25.69,"CH","gebuehr",77.57],["#229272","2026-08-27",0,"DE","frei",98.01],["#229393","2026-08-27",0,"DE","frei",26.58],["#229512","2026-08-27",5.9,"DE","gebuehr",67.5],["#229540","2026-08-27",5.9,"DE","gebuehr",197.88],["#230237","2026-08-27",5.9,"DE","gebuehr",71.97],["#230267","2026-08-27",5.9,"DE","gebuehr",26.58],["#230460","2026-08-27",5.9,"DE","gebuehr",82.53],["#226217","2026-08-28",5.9,"DE","gebuehr",13.29],["#229029","2026-08-28",0,"DE","frei",26.18],["#229577","2026-08-28",5.9,"DE","gebuehr",29.99],["#229633","2026-08-28",5.9,"DE","gebuehr",116.77],["#229641","2026-08-28",5.9,"DE","gebuehr",36.97],["#225621","2026-08-31",0,"DE","frei",49.99],["#226065","2026-08-31",0,"DE","frei",14.99],["#227601","2026-08-31",0,"DE","frei",75.04],["#227627","2026-08-31",5.9,"DE","gebuehr",149.99],["#227739","2026-08-31",5.9,"DE","gebuehr",54.99],["#228441","2026-08-31",5.9,"DE","gebuehr",299.98],["#228481","2026-08-31",5.9,"DE","gebuehr",149.99],["#228755","2026-08-31",5.9,"DE","gebuehr",42.09],["#229264","2026-08-31",5.9,"DE","gebuehr",214.98],["#229327","2026-08-31",5.99,"DE","gebuehr",93.15],["#229330","2026-08-31",5.9,"DE","gebuehr",29.99],["#229370","2026-08-31",5.98,"DE","gebuehr",75.98],["#229587","2026-08-31",5.9,"DE","gebuehr",25.98],["#229612","2026-08-31",5.9,"DE","gebuehr",104.87],["#229800","2026-08-31",5.9,"DE","gebuehr",71.99],["#229816","2026-08-31",5.9,"DE","gebuehr",119.98],["#229863","2026-08-31",5.9,"DE","gebuehr",72],["#230029","2026-08-31",5.9,"DE","gebuehr",76.9],["#230123","2026-08-31",5.9,"DE","gebuehr",109.98],["#230443","2026-08-31",5.9,"DE","gebuehr",9.99],["#230701","2026-08-31",5.9,"DE","gebuehr",29.99],["#230714","2026-08-31",5.9,"DE","gebuehr",58.38],["#230767","2026-08-31",5.9,"DE","gebuehr",139.75],["#230778","2026-08-31",5.9,"DE","gebuehr",149.99],["#231012","2026-08-31",0,"DE","frei",68.36],["#232832","2026-08-31",0,"DE","frei",69.85],["#226666","2026-09-01",5.9,"DE","gebuehr",228.98],["#227477","2026-09-01",5.9,"DE","gebuehr",71.97],["#229243","2026-09-01",5.9,"DE","gebuehr",73.75],["#229253","2026-09-01",0.03,"CH","frei",15.27],["#229517","2026-09-01",0.01,"DE","frei",269.99],["#229555","2026-09-01",0,"DE","frei",84.99],["#229615","2026-09-01",5.9,"DE","gebuehr",269.98],["#229633","2026-09-01",0,"DE","frei",17.33],["#229657","2026-09-01",0,"DE","frei",63.7],["#229695","2026-09-01",5.9,"DE","gebuehr",19.98],["#229759","2026-09-01",0,"DE","frei",109.18],["#229847","2026-09-01",0,"DE","frei",328.48],["#229905","2026-09-01",5.9,"DE","gebuehr",77.98],["#229932","2026-09-01",5.9,"DE","gebuehr",61.95],["#230289","2026-09-01",5.9,"DE","gebuehr",73.77],["#230330","2026-09-01",5.9,"DE","gebuehr",9.99],["#230341","2026-09-01",5.9,"DE","gebuehr",80.95],["#230488","2026-09-01",5.9,"DE","gebuehr",26.58],["#230506","2026-09-01",5.9,"DE","gebuehr",113.9],["#230521","2026-09-01",5.9,"DE","gebuehr",100.42],["#230560","2026-09-01",5.9,"DE","gebuehr",44.6],["#230701","2026-09-01",5.9,"DE","gebuehr",149.99],["#230735","2026-09-01",5.9,"DE","gebuehr",24.99],["#230938","2026-09-01",5.9,"DE","gebuehr",134.99],["#231168","2026-09-01",5.9,"DE","gebuehr",71.96],["#231204","2026-09-01",5.9,"DE","gebuehr",37.99],["#231339","2026-09-01",5.9,"DE","gebuehr",135],["#231354","2026-09-01",5.9,"DE","gebuehr",129.99],["#231425","2026-09-01",5.9,"DE","gebuehr",14.99],["#231437","2026-09-01",5.9,"DE","gebuehr",72.72],["#231538","2026-09-01",5.9,"DE","gebuehr",186.19],["#232089","2026-09-01",5.9,"DE","gebuehr",119.96],["#229024","2026-09-02",5.9,"DE","gebuehr",70.15],["#229646","2026-09-02",0,"DE","frei",41.87],["#230788","2026-09-02",5.9,"DE","gebuehr",36.1],["#230789","2026-09-02",5.9,"DE","gebuehr",89.98],["#230838","2026-09-02",0,"DE","frei",130.87],["#230904","2026-09-02",5.9,"DE","gebuehr",80.57],["#231104","2026-09-02",0,"DE","frei",134.56],["#231483","2026-09-02",5.9,"DE","gebuehr",64.94],["#231614","2026-09-02",5.9,"DE","gebuehr",79.99],["#231616","2026-09-02",0,"DE","frei",49.99],["#231705","2026-09-02",5.9,"DE","gebuehr",23.87],["#231776","2026-09-02",5.9,"DE","gebuehr",416.44],["#231798","2026-09-02",5.9,"DE","gebuehr",71.1],["#232045","2026-09-02",0,"DE","frei",5.39],["#226984","2026-09-03",5.9,"DE","gebuehr",526.45],["#227103","2026-09-03",0,"DE","frei",17.98],["#230077","2026-09-03",0,"DE","frei",93.94],["#230867","2026-09-03",5.9,"DE","gebuehr",40.14],["#230926","2026-09-03",5.9,"DE","gebuehr",84.97],["#231039","2026-09-03",5.9,"DE","gebuehr",41.35],["#231317","2026-09-03",0,"AT","frei",128.59],["#231669","2026-09-03",31.29,"CH","gebuehr",35.3],["#232026","2026-09-03",5.9,"DE","gebuehr",64.94],["#232027","2026-09-03",5.9,"DE","gebuehr",56.57],["#232313","2026-09-03",5.9,"DE","gebuehr",49.99],["#233658","2026-09-03",0,"DE","frei",74.94],["#228514","2026-09-04",0,"DE","frei",54.99],["#230955","2026-09-04",0,"DE","frei",147.84],["#229334","2026-09-07",5.9,"DE","gebuehr",26.3],["#230487","2026-09-07",5.9,"DE","gebuehr",105.5],["#230530","2026-09-07",5.9,"DE","gebuehr",100.7],["#230614","2026-09-07",5.9,"DE","gebuehr",77.49],["#230652","2026-09-07",5.9,"DE","gebuehr",299.98],["#231514","2026-09-07",5.9,"DE","gebuehr",134.97],["#232139","2026-09-07",0,"AT","frei",59.35],["#232412","2026-09-07",5.9,"DE","gebuehr",126.56],["#232840","2026-09-07",5.9,"DE","gebuehr",21],["#232874","2026-09-07",5.9,"DE","gebuehr",15.51],["#233020","2026-09-07",0,"DE","frei",37.78],["#234043","2026-09-07",0,"DE","frei",74.94],["#234178","2026-09-07",0,"DE","frei",319.98],["#228245","2026-09-08",0,"FI","frei",62.95],["#228494","2026-09-08",0,"AT","frei",37.24],["#228887","2026-09-08",0,"DE","frei",47.48],["#228888","2026-09-08",0,"DE","frei",117.96],["#230281","2026-09-08",0,"DE","frei",297.96],["#230546","2026-09-08",5.9,"DE","gebuehr",142.5],["#230810","2026-09-08",5.9,"DE","gebuehr",359.98],["#231053","2026-09-08",5.9,"DE","gebuehr",29.99],["#231547","2026-09-08",0,"DE","frei",48.95],["#231626","2026-09-08",5.9,"DE","gebuehr",76.98],["#232295","2026-09-08",5.9,"DE","gebuehr",149.99],["#232296","2026-09-08",0,"DE","frei",29.68],["#232548","2026-09-08",5.9,"DE","gebuehr",112.39],["#232583","2026-09-08",5.9,"DE","gebuehr",66.59],["#232596","2026-09-08",5.64,"DE","gebuehr",13.64],["#232689","2026-09-08",0,"AT","frei",126.05],["#232896","2026-09-08",5.9,"DE","gebuehr",26.99],["#233022","2026-09-08",5.9,"DE","gebuehr",69.81],["#233468","2026-09-08",5.9,"DE","gebuehr",71.94],["#233580","2026-09-08",0,"DE","frei",162],["#234410","2026-09-08",6,"DE","gebuehr",11.99],["#234564","2026-09-08",0,"DE","frei",45],["#234783","2026-09-08",0,"DE","frei",238.56],["#226619","2026-09-09",0,"DE","frei",122.49],["#231948","2026-09-09",0,"DE","frei",49.98]];
+
+function renderRueckversandSection(){
+  var box = document.getElementById('rueckversandBox');
+  if(!box || typeof RUECKVERSAND === 'undefined') return;
+  var range = ov_getRange(window.__retTab||'30d', window.__retCustFrom, window.__retCustTo);
+  var inR = RUECKVERSAND.filter(function(r){ return r[1] >= range.from && r[1] <= range.to; });
+  var geb = inR.filter(function(r){ return r[4]==='gebuehr'; });
+  var frei = inR.filter(function(r){ return r[4]==='frei'; });
+  var einbehalten = geb.reduce(function(s,r){ return s + r[2]; }, 0);
+  var freiWert = frei.reduce(function(s,r){ return s + r[5]; }, 0);
+  var labels = inR.length;
+  var breakEven = labels ? einbehalten/labels : 0;
+  var deckung = labels ? (geb.length/labels*100) : 0;
+
+  function proLand(arr){
+    var m = {};
+    arr.forEach(function(r){ var l = r[3]||'??'; if(!m[l]) m[l]={n:0,sum:0}; m[l].n++; m[l].sum += r[2]; });
+    return m;
+  }
+  var gebLand = proLand(geb), freiLand = proLand(frei);
+  var ii = function(k){ return '<span class="kpi-info" tabindex="0" aria-label="Info" data-tooltip="'+k+'">i</span>'; };
+
+  var kpis = '<div class="rv-kpis">'
+    + '<div class="rv-kpi rv-kpi-hero"><div class="rv-lbl">Einbehaltene Rücksendegebühren '+ii('rv-einbehalten')+'</div>'
+      + '<div class="rv-val rv-plus">'+fmtEURcompact(einbehalten)+'</div>'
+      + '<div class="rv-sub">'+geb.length+' Retouren mit Abzug</div></div>'
+    + '<div class="rv-kpi"><div class="rv-lbl">Retouren auf unsere Kosten '+ii('rv-frei')+'</div>'
+      + '<div class="rv-val rv-minus">'+frei.length+'</div>'
+      + '<div class="rv-sub">'+fmtEURcompact(freiWert)+' Warenwert · '+(100-deckung).toFixed(0)+'% aller Retouren</div></div>'
+    + '<div class="rv-kpi"><div class="rv-lbl">Retouren-Labels gesamt '+ii('rv-labels')+'</div>'
+      + '<div class="rv-val">'+labels+'</div>'
+      + '<div class="rv-sub">'+deckung.toFixed(0)+'% davon mit Gebühr</div></div>'
+    + '<div class="rv-kpi rv-kpi-be"><div class="rv-lbl">Break-even pro Label '+ii('rv-breakeven')+'</div>'
+      + '<div class="rv-val">'+fmtEUR(breakEven)+'</div>'
+      + '<div class="rv-sub">darüber zahlt ihr drauf</div></div>'
+  + '</div>';
+
+  var laender = ['DE','AT','CH'];
+  var rows = laender.map(function(l){
+    var g = gebLand[l]||{n:0,sum:0}, f = freiLand[l]||{n:0,sum:0};
+    var tot = g.n + f.n;
+    if(!tot) return '';
+    var be = tot ? g.sum/tot : 0;
+    return '<div class="rv-row">'
+      + '<div class="rv-land">'+l+'<span class="rv-satz">Satz '+fmtEUR(RV_SATZ[l])+'</span></div>'
+      + '<div class="rv-bar-wrap"><div class="rv-bar" style="width:'+(tot? (g.n/tot*100).toFixed(1):0)+'%"></div></div>'
+      + '<div class="rv-c">'+g.n+'</div>'
+      + '<div class="rv-c rv-c-muted">'+f.n+'</div>'
+      + '<div class="rv-c rv-plus">'+fmtEURcompact(g.sum)+'</div>'
+      + '<div class="rv-c">'+fmtEUR(be)+'</div>'
+    + '</div>';
+  }).join('');
+
+  var byMonat = {};
+  geb.forEach(function(r){ var m = r[1].slice(0,7); byMonat[m] = (byMonat[m]||0) + r[2]; });
+  var monate = Object.keys(byMonat).sort();
+  var maxM = Math.max.apply(null, monate.map(function(m){return byMonat[m];}).concat([1]));
+  var MN = ['','Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
+  var verlauf = monate.length > 1 ? '<div class="rv-verlauf"><div class="rv-vl-title">Verlauf einbehaltener Gebühren</div>'
+    + monate.map(function(m){
+        var v = byMonat[m];
+        return '<div class="rv-vl-row"><span class="rv-vl-m">'+MN[parseInt(m.slice(5,7),10)]+'</span>'
+          + '<div class="rv-vl-bar-wrap"><div class="rv-vl-bar" style="width:'+(v/maxM*100).toFixed(1)+'%"></div></div>'
+          + '<span class="rv-vl-v">'+fmtEURcompact(v)+'</span></div>';
+      }).join('') + '</div>' : '';
+
+  box.innerHTML = '<div class="card rv-card"><h3>Rückversand-Bilanz <span class="rv-badge">Kosten</span></h3>'
+    + '<div class="rv-hint">Ihr übernehmt den Rückversand und behaltet dafür eine Pauschale vom Erstattungsbetrag ein — <strong>DE 5,90 €</strong> · <strong>AT 14,90 €</strong> · <strong>CH 24,90 €</strong>. Bei Gutschein-Wahl innerhalb 14 Tagen (nur DE) und bei Defekt/Reklamation tragt ihr die Kosten selbst.</div>'
+    + kpis
+    + '<div class="rv-tbl"><div class="rv-head"><span>Land</span><span></span><span>mit Gebühr</span><span>ohne</span><span>Einbehalten</span><span>Break-even</span></div>'
+    + rows + '</div>'
+    + verlauf
+    + '<div class="rv-footer">Zeitraum: <strong>'+fmtDE(range.from)+' – '+fmtDE(range.to)+'</strong> · '
+    + 'Gegenrechnung DHL-Kosten steht noch aus — sobald der Label-Satz hinterlegt ist, zeigt die Karte die tatsächliche Über-/Unterdeckung.'
+    + '<br><span style="opacity:.75">CH-Beträge weichen leicht von 24,90 € ab (CHF→EUR-Umrechnung). Datenbasis: Shopify-Refunds, Abzug = Warenwert − tatsächliche Erstattung.</span></div>'
+  + '</div>';
 }
 
 // V10.2: Branchen-Benchmarks E-Commerce Interior & Home
@@ -3117,6 +3238,38 @@ document.querySelectorAll('.recs-tab').forEach(function(tab){
       '<div class="tt-formula">(Resolvia + Returnless) ÷ Gesamt-Refunds × 100</div>' +
       '<div class="tt-row" style="color:#d5d3cf;margin-top:4px">Zeigt wie viel Prozent der Refunds ohne manuellen Eingriff verarbeitet wurden. Hohe Quote = effizienter Kundenservice. Ziel: 70 %+.</div>',
 
+
+    'rv-einbehalten':
+      '<strong>Einbehaltene Rücksendegebühren</strong>' +
+      '<div class="tt-row">Die Summe, die ihr <em>weniger</em> an Kunden erstattet, weil ihr den Rückversand übernehmt.</div>' +
+      '<div class="tt-formula">Σ (Warenwert der Retoure − tatsächliche Erstattung)</div>' +
+      '<div class="tt-sep"></div>' +
+      '<div class="tt-row"><strong style="font-size:11.5px">Die Sätze:</strong></div>' +
+      '<ul class="tt-list"><li><strong style="color:#fff">DE 5,90 €</strong> · <strong style="color:#fff">AT 14,90 €</strong> · <strong style="color:#fff">CH 24,90 €</strong> — pauschal, unabhängig vom Gewicht</li></ul>' +
+      '<div class="tt-row" style="color:#d5d3cf;margin-top:6px">CH-Werte weichen leicht ab, weil in CHF berechnet und nach EUR umgerechnet wird.</div>',
+
+    'rv-frei':
+      '<strong>Retouren auf unsere Kosten</strong>' +
+      '<div class="tt-row">Retouren ohne Gebühren-Abzug — hier tragt ihr den Rückversand komplett selbst.</div>' +
+      '<div class="tt-sep"></div>' +
+      '<div class="tt-row"><strong style="font-size:11.5px">Zwei Fälle:</strong></div>' +
+      '<ul class="tt-list"><li><strong style="color:#fff">Gutschein-Wahl</strong> innerhalb 14 Tagen (nur DE) → Rückversand kostenlos</li>' +
+      '<li><strong style="color:#fff">Defekt / Reklamation</strong> über das KS-Retourenformular → ihr tragt die Kosten</li></ul>' +
+      '<div class="tt-row" style="color:#d5d3cf;margin-top:6px">Das ist die stille Kostenposition: DHL berechnet euch das Label, aber es kommt kein Geld zurück.</div>',
+
+    'rv-labels':
+      '<strong>Retouren-Labels gesamt</strong>' +
+      '<div class="tt-row">Alle Retouren im Zeitraum — mit und ohne Gebühren-Abzug.</div>' +
+      '<div class="tt-row" style="color:#d5d3cf;margin-top:6px">Für jedes davon fallen DHL-Kosten an, aber nur für einen Teil bekommt ihr Geld. Der Prozentwert zeigt die Deckungsquote.</div>' +
+      '<div class="tt-sep"></div>' +
+      '<div class="tt-row" style="color:#d5d3cf">Nicht enthalten: Resolvia-Kulanzerstattungen ohne Warenrücknahme und reine Stornos — das sind keine Retouren.</div>',
+
+    'rv-breakeven':
+      '<strong>Break-even pro Label</strong>' +
+      '<div class="tt-formula">Einbehaltene Gebühren ÷ alle Retouren-Labels</div>' +
+      '<div class="tt-row" style="margin-top:6px">Der maximale DHL-Satz, den ihr zahlen könnt, ohne draufzulegen.</div>' +
+      '<div class="tt-sep"></div>' +
+      '<div class="tt-row" style="color:#d5d3cf">Beispiel: Ihr behaltet 5,90 € ein, aber jede dritte Retoure läuft kostenlos. Dadurch sinkt der Break-even deutlich unter 5,90 €. Liegt der DHL-Satz darüber, zahlt ihr drauf.</div>',
 
     'bm-lager':
       '<strong>Benchmark: Lager-Fehlerquote</strong>' +
