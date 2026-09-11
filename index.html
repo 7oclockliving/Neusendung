@@ -2398,7 +2398,7 @@ function renderRueckversandSection(){
   var monate = Object.keys(byMonat).sort();
   var maxM = Math.max.apply(null, monate.map(function(m){return byMonat[m];}).concat([1]));
   var MN = ['','Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
-  var verlauf = monate.length > 1 ? ''+__rvKulanzHTML(range&&range.from,range&&range.to)+'<div class="rv-verlauf"><div class="rv-vl-title">Verlauf einbehaltener Gebühren</div>'
+  var verlauf = monate.length > 1 ? '<div class="rv-verlauf"><div class="rv-vl-title">Verlauf einbehaltener Gebühren</div>'
     + monate.map(function(m){
         var v = byMonat[m];
         return '<div class="rv-vl-row"><span class="rv-vl-m">'+MN[parseInt(m.slice(5,7),10)]+'</span>'
@@ -2412,7 +2412,7 @@ function renderRueckversandSection(){
     + '<div class="rv-tbl"><div class="rv-head"><span>Land</span><span></span><span>mit Gebühr</span><span>ohne</span><span>Einbehalten</span><span>Break-even</span></div>'
     + rows + '</div>'
     + verlauf
-    + '<div class="rv-footer">Zeitraum: <strong>'+fmtDE(range.from)+' – '+fmtDE(range.to)+'</strong> · '
+    + ''+__rvKulanzHTML(range&&range.from,range&&range.to)+'<div class="rv-footer">Zeitraum: <strong>'+fmtDE(range.from)+' – '+fmtDE(range.to)+'</strong> · '
     + 'Gegenrechnung DHL-Kosten steht noch aus — sobald der Label-Satz hinterlegt ist, zeigt die Karte die tatsächliche Über-/Unterdeckung.'
     + '<br><span style="opacity:.75">CH-Beträge weichen leicht von 24,90 € ab (CHF→EUR-Umrechnung). Datenbasis: Shopify-Refunds, Abzug = Warenwert − tatsächliche Erstattung.</span></div>'
   + '</div>';
