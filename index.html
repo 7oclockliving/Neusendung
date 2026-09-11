@@ -2398,7 +2398,7 @@ function renderRueckversandSection(){
   var monate = Object.keys(byMonat).sort();
   var maxM = Math.max.apply(null, monate.map(function(m){return byMonat[m];}).concat([1]));
   var MN = ['','Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
-  var verlauf = monate.length > 1 ? ''+__rvKulanzHTML(typeof from!=="undefined"?from:null,typeof to!=="undefined"?to:null)+'<div class="rv-verlauf"><div class="rv-vl-title">Verlauf einbehaltener Gebühren</div>'
+  var verlauf = monate.length > 1 ? ''+__rvKulanzHTML(range&&range.from,range&&range.to)+'<div class="rv-verlauf"><div class="rv-vl-title">Verlauf einbehaltener Gebühren</div>'
     + monate.map(function(m){
         var v = byMonat[m];
         return '<div class="rv-vl-row"><span class="rv-vl-m">'+MN[parseInt(m.slice(5,7),10)]+'</span>'
