@@ -3811,6 +3811,7 @@ function ov_computeMetrics(from, to){
 }
 
 // V9.1: Overview-Section (Umbau)
+function __ovRetouren(from,to){var o={n:0,wert:0};try{var R=(typeof RETOUREN!=="undefined")?RETOUREN:[];for(var i=0;i<R.length;i++){var d=R[i][0];if(from&&to&&(d<from||d>to))continue;o.n++;o.wert+=(+R[i][2]||0);}}catch(e){}return o;}
 function renderOverviewSection(){
   var box = document.getElementById('overviewContent');
   if(!box) return;
@@ -3846,7 +3847,7 @@ function renderOverviewSection(){
     + kpiCard('Neusendungen', String(cur.agg.total), fmtDE(range.from)+' – '+fmtDE(range.to), cur.agg.total, prev.agg.total, cur.casesInRange, 'count', null, 'neusendungen-count')
     + kpiCard('Reklamationsquote', cur.quote.toFixed(2)+'%', days+' Tage · Rolling', cur.quote, prev.quote, cur.casesInRange, 'quote', cur.orders, 'reklamationsquote')
     + kpiCard('Rückerstattungen', fmtEURcompact(cur.refundSum), cur.refunds.length+' Refunds · '+cur.resolviaCount+' Resolvia', cur.refundSum, prev.refundSum, cur.refunds, 'sum', null, 'refunds-summe')
-    + kpiCard('Retouren-Warenwert', fmtEURcompact(rl.total_wert_eur||0), (rl.total_returns||0)+' Retouren · Snapshot 30d', 0, 0, null, 'static', null, 'retouren-warenwert')
+    + kpiCard('Retouren-Warenwert', fmtEURcompact(__ovRetouren(range.from,range.to).wert), __ovRetouren(range.from,range.to).n+' Retouren · Live-API', __ovRetouren(range.from,range.to).wert, __ovRetouren(prevFrom,prevTo).wert, null, 'sum', null, 'retouren-warenwert')
     + (function(){
         var discInRange = (DATA.discounts||[]).filter(function(x){return x.d>=range.from && x.d<=range.to});
         var discPrev = (DATA.discounts||[]).filter(function(x){return x.d>=prevFrom && x.d<=prevTo});
@@ -3901,13 +3902,13 @@ function renderOverviewSection(){
   // Kosten-Impact-Card
   var neuKosten = calcNeusendungsKosten(cur.agg);
   var refunds30 = cur.refundSum;
-  var retourenWert = rl.total_wert_eur || 0;
+  var retourenWert = __ovRetouren(range.from, range.to).wert;
   var totalImpact = neuKosten + refunds30 + retourenWert;
   var impactHtml = '<div class="card"><h3>Finanzieller Impact</h3>'
     + '<div class="impact-rows">'
       + impactRow('Neusendungs-Kosten (EK + Pauschale)', fmtEUR(neuKosten))
       + impactRow('Rückerstattungen ('+cur.refunds.length+' Refunds)', fmtEUR(refunds30))
-      + impactRow('Warenwert Retouren (Snapshot 30d)', fmtEUR(retourenWert))
+      + impactRow('Warenwert Retouren (Zeitraum)', fmtEUR(retourenWert))
       + '<div class="impact-row total"><div class="im-label">Gesamt-Impact</div><div class="im-value">'+fmtEUR(totalImpact)+'</div></div>'
     + '</div>'
     + '<div style="margin-top:10px;font-size:11.5px;color:var(--ink-soft);line-height:1.5">Neusendungen &amp; Refunds im ausgewählten Zeitraum. Retouren als 30-Tage-Snapshot (feste Datenbasis).</div>'
